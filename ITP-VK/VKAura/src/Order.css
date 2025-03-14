@@ -1,0 +1,96 @@
+/* Container for the order page */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(230, 3, 3, 0.1)
+  }
+  
+  h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .cart {
+    margin-top: 20px;
+  }
+  
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cart-item h4 {
+    font-size: 18px;
+  }
+  
+  .cart-item p {
+    font-size: 16px;
+  }
+  
+  .cart-item button {
+    padding: 5px 10px;
+    margin-left: 5px;
+    cursor: pointer;
+    background-color: #ff0000;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .cart-item button:hover {
+    background-color: #ccc;
+  }
+  
+  h3 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+    text-align: right;
+    margin-bottom: 30px;
+  }
+  
+  /* Pay and Order History buttons */
+  .pay-button, .order-history-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    margin-top: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .pay-button:hover, .order-history-button:hover {
+    background-color: #45a049;
+  }
+  
+  .order-history-button {
+    background-color: #008CBA;
+  }
+  
+  .order-history-button:hover {
+    background-color: #007bb5;
+  }
+  
+  /* Message when no items are in the cart */
+  p {
+    text-align: center;
+    font-size: 18px;
+    color: #555;
+  }
+  
