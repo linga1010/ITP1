@@ -1,3 +1,4 @@
+//App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
@@ -17,8 +18,7 @@ import AddPackage from './invontorypage/AddPackage';
 import EditProduct from './invontorypage/EditProduct';
 import EditPackage from './invontorypage/EditPackage';
 import ViewPackage from './invontorypage/ViewPackage';
-import CreateInvoice from './invontorypage/CreateInvoice';
-import InvoiceList from './invontorypage/InvoiceList';
+import OrderPage from './OrderPages/Order';
 
 
 
@@ -44,10 +44,8 @@ function App() {
           <Route path="/edit-package/:id" element={<EditPackage />} />
           <Route path="/view-package" element={<ViewPackage />} />
           <Route path="/edit-product/:id" element={<EditProduct />} />
-          <Route path="/create-invoice" element={<CreateInvoice />} />
-          <Route path="/invoices" element={<InvoiceList />} />
-          
-          
+          <Route path="/order" element={<OrderPage />} />
+
 
       </Routes>
     </Router>

@@ -1,0 +1,28 @@
+
+.container {
+    padding: 20px;
+  }
+  
+  .cart {
+    margin-top: 20px;
+  }
+  
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .cart-item button {
+    margin: 0 5px;
+  }
+  
+  .pay-button {
+    margin-top: 20px;
+  }
+  
+  .order-history-button {
+    margin-top: 10px;
+  }
+  

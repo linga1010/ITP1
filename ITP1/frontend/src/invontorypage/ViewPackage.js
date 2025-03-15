@@ -1,12 +1,15 @@
+//veiwpackage
 import React, { useEffect, useState } from "react";
 import { Input, Button, Card, Row, Col } from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ViewPackage = () => {
   const [packages, setPackages] = useState([]);
   const [filteredPackages, setFilteredPackages] = useState([]);
   const [search, setSearch] = useState("");
+  const navigate = useNavigate(); // For navigation to the OrderPage
 
   useEffect(() => {
     fetchPackages();
@@ -32,8 +35,28 @@ const ViewPackage = () => {
   };
 
   const addToCart = (pkg) => {
+    // Get cart from localStorage or initialize as empty array
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // Check if the package is already in the cart
+    const existingItemIndex = cart.findIndex(item => item._id === pkg._id);
+    
+    if (existingItemIndex > -1) {
+      // Package already in cart, increase the quantity
+      cart[existingItemIndex].quantity += 1;
+    } else {
+      // Add the package to cart with quantity 1
+      cart.push({ ...pkg, quantity: 1 });
+    }
+
+    // Save the updated cart to localStorage
+    localStorage.setItem("cart", JSON.stringify(cart));
+
     console.log("Added to cart:", pkg.name);
-    // Implement cart logic here (Redux, Context API, LocalStorage, etc.)
+  };
+
+  const handlePlaceOrder = () => {
+    navigate("/order"); // Redirect to OrderPage
   };
 
   const renderProducts = (products) => {
@@ -113,6 +136,14 @@ const ViewPackage = () => {
           </Col>
         ))}
       </Row>
+
+      <Button
+        type="primary"
+        style={{ marginTop: "20px" }}
+        onClick={handlePlaceOrder}
+      >
+        Place Order
+      </Button>
     </div>
   );
 };
