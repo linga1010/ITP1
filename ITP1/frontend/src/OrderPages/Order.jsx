@@ -9,7 +9,7 @@ const OrderPage = () => {
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")) || []);
 
   const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.finalPrice * item.quantity, 0);
+    return cart.reduce((total, item) => total + item.finalPrice * item.quantity, 0).toFixed(2);
   };
 
   const handleIncreaseQuantity = (id) => {
@@ -40,7 +40,7 @@ const OrderPage = () => {
     const orderData = {
       user: "test_user",
       items: cart,
-      total: getTotalPrice(),
+      total: parseFloat(getTotalPrice()),
     };
 
     console.log("📦 Sending Order Data:", orderData);
@@ -48,7 +48,7 @@ const OrderPage = () => {
     try {
       const response = await axios.post("http://localhost:5000/api/orders", orderData);
       alert(response.data.message);
-      navigate("/PaymentDetails ");
+      navigate("/PaymentDetails");
     } catch (error) {
       console.error("❌ Order Error:", error.response?.data || error.message);
       alert("❌ Order Failed! Check the console for details.");
@@ -60,13 +60,12 @@ const OrderPage = () => {
   };
 
   const handleBack = () => {
-    navigate("/view-package"); // Navigate back to ViewPackage page
+    navigate("/view-package");
   };
 
   return (
     <div className="container">
       <h2>Package Order Summary</h2>
-
       <Button className="back-button" onClick={handleBack} type="default">
         ← Back to Packages
       </Button>
@@ -77,9 +76,9 @@ const OrderPage = () => {
             <div key={item._id} className="cart-item">
               <h4>{item.name}</h4>
               <p>
-                ₹{item.finalPrice} x {item.quantity}
+                ₹{item.finalPrice.toFixed(2)} x {item.quantity}
               </p>
-              <Button id="b1"onClick={() => handleIncreaseQuantity(item._id)} type="primary">
+              <Button id="b1" onClick={() => handleIncreaseQuantity(item._id)} type="primary">
                 +
               </Button>
               <Button id="b2" onClick={() => handleDecreaseQuantity(item._id)} type="default">
