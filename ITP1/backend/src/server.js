@@ -12,8 +12,7 @@ import adminRoutes from './routers/admin.router.js';
 import productRoutes from './routers/productRoutes.js';
 import packageRoutes from './routers/packageRoutes.js';
 import invoiceRoutes from './routers/invoiceRoutes.js';
-
-
+import OrderRoutes from './routers/OrderRoutes.js';
 
 dotenv.config(); // Load environment variables
 
@@ -51,9 +50,13 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/packages', packageRoutes);
 app.use('/api/invoices', invoiceRoutes);
+app.use('/api/orders', OrderRoutes);
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
   .then(() => console.log('✅ MongoDB connected'))
   .catch((err) => {
     console.error('❌ MongoDB error:', err.message);
