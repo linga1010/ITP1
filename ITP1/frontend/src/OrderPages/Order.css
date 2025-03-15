@@ -15,7 +15,16 @@
   }
   
   .cart-item button {
-    margin: 0 5px;
+    margin: 5px;
+
+  }
+
+  #b1,#b2{
+    background-color: #3296f3;
+    color :#ffffff
+  }
+  #b3{
+    background-color: #e42121;
   }
   
   .pay-button {
@@ -24,5 +33,13 @@
   
   .order-history-button {
     margin-top: 10px;
+    background-color: #01850c;
+    color: #ffffff;
   }
   
+  .back-button {
+    margin-bottom: 20px;
+    background-color: #01850c;
+    color: #ffffff;
+    border: 1px solid #ccc;
+  }

@@ -139,7 +139,7 @@ const ViewPackage = () => {
 
       <Button
         type="primary"
-        style={{ marginTop: "20px" }}
+        style={{ marginTop: "20px", marginLeft:"1000px", marginBottom: "30px",padding: "20px" }}
         onClick={handlePlaceOrder}
       >
         Place Order
