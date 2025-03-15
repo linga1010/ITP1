@@ -1,7 +1,7 @@
+// ProductPage.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./Product.css";
-
 
 const products = [
   { id: 1, name: "Incense Sticks", price: 50 },
@@ -21,7 +21,7 @@ const ProductPage = ({ addToCart }) => {
           <div key={product.id} className="product">
             <h4>{product.name}</h4>
             <p>₹{product.price}</p>
-            <button onClick={() => addToCart(product)}>Buy</button>
+            <button onClick={() => addToCart(product)}>Add to Cart</button>
           </div>
         ))}
       </div>
