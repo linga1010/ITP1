@@ -1,0 +1,117 @@
+/* Common Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  
+  th,
+  td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  th {
+    background-color: #f2f2f2;
+  }
+  
+  button {
+    padding: 6px 12px;
+    margin-right: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  button:focus {
+    outline: none;
+  }
+  
+  button.danger {
+    background-color: #f44336;
+  }
+  
+  button.danger:hover {
+    background-color: #e57373;
+  }
+  
+  button.edit {
+    background-color: #008CBA;
+  }
+  
+  button.edit:hover {
+    background-color: #007B9D;
+  }
+  
+  img {
+    border-radius: 5px;
+  }
+  
+  ul {
+    padding-left: 15px;
+  }
+  
+  /* Custom styles for Tables */
+  table th,
+  table td {
+    font-size: 14px;
+  }
+  
+  table td {
+    color: #333;
+  }
+  
+  table td img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+  }
+  
+  /* Add Package / Invoice / Product Section */
+  .add-button {
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-start;
+  }
+  
+  .add-button a {
+    text-decoration: none;
+  }
+  
+  button.add {
+    background-color: #28a745;
+    color: white;
+    border-radius: 5px;
+    padding: 10px 20px;
+    border: none;
+  }
+  
+  button.add:hover {
+    background-color: #218838;
+  }
+  
+  .no-data {
+    text-align: center;
+    font-size: 16px;
+    color: #777;
+  }
+  

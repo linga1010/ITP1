@@ -1,0 +1,204 @@
+import React, { useState, useEffect, useCallback } from "react";
+import { Form, Input, Button, Upload, Select, message } from "antd";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const { Option } = Select;
+
+const AddPackage = () => {
+  const [form] = Form.useForm();
+  const [products, setProducts] = useState([]);
+  const [selectedProducts, setSelectedProducts] = useState([]);
+  //const [search, setSearch] = useState("");
+  const [image, setImage] = useState(null);
+  const [discount, setDiscount] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [finalPrice, setFinalPrice] = useState(0);
+  const navigate = useNavigate();
+
+  // Fetch products from API
+  const fetchProducts = useCallback(async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/products");
+      setProducts(response.data);
+    } catch (error) {
+      message.error("Failed to load products");
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  // Submit package
+  const handleSubmit = async (values) => {
+    if (!image) return message.error("Please upload an image");
+
+    const formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("discount", discount);
+    formData.append("image", image);
+    formData.append("products", JSON.stringify(selectedProducts));
+
+    try {
+      await axios.post("http://localhost:5000/api/packages", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      message.success("Package added successfully");
+      navigate("/packages");
+    } catch (error) {
+      message.error("Error submitting package");
+    }
+  };
+
+  // Add new product row
+  const addProductRow = () => {
+    setSelectedProducts((prev) => [
+      ...prev,
+      { productId: "", name: "", unit: "", sellingPrice: 0, quantity: 1 },
+    ]);
+  };
+
+  // Update product selection
+  const handleProductChange = (index, id) => {
+    const product = products.find((p) => p._id === id);
+    if (!product) return;
+
+    setSelectedProducts((prev) => {
+      const updatedProducts = [...prev];
+      updatedProducts[index] = {
+        productId: id,
+        name: product.name,
+        unit: product.unit,
+        sellingPrice: product.sellingPrice,
+        quantity: 1,
+      };
+      calculatePrices(updatedProducts, discount);
+      return updatedProducts;
+    });
+  };
+
+  const handleQuantityChange = (index, quantity) => {
+  // Allow decimal input while typing (without immediate parsing)
+  if (quantity === "" || /^[0-9]*\.?[0-9]{0,2}$/.test(quantity)) {
+    setSelectedProducts((prev) => {
+      const updatedProducts = [...prev];
+      updatedProducts[index].quantity = quantity; // Keep as string temporarily
+      calculatePrices(updatedProducts, discount); // Recalculate prices
+      return updatedProducts;
+    });
+  }
+};
+
+  
+ 
+
+  // Remove product row
+  const removeProductRow = (index) => {
+    setSelectedProducts((prev) => {
+      const updatedProducts = prev.filter((_, i) => i !== index);
+      calculatePrices(updatedProducts, discount);
+      return updatedProducts;
+    });
+  };
+ 
+  // Update discount and recalculate prices
+const handleDiscountChange = (value) => {
+  const discountValue = parseFloat(value) || 0;
+  setDiscount(discountValue);
+  calculatePrices(selectedProducts, discountValue); // Update prices when discount changes
+};
+
+
+// Calculate total and final price dynamically
+const calculatePrices = (selected, discount) => {
+  let total = selected.reduce((sum, item) => sum + item.sellingPrice * (item.quantity || 0), 0);
+  let final = total - (total * (discount / 100));
+  setTotalPrice(total);
+  setFinalPrice(final);
+};
+
+
+  return (
+    <div>
+      <h2>Add Package</h2>
+      <Form form={form} layout="vertical" onFinish={handleSubmit}>
+        <Form.Item name="name" label="Package Name" rules={[{ required: true, message: "Enter package name" }]}>
+          <Input placeholder="Enter package name" />
+        </Form.Item>
+
+        <Button type="dashed" onClick={addProductRow} style={{ marginBottom: 20 }}>
+          + Add Product
+        </Button>
+
+        {selectedProducts.map((item, index) => (
+          <div key={index} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: 10 }}>
+          <Select
+  showSearch
+  style={{ width: "40%" }}
+  value={item.productId || undefined}
+  placeholder="Search and select product"
+  onChange={(value) => handleProductChange(index, value)}
+  filterOption={(input, option) =>
+    option.children
+      ?.toString()
+      ?.toLowerCase()
+      ?.includes(input.toLowerCase())
+  }
+>
+  {products.map((product) => (
+    <Option key={product._id} value={product._id}>
+      {`${product.name || ""} - ${product.sku || ""}`}
+    </Option>
+  ))}
+</Select>
+
+            <span>{item.unit}</span>
+            <span>Rs. {item.sellingPrice || 0}</span>
+            <span>quantity</span>
+             <Input
+            type="text"
+            value={item.quantity === "" ? "" : item.quantity}
+            onChange={(e) => handleQuantityChange(index, e.target.value)}
+  placeholder="Enter quantity"
+  style={{ width: "100px" }}
+/>
+             <span>{item.quantity}</span>
+            <Button type="link" danger onClick={() => removeProductRow(index)}>
+              Remove
+            </Button>
+          </div>
+        ))}
+
+        <Form.Item label="Discount">
+        <Input
+          type="text"
+        value={discount}
+          onChange={(e) => handleDiscountChange(e.target.value)}
+           placeholder="Enter discount %"
+             />
+        </Form.Item>
+
+        <Form.Item label="Total Price">
+          <Input value={totalPrice} readOnly />
+        </Form.Item>
+
+        <Form.Item label="Final Price">
+          <Input value={finalPrice} readOnly />
+        </Form.Item>
+
+        <Form.Item label="Upload Image">
+          <Upload beforeUpload={(file) => { setImage(file); return false; }} showUploadList={false}>
+            <Button>Upload Image</Button>
+          </Upload>
+        </Form.Item>
+
+        <Form.Item>
+          <Button type="primary" htmlType="submit">Add Package</Button>
+        </Form.Item>
+      </Form>
+    </div>
+  );
+};
+
+export default AddPackage;

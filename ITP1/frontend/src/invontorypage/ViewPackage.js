@@ -1,0 +1,120 @@
+import React, { useEffect, useState } from "react";
+import { Input, Button, Card, Row, Col } from "antd";
+import { ShoppingCartOutlined } from "@ant-design/icons";
+import axios from "axios";
+
+const ViewPackage = () => {
+  const [packages, setPackages] = useState([]);
+  const [filteredPackages, setFilteredPackages] = useState([]);
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    fetchPackages();
+  }, []);
+
+  const fetchPackages = async () => {
+    try {
+      const { data } = await axios.get("http://localhost:5000/api/packages");
+      setPackages(data);
+      setFilteredPackages(data);
+    } catch (error) {
+      console.error("Error fetching packages:", error);
+    }
+  };
+
+  const handleSearch = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearch(value);
+    const filtered = packages.filter((pkg) =>
+      pkg.name.toLowerCase().includes(value)
+    );
+    setFilteredPackages(filtered);
+  };
+
+  const addToCart = (pkg) => {
+    console.log("Added to cart:", pkg.name);
+    // Implement cart logic here (Redux, Context API, LocalStorage, etc.)
+  };
+
+  const renderProducts = (products) => {
+    const rows = [];
+    for (let i = 0; i < products.length; i += 4) {
+      rows.push(
+        <Row gutter={[16, 16]} key={i}>
+          {products.slice(i, i + 4).map((product, index) => (
+            <Col key={index} xs={6} sm={6} md={6} lg={6}>
+              <p>
+                {product.productId.name} - {product.quantity} {product.productId.unit}
+              </p>
+            </Col>
+          ))}
+        </Row>
+      );
+    }
+    return rows;
+  };
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h2>User Package List</h2>
+
+      <Input
+        placeholder="Search by package name"
+        value={search}
+        onChange={handleSearch}
+        style={{ width: "300px", marginBottom: "20px" }}
+      />
+
+      <Row gutter={[16, 16]}>
+        {filteredPackages.map((pkg) => (
+          <Col key={pkg._id} xs={24} sm={24} md={24} lg={24}>
+            <Card
+              hoverable
+              style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+            >
+              <Row gutter={[16, 16]} style={{ width: '100%' }}>
+                <Col xs={24} sm={8} md={8} lg={8}>
+                  <img
+                    src={`http://localhost:5000${pkg.image}`}
+                    alt="Package"
+                    style={{
+                      width: "100%",
+                      height: "auto",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                    }}
+                  />
+                </Col>
+                <Col xs={24} sm={16} md={16} lg={16}>
+                  <h3>{pkg.name}</h3>
+                  <p>
+                    <b>Products:</b>
+                  </p>
+                  {renderProducts(pkg.products)}
+                  <p>
+                    <b>Total Price:</b> Rs. {pkg.totalPrice}
+                  </p>
+                  <p>
+                    <b>Discount:</b> {pkg.discount}%
+                  </p>
+                  <p>
+                    <b>Final Price:</b> Rs. {pkg.finalPrice}
+                  </p>
+                  <Button
+                    type="primary"
+                    icon={<ShoppingCartOutlined />}
+                    onClick={() => addToCart(pkg)}
+                  >
+                    Add to Cart
+                  </Button>
+                </Col>
+              </Row>
+            </Card>
+          </Col>
+        ))}
+      </Row>
+    </div>
+  );
+};
+
+export default ViewPackage;
