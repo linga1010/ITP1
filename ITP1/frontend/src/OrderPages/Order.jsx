@@ -48,7 +48,7 @@ const OrderPage = () => {
     try {
       const response = await axios.post("http://localhost:5000/api/orders", orderData);
       alert(response.data.message);
-      navigate("/Payment");
+      navigate("/PaymentDetails ");
     } catch (error) {
       console.error("❌ Order Error:", error.response?.data || error.message);
       alert("❌ Order Failed! Check the console for details.");
@@ -56,7 +56,7 @@ const OrderPage = () => {
   };
 
   const handleOrderHistory = () => {
-    navigate("/order-history");
+    navigate("/OrderHistoryDetails");
   };
 
   const handleBack = () => {

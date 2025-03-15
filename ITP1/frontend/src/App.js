@@ -19,6 +19,8 @@ import EditProduct from './invontorypage/EditProduct';
 import EditPackage from './invontorypage/EditPackage';
 import ViewPackage from './invontorypage/ViewPackage';
 import OrderPage from './OrderPages/Order';
+import PaymentDetails from './OrderPages/Payment'
+import OrderHistoryPage from './OrderPages/OrderHistory';
 
 
 
@@ -45,7 +47,8 @@ function App() {
           <Route path="/view-package" element={<ViewPackage />} />
           <Route path="/edit-product/:id" element={<EditProduct />} />
           <Route path="/order" element={<OrderPage />} />
-
+          <Route path="/PaymentDetails" element={<PaymentDetails />}/>
+          <Route path="/OrderHistoryDetails" element={<OrderHistoryPage  />}/>
 
       </Routes>
     </Router>
