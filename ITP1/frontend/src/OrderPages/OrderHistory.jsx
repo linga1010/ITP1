@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 import "./OrderHistory.css";
 
 const OrderHistory = () => {
@@ -8,13 +9,20 @@ const OrderHistory = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
-  const user = "test_user"; // Replace this with actual user authentication logic
+  
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
+    if (authLoading) return; // Wait for authentication to load
+    
+    if (!user) {
+      navigate("/login"); // Redirect to login if user is not authenticated
+      return;
+    }
+    
     const fetchOrders = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/orders/${user}`);
+        const response = await axios.get(`http://localhost:5000/api/orders/${user.name}`);
         setOrders(response.data);
       } catch (err) {
         setError("Failed to fetch orders. Please try again.");
@@ -25,7 +33,7 @@ const OrderHistory = () => {
     };
 
     fetchOrders();
-  }, [user]);
+  }, [user, authLoading, navigate]);
 
   return (
     <div className="order-history-container">
@@ -51,9 +59,7 @@ const OrderHistory = () => {
         </div>
       ))}
 
-      <button className="back-button" onClick={() => navigate("/order")}>
-        ⬅ Back to Shop
-      </button>
+      <button className="back-button" onClick={() => navigate("/order")}>⬅ Back to Shop</button>
     </div>
   );
 };

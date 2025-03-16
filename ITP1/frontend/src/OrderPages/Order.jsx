@@ -2,10 +2,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Button } from "antd";
+import { useAuth } from "../hooks/useAuth";
 import "./Order.css";
 
 const OrderPage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth(); // Get logged-in user from useAuth
   const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")) || []);
 
   const getTotalPrice = () => {
@@ -22,9 +24,7 @@ const OrderPage = () => {
 
   const handleDecreaseQuantity = (id) => {
     const updatedCart = cart.map((item) =>
-      item._id === id && item.quantity > 1
-        ? { ...item, quantity: item.quantity - 1 }
-        : item
+      item._id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
     );
     setCart(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
@@ -37,8 +37,14 @@ const OrderPage = () => {
   };
 
   const handlePay = async () => {
+    if (!user) {
+      alert("❌ User not logged in! Please log in to continue.");
+      navigate("/login");
+      return;
+    }
+
     const orderData = {
-      user: "test_user",
+      user: user.name, // Use the logged-in user's name
       items: cart,
       total: parseFloat(getTotalPrice()),
     };
