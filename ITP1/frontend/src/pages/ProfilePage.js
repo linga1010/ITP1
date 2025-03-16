@@ -89,6 +89,8 @@ const ProfilePage = () => {
       {error && <p className="error-message">{error}</p>}
 
       <div className="profile-info">
+      <p><strong>Email:</strong> {user.email}</p>
+
         <p><strong>Name:</strong> {user.name}</p>
         {isEditingName ? (
           <div>
@@ -105,7 +107,6 @@ const ProfilePage = () => {
           <button onClick={() => { setNewName(user.name); setIsEditingName(true); }}>Change Name</button>
         )}
 
-        <p><strong>Email:</strong> {user.email}</p>
 
         <p><strong>Address:</strong> {user.address}</p>
         {isEditingAddress ? (
