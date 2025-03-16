@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';  // Added useLocation
 import { useAuth } from '../hooks/useAuth';
 import { FaArrowLeft, FaSignOutAlt, FaBars } from 'react-icons/fa';
 import axios from 'axios';
@@ -8,14 +8,15 @@ import '../styles/AdminDashboard.css';
 
 const Adminnaviagtion = () => {
   const navigate = useNavigate();
+  const location = useLocation();  // Added useLocation
   const { user } = useAuth();
 
   const [openSections, setOpenSections] = useState({
-    'Home':false,
+    'Home': false,
     'User Management': false,
-    'Invontory Management': false,
+    'Inventory Management': false,
     'Order Management': false,
-    'Bokking Management': false,
+    'Booking Management': false,
     'Feedback Management': false,
   });
 
@@ -67,15 +68,12 @@ const Adminnaviagtion = () => {
   };
 
   const sidebarItems = [
-
     {
       title: 'Home',
       links: [
         { to: '/admin-dashboard', label: 'Admin Dashboard' },
       ],
     },
-   
-
     {
       title: 'User Management',
       links: [
@@ -83,7 +81,7 @@ const Adminnaviagtion = () => {
       ],
     },
     {
-      title: 'Invontory Management',
+      title: 'Inventory Management',
       links: [
         { to: '/add-product', label: 'Add New Product' },
         { to: '/product-list', label: 'View All Products' },
@@ -91,7 +89,6 @@ const Adminnaviagtion = () => {
         { to: '/packages', label: 'View All Packages' },
         { to: '/create-invoice', label: 'Create Invoice' },
         { to: '/invoices', label: 'View All Invoices' },
-
       ],
     },
     {
@@ -101,10 +98,9 @@ const Adminnaviagtion = () => {
       ],
     },
     {
-      title: 'Bokking Management',
+      title: 'Booking Management',
       links: [
         { to: '/create-invoice', label: 'Create Invoice' },
-       
       ],
     },
     {
@@ -116,6 +112,24 @@ const Adminnaviagtion = () => {
     },
   ];
 
+  // Back button component with check for /login
+  const BackButton = () => {
+    const handleBack = () => {
+      // If the current location is '/login', don't allow going back
+      if (location.pathname === '/admin-dashboard') {
+        return;
+      }
+      // Otherwise, navigate back to the previous page
+      navigate(-1);
+    };
+
+    return (
+      <button className="back-btn" onClick={handleBack}>
+        <FaArrowLeft /> Back
+      </button>
+    );
+  };
+
   if (loading) return <p>Loading Admin Dashboard...</p>;
   if (error) return <p>{error}</p>;
 
@@ -126,9 +140,7 @@ const Adminnaviagtion = () => {
           <FaBars />
         </button>
         <div className="navbar-right">
-          <button className="back-btn" onClick={() => navigate(-1)}>
-            <FaArrowLeft /> Back
-          </button>
+          <BackButton />
           <p>Welcome back, <strong>{user?.name || 'Admin'}</strong></p>
           <button className="logout-btn" onClick={handleLogout}>
             <FaSignOutAlt /> Logout
