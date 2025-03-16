@@ -47,6 +47,7 @@ const OrderHistory = () => {
       {orders.map((order) => (
         <div key={order._id} className="order-card">
           <h3>📅 Order Date: {new Date(order.createdAt).toLocaleDateString()}</h3>
+          <h3>⏰ Order Time: {new Date(order.createdAt).toLocaleTimeString()}</h3>
           <h4>🛍️ Ordered Items:</h4>
           <ul>
             {order.items.map((item, index) => (
