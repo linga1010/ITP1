@@ -1,4 +1,3 @@
-//veiwpackage
 import React, { useEffect, useState } from "react";
 import { Input, Button, Card, Row, Col } from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
@@ -9,7 +8,7 @@ const ViewPackage = () => {
   const [packages, setPackages] = useState([]);
   const [filteredPackages, setFilteredPackages] = useState([]);
   const [search, setSearch] = useState("");
-  const navigate = useNavigate(); // For navigation to the OrderPage
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPackages();
@@ -35,30 +34,26 @@ const ViewPackage = () => {
   };
 
   const addToCart = (pkg) => {
-    // Get cart from localStorage or initialize as empty array
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
-
-    // Check if the package is already in the cart
     const existingItemIndex = cart.findIndex(item => item._id === pkg._id);
     
     if (existingItemIndex > -1) {
-      // Package already in cart, increase the quantity
       cart[existingItemIndex].quantity += 1;
     } else {
-      // Add the package to cart with quantity 1
       cart.push({ ...pkg, quantity: 1 });
     }
 
-    // Save the updated cart to localStorage
     localStorage.setItem("cart", JSON.stringify(cart));
-
-    console.log("Added to cart:", pkg.name);
   };
 
   const handlePlaceOrder = () => {
-    navigate("/order"); // Redirect to OrderPage
+    navigate("/order");
   };
-
+  
+  const handleBack = () => {
+    navigate("/user-home");
+  };
+  
   const renderProducts = (products) => {
     const rows = [];
     for (let i = 0; i < products.length; i += 4) {
@@ -78,8 +73,28 @@ const ViewPackage = () => {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>User Package List</h2>
+    <div style={{ padding: "20px", position: "relative" }}>
+      <Button 
+  className="backbutton" 
+  onClick={handleBack} 
+  type="default" 
+  style={{ 
+    position: "fixed", 
+    top: "20px", 
+    left: "20px", 
+    zIndex: 1000, 
+    padding: "5px 10px",  
+    minWidth: "auto", 
+    height: "auto", 
+    backgroundColor:"#007bff",
+    color:"white",
+  }}
+>
+  ← Back to Home
+</Button>
+
+      
+      <h2 style={{ textAlign: "center" }}>User Package List</h2>
 
       <Input
         placeholder="Search by package name"
@@ -110,19 +125,11 @@ const ViewPackage = () => {
                 </Col>
                 <Col xs={24} sm={16} md={16} lg={16}>
                   <h3>{pkg.name}</h3>
-                  <p>
-                    <b>Products:</b>
-                  </p>
+                  <p><b>Products:</b></p>
                   {renderProducts(pkg.products)}
-                  <p>
-                    <b>Total Price:</b> Rs. {pkg.totalPrice}
-                  </p>
-                  <p>
-                    <b>Discount:</b> {pkg.discount}%
-                  </p>
-                  <p>
-                    <b>Final Price:</b> Rs. {pkg.finalPrice}
-                  </p>
+                  <p><b>Total Price:</b> Rs. {pkg.totalPrice}</p>
+                  <p><b>Discount:</b> {pkg.discount}%</p>
+                  <p><b>Final Price:</b> Rs. {pkg.finalPrice}</p>
                   <Button
                     type="primary"
                     icon={<ShoppingCartOutlined />}
@@ -139,7 +146,14 @@ const ViewPackage = () => {
 
       <Button
         type="primary"
-        style={{ marginTop: "20px", marginLeft:"1000px", marginBottom: "30px",padding: "20px" }}
+        style={{ 
+          position: "fixed", 
+          bottom: "20px", 
+          right: "20px", 
+          padding: "15px 30px", 
+          fontSize: "16px", 
+          zIndex: 1000 
+        }}
         onClick={handlePlaceOrder}
       >
         Place Order

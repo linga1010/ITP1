@@ -106,13 +106,14 @@ const OrderPage = () => {
           <Button className="pay-button" onClick={handlePay} type="primary">
             Pay
           </Button>
-          <Button className="order-history-button" onClick={handleOrderHistory} type="default">
-            Order History
-          </Button>
+          
         </div>
       ) : (
         <p>No packages in the cart</p>
       )}
+      <Button className="order-history-button" onClick={handleOrderHistory} type="default">
+            Order History
+          </Button>
     </div>
   );
 };
