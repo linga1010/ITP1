@@ -3,7 +3,6 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import ViewBookings from './pages/ViewBookings';
 import ForgotPassword from './pages/ForgotPassword';
 import ProfilePage from './pages/ProfilePage';
 import AdminDashboard from './pages/AdminDashboard';
@@ -24,6 +23,7 @@ import Invoices from './invontorypage/InvoiceList';
 import OrderPage from './OrderPages/Order';
 import PaymentDetails from './OrderPages/Payment'
 import OrderHistoryPage from './OrderPages/OrderHistory';
+import ViewBookings from './OrderPages/VeiwBookings';
 
 
 

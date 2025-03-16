@@ -60,7 +60,7 @@ const OrderHistory = () => {
         </div>
       ))}
 
-      <button className="back-button" onClick={() => navigate("/order")}>⬅ Back to Shop</button>
+      <button className="back-button" onClick={() => navigate("/order")}>⬅ Back to Order</button>
     </div>
   );
 };

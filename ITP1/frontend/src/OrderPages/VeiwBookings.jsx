@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/ViewBookings.css';
+import './VeiwBooking.css';
 import "../styles/Body.css";
 import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component
 
