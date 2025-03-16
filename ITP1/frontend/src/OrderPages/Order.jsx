@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Button } from "antd";
@@ -7,8 +7,14 @@ import "./Order.css";
 
 const OrderPage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth(); // Get logged-in user from useAuth
-  const [cart, setCart] = useState(JSON.parse(localStorage.getItem("cart")) || []);
+  const { user } = useAuth();
+  const [cart, setCart] = useState([]);
+
+  useEffect(() => {
+    // Fetch only the latest selected package
+    const selectedPackage = JSON.parse(localStorage.getItem("cart")) || [];
+    setCart(selectedPackage);
+  }, []);
 
   const getTotalPrice = () => {
     return cart.reduce((total, item) => total + item.finalPrice * item.quantity, 0).toFixed(2);
@@ -44,16 +50,15 @@ const OrderPage = () => {
     }
 
     const orderData = {
-      user: user.name, // Use the logged-in user's name
+      user: user.name,
       items: cart,
       total: parseFloat(getTotalPrice()),
     };
 
-    console.log("📦 Sending Order Data:", orderData);
-
     try {
       const response = await axios.post("http://localhost:5000/api/orders", orderData);
       alert(response.data.message);
+      localStorage.removeItem("cart"); // Clear cart after order
       navigate("/PaymentDetails");
     } catch (error) {
       console.error("❌ Order Error:", error.response?.data || error.message);
