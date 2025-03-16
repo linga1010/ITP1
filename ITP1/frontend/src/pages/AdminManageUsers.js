@@ -77,6 +77,7 @@ const AdminManageUsers = () => {
             <th>Name</th>
             <th>Email</th>
             <th>Phone</th>
+            <th>Address</th> {/* Added Address column */}
           </tr>
         </thead>
         <tbody>
@@ -85,6 +86,7 @@ const AdminManageUsers = () => {
               <td>{admin.name}</td>
               <td>{admin.email}</td>
               <td>{admin.phone}</td>
+              <td>{admin.address ? admin.address : 'No address available'}</td> {/* Display address */}
             </tr>
           ))}
         </tbody>
