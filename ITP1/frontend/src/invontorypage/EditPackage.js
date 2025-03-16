@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Form, Input, Button, Upload, Select, message } from "antd";
 import axios from "axios";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
+import "../styles/Body.css";
+import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component
 
 const { Option } = Select;
 
@@ -161,6 +163,10 @@ const EditPackage = () => {
   };
 
   return (
+    <div className="admin-dashboard-container">
+    <Adminnaviagtion /> {/* Add the Admin navigation component here */}
+
+    <div className="main-content">
     <div>
       <h2>Edit Package</h2>
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
@@ -252,6 +258,8 @@ const EditPackage = () => {
           </Button>
         </Form.Item>
       </Form>
+    </div>
+    </div>
     </div>
   );
 };

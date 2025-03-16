@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/ViewBookings.css';
+import "../styles/Body.css";
+import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component
 
 const ViewBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -51,6 +53,10 @@ const ViewBookings = () => {
   if (error) return <p>{error}</p>;
 
   return (
+    <div className="admin-dashboard-container">
+    <Adminnaviagtion /> {/* Add the Admin navigation component here */}
+
+    <div className="main-content">
     <div className="view-bookings-container">
       <h2>All Booking Details</h2>
       <button className="back-btn" onClick={() => navigate('/admin-dashboard')}>
@@ -93,6 +99,8 @@ const ViewBookings = () => {
           </table>
         )}
       </div>
+    </div>
+    </div>
     </div>
   );
 };

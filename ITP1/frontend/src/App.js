@@ -19,6 +19,8 @@ import AddPackage from './invontorypage/AddPackage';
 import EditProduct from './invontorypage/EditProduct';
 import EditPackage from './invontorypage/EditPackage';
 import ViewPackage from './invontorypage/ViewPackage';
+import Createinvoice from './invontorypage/CreateInvoice';
+import Invoices from './invontorypage/InvoiceList';
 import OrderPage from './OrderPages/Order';
 import PaymentDetails from './OrderPages/Payment'
 import OrderHistoryPage from './OrderPages/OrderHistory';
@@ -51,6 +53,8 @@ function App() {
           <Route path="/PaymentDetails" element={<PaymentDetails />}/>
           <Route path="/OrderHistoryDetails" element={<OrderHistoryPage  />}/>
           <Route path="/admin/view-bookings" element={<ViewBookings />} />
+          <Route path="/create-invoice" element={<Createinvoice />} />
+          <Route path="/invoices" element={<Invoices />} />
 
 
       </Routes>

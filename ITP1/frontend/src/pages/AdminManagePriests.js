@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import "../styles/Body.css";
+import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component
 
 const AdminManagePriests = () => {
   const [priests, setPriests] = useState([]);
@@ -38,6 +40,10 @@ const AdminManagePriests = () => {
   };
 
   return (
+    <div className="admin-dashboard-container">
+    <Adminnaviagtion /> {/* Add the Admin navigation component here */}
+
+    <div className="main-content">
     <div>
       <h2>Manage Priests</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -61,6 +67,8 @@ const AdminManagePriests = () => {
           ))}
         </tbody>
       </table>
+    </div>
+    </div>
     </div>
   );
 };

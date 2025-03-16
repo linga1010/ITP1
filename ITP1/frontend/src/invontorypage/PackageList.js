@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Button, Table } from "antd";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import './List.css'; // Import the CSS file
+import "../styles/Body.css";
+import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component
 
 const PackageList = () => {
   const [packages, setPackages] = useState([]);
+  const [filteredPackages, setFilteredPackages] = useState([]);
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchPackages();
   }, []);
+
+  useEffect(() => {
+    setFilteredPackages(packages);
+  }, [packages]);
 
   const fetchPackages = async () => {
     try {
@@ -20,7 +28,7 @@ const PackageList = () => {
     }
   };
 
-  const deletePackage = async (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this package?")) {
       try {
         await axios.delete(`http://localhost:5000/api/packages/${id}`);
@@ -31,71 +39,74 @@ const PackageList = () => {
     }
   };
 
-  const columns = [
-    {
-      title: "Image",
-      dataIndex: "image",
-      render: (text) => (
-        <img src={`http://localhost:5000${text}`} alt="Package" width="50" />
-      ),
-    },
-    { title: "Name", dataIndex: "name" },
-    {
-      title: "Products",
-      dataIndex: "products",
-      render: (products) => (
-        <ul>
-          {products.map((product, index) => (
-            <li key={index}>
-              {product.productId.name} : {product.quantity} {product.productId.unit}
-            </li>
-          ))}
-        </ul>
-      ),
-    },
-    {
-      title: "Total Price",
-      dataIndex: "totalPrice",
-      render: (price) => `Rs. ${price}`,
-    },
-    {
-      title: "Discount",
-      dataIndex: "discount",
-      render: (discount) => `${discount}%`,
-    },
-    {
-      title: "Final Price",
-      dataIndex: "finalPrice",
-      render: (price) => `Rs. ${price}`,
-    },
-    {
-      title: "Actions",
-      render: (_, record) => (
-        <>
-          <Link to={`/Edit-package/${record._id}`}>
-            <Button type="primary">Edit</Button>
-          </Link>
-          <Button
-            type="danger"
-            onClick={() => deletePackage(record._id)}
-            style={{ marginLeft: 10 }}
-          >
-            Delete
-          </Button>
-        </>
-      ),
-    },
-  ];
+  const handleEdit = (id) => {
+    const packageToEdit = packages.find(pkg => pkg._id === id);
+    navigate(`/Edit-package/${id}`, { state: { package: packageToEdit } });
+  };
+
+  const handleSearch = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearch(value);
+    const filtered = packages.filter((pkg) =>
+      pkg.name.toLowerCase().includes(value)
+    );
+    setFilteredPackages(filtered);
+  };
 
   return (
-    <div>
-      <h2>Package List</h2>
-      <Link to="/add-package">
-        <Button type="primary" className="add-button">
-          Add Package
-        </Button>
-      </Link>
-      <Table dataSource={packages} columns={columns} rowKey="_id" />
+    <div className="admin-dashboard-container">
+      <Adminnaviagtion /> {/* Add the Admin navigation component here */}
+
+      <div className="main-content">
+        <h2>Package List</h2>
+
+        <input
+          placeholder="Search by package name"
+          value={search}
+          onChange={handleSearch}
+          style={{ width: "300px", marginBottom: "20px" }}
+        />
+
+        <table>
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Products</th>
+              <th>Total Price</th>
+              <th>Discount</th>
+              <th>Final Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredPackages.map((pkg) => (
+              <tr key={pkg._id}>
+                <td>
+                  <img src={`http://localhost:5000${pkg.image}`} alt="Package" width="50" />
+                </td>
+                <td>{pkg.name}</td>
+                <td>
+                  <ul>
+                    {pkg.products.map((product, index) => (
+                      <li key={index}>
+                        {product.productId.name} : {product.quantity} {product.productId.unit}
+                      </li>
+                    ))}
+                  </ul>
+                </td>
+                <td>Rs. {pkg.totalPrice}</td>
+                <td>{pkg.discount}%</td>
+                <td>Rs. {pkg.finalPrice}</td>
+                <td>
+                  <button onClick={() => handleEdit(pkg._id)} className="edit">Edit</button>
+                  <button onClick={() => handleDelete(pkg._id)} className="Delete">Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

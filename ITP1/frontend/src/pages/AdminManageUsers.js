@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../styles/AdminUser.css';  // Ensure this path is correct based on your folder structure
 import { useNavigate } from 'react-router-dom';
+import "../styles/Body.css";
+import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component
 
 const AdminManageUsers = () => {
   const [users, setUsers] = useState([]);
@@ -65,6 +67,10 @@ const AdminManageUsers = () => {
   };
 
   return (
+    <div className="admin-dashboard-container">
+    <Adminnaviagtion /> {/* Add the Admin navigation component here */}
+
+    <div className="main-content">
     <div>
       <h2>Manage Admins</h2>
       {error && <p>{error}</p>}
@@ -141,6 +147,8 @@ const AdminManageUsers = () => {
 
       {/* Button to navigate to Admin Dashboard */}
       <button className="go-back-btn" onClick={handleGoToAdminDashboard}>Go to Admin Dashboard</button>
+    </div>
+    </div>
     </div>
   );
 };

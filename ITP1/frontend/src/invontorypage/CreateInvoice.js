@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Form, Input, Button, Select, message } from 'antd';
+import "../styles/Body.css";
+import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component
 
 const { Option } = Select;
 
@@ -112,6 +114,10 @@ const CreateInvoice = () => {
   };
 
   return (
+     <div className="admin-dashboard-container">
+          <Adminnaviagtion /> {/* Add the Admin navigation component here */}
+    
+          <div className="main-content">
     <div>
       <h2>Create Invoice</h2>
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
@@ -187,6 +193,9 @@ const CreateInvoice = () => {
         <h3>Total Amount: Rs. {totalAmount.toFixed(2)}</h3> {/* Format total amount */}
         <h3>Amount After Discount: Rs. {amountAfterDiscount.toFixed(2)}</h3> {/* Format after discount */}
       </div>
+    </div>
+        
+    </div>
     </div>
   );
 };
