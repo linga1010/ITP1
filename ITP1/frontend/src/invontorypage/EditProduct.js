@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom"; // Make sure useLoc
 import axios from "axios";
 import { Input } from "antd";
 import "./AddProduct.css";
+import "../styles/Body.css";
+import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component
 
 const EditProduct = () => {
   const location = useLocation();
@@ -50,6 +52,11 @@ const EditProduct = () => {
     e.preventDefault();
     setErrorMessage("");
 
+    if (parseFloat(sellingPrice) <= parseFloat(costPrice)) {
+      setErrorMessage("Selling price must be greater than cost price.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("name", name);
     formData.append("sku", sku);
@@ -75,6 +82,11 @@ const EditProduct = () => {
   };
 
   return (
+    <div className="admin-dashboard-container">
+    <Adminnaviagtion /> {/* Add the Admin navigation component here */}
+
+    <div className="main-content">
+
     <div className="form-container">
       <h2>Edit Product</h2>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
@@ -163,6 +175,8 @@ const EditProduct = () => {
           </button>
         </form>
       </div>
+    </div>
+    </div>
     </div>
   );
 };

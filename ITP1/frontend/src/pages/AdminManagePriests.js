@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component
 
 const AdminManagePriests = () => {
   const [priests, setPriests] = useState([]);

@@ -1,66 +1,34 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
-import '../styles/AdminDashboard.css';
+import React, { useState } from 'react';
+import Navbar from '../Component/Adminnavigation';
 
 const AdminDashboard = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth(); 
-
-  const handleManageUsers = () => {
-    navigate('/admin/manage-users');
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="admin-dashboard-container">
-      <button className="logout-btn" onClick={handleLogout}>Logout</button>
-
-      <header className="header">
-        <h1>Admin Dashboard</h1>
-        <p>Welcome back, <strong>{user?.name || 'Admin'}</strong></p>
-      </header>
-
-      <div className="quick-access">
-        <div className="card">
-          <h3>Product Management</h3>
-          <ul>
-            <li><Link to="/add-product">Add New Product</Link></li>
-            <li><Link to="/product-list">View All Products</Link></li>
-          </ul>
+    <main className="main-content">
+      <section className="dashboard-info">
+        <Navbar onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
+        
+        {/* Dashboard welcome section */}
+        <div className="dashboard-welcome">
+          <h1>Welcome to the Admin Dashboard</h1>
+          {/* Add dynamic content here */}
         </div>
 
-        <div className="card">
-          <h3>Package Management</h3>
-          <ul>
-            <li><Link to="/add-package">Add Package</Link></li>
-            <li><Link to="/packages">View All Packages</Link></li>
-            <li><Link to="/view-package">All Packages</Link></li>
-          </ul>
-        </div>
+        {/* Dashboard main content */}
+        <p>Manage your sections here...</p>
+        
+        {/* Additional content or components can go here */}
+      </section>
 
-        <div className="card">
-          <h3>Invoice Management</h3>
-          <ul>
-            <li><Link to="/create-invoice">Create Invoice</Link></li>
-            <li><Link to="/invoices">View All Invoices</Link></li>
-          </ul>
+      {/* Optionally render sidebar if open */}
+      {isSidebarOpen && (
+        <div className="sidebar">
+          {/* Sidebar content */}
         </div>
-      </div>
-
-      <div className="admin-buttons">
-        <button onClick={handleManageUsers}>Manage Users</button>
-        <button onClick={() => alert("View Bookings Page coming soon!")}>View Bookings</button>
-        <button onClick={() => alert("View Priest Page coming soon!")}>View Priest</button>
-        <button onClick={() => alert("View Rating Page coming soon!")}>View Rating</button>
-      </div>
-    </div>
+      )}
+    </main>
   );
-};
+}
 
 export default AdminDashboard;

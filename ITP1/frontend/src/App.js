@@ -21,6 +21,7 @@ import ViewPackage from './invontorypage/ViewPackage';
 import OrderPage from './OrderPages/Order';
 import PaymentDetails from './OrderPages/Payment'
 import OrderHistoryPage from './OrderPages/OrderHistory';
+import ViewBookings from './OrderPages/VeiwBookings';
 
 
 
@@ -49,6 +50,7 @@ function App() {
           <Route path="/order" element={<OrderPage />} />
           <Route path="/PaymentDetails" element={<PaymentDetails />}/>
           <Route path="/OrderHistoryDetails" element={<OrderHistoryPage  />}/>
+          <Route path="/admin/view-bookings" element={<ViewBookings />} />
 
       </Routes>
     </Router>

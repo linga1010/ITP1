@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Input } from "antd";
 import "./AddProduct.css";
+import "../styles/Body.css";
+import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component
 
 const AddProduct = () => {
   const navigate = useNavigate();
@@ -76,7 +78,12 @@ const AddProduct = () => {
   
 
   return (
-    <div className="form-container">
+
+    <div className="admin-dashboard-container">
+      <Adminnaviagtion /> {/* Add the Admin navigation component here */}
+
+      <div className="main-content">
+    
       <h2>Add Product</h2>
       {errorMessage && <p className="error-message">{errorMessage}</p>}
 
@@ -164,6 +171,7 @@ const AddProduct = () => {
           </button>
         </form>
       </div>
+    </div>
     </div>
   );
 };

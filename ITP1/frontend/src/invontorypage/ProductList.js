@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import './List.css'; // Import the CSS file         
+import './List.css'; // Import the CSS file    
+import "../styles/Body.css";
+import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component     
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -52,6 +54,11 @@ const ProductList = () => {
   };
 
   return (
+
+    <div className="admin-dashboard-container">
+      <Adminnaviagtion /> {/* Add the Admin navigation component here */}
+
+      <div className="main-content">
     <div>
       <h2>Product List</h2>
 
@@ -89,12 +96,14 @@ const ProductList = () => {
               <td>{product.unit}</td>
               <td>
                 <button onClick={() => handleEdit(product.sku)} className="edit">Edit</button>
-                <button onClick={() => handleDelete(product.sku)} className="danger">Delete</button>
+                <button onClick={() => handleDelete(product.sku)} className="Delete">Delete</button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+    </div>
+    </div>
     </div>
   );
 };

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Form, Input, Button, Upload, Select, message } from "antd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "../styles/Body.css";
+import Adminnaviagtion from "../Component/Adminnavigation"; // Import the Admin Navigation Component
 
 const { Option } = Select;
 
@@ -9,8 +11,8 @@ const AddPackage = () => {
   const [form] = Form.useForm();
   const [products, setProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
-  //const [search, setSearch] = useState("");
   const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null); // Added preview state
   const [discount, setDiscount] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [finalPrice, setFinalPrice] = useState(0);
@@ -29,6 +31,13 @@ const AddPackage = () => {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
+
+  // Cleanup URL.createObjectURL when component unmounts
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview);
+    };
+  }, [preview]);
 
   // Submit package
   const handleSubmit = async (values) => {
@@ -78,20 +87,17 @@ const AddPackage = () => {
     });
   };
 
+  // Handle quantity change (Allow decimals)
   const handleQuantityChange = (index, quantity) => {
-  // Allow decimal input while typing (without immediate parsing)
-  if (quantity === "" || /^[0-9]*\.?[0-9]{0,2}$/.test(quantity)) {
-    setSelectedProducts((prev) => {
-      const updatedProducts = [...prev];
-      updatedProducts[index].quantity = quantity; // Keep as string temporarily
-      calculatePrices(updatedProducts, discount); // Recalculate prices
-      return updatedProducts;
-    });
-  }
-};
-
-  
- 
+    if (quantity === "" || /^[0-9]*\.?[0-9]{0,2}$/.test(quantity)) {
+      setSelectedProducts((prev) => {
+        const updatedProducts = [...prev];
+        updatedProducts[index].quantity = quantity;
+        calculatePrices(updatedProducts, discount);
+        return updatedProducts;
+      });
+    }
+  };
 
   // Remove product row
   const removeProductRow = (index) => {
@@ -101,102 +107,146 @@ const AddPackage = () => {
       return updatedProducts;
     });
   };
- 
+
   // Update discount and recalculate prices
-const handleDiscountChange = (value) => {
-  const discountValue = parseFloat(value) || 0;
-  setDiscount(discountValue);
-  calculatePrices(selectedProducts, discountValue); // Update prices when discount changes
-};
+  const handleDiscountChange = (value) => {
+    const discountValue = parseFloat(value) || 0;
+    setDiscount(discountValue);
+    calculatePrices(selectedProducts, discountValue);
+  };
 
-
-// Calculate total and final price dynamically
-const calculatePrices = (selected, discount) => {
-  let total = selected.reduce((sum, item) => sum + item.sellingPrice * (item.quantity || 0), 0);
-  let final = total - (total * (discount / 100));
-  setTotalPrice(total);
-  setFinalPrice(final);
-};
-
+  // Calculate total and final price dynamically
+  const calculatePrices = (selected, discount) => {
+    let total = selected.reduce(
+      (sum, item) => sum + item.sellingPrice * (item.quantity || 0),
+      0
+    );
+    let final = total - total * (discount / 100);
+    setTotalPrice(total);
+    setFinalPrice(final);
+  };
 
   return (
-    <div>
-      <h2>Add Package</h2>
-      <Form form={form} layout="vertical" onFinish={handleSubmit}>
-        <Form.Item name="name" label="Package Name" rules={[{ required: true, message: "Enter package name" }]}>
-          <Input placeholder="Enter package name" />
-        </Form.Item>
+    <div className="admin-dashboard-container">
+      <Adminnaviagtion />
 
-        <Button type="dashed" onClick={addProductRow} style={{ marginBottom: 20 }}>
-          + Add Product
-        </Button>
+      <div className="main-content">
+        <h2>Add Package</h2>
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <Form.Item
+            name="name"
+            label="Package Name"
+            rules={[{ required: true, message: "Enter package name" }]}
+          >
+            <Input placeholder="Enter package name" />
+          </Form.Item>
 
-        {selectedProducts.map((item, index) => (
-          <div key={index} style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: 10 }}>
-          <Select
-  showSearch
-  style={{ width: "40%" }}
-  value={item.productId || undefined}
-  placeholder="Search and select product"
-  onChange={(value) => handleProductChange(index, value)}
-  filterOption={(input, option) =>
-    option.children
-      ?.toString()
-      ?.toLowerCase()
-      ?.includes(input.toLowerCase())
-  }
->
-  {products.map((product) => (
-    <Option key={product._id} value={product._id}>
-      {`${product.name || ""} - ${product.sku || ""}`}
-    </Option>
-  ))}
-</Select>
+          <Button
+            type="dashed"
+            onClick={addProductRow}
+            style={{ marginBottom: 20 }}
+          >
+            + Add Product
+          </Button>
 
-            <span>{item.unit}</span>
-            <span>Rs. {item.sellingPrice || 0}</span>
-            <span>quantity</span>
-             <Input
-            type="text"
-            value={item.quantity === "" ? "" : item.quantity}
-            onChange={(e) => handleQuantityChange(index, e.target.value)}
-  placeholder="Enter quantity"
-  style={{ width: "100px" }}
-/>
-             <span>{item.quantity}</span>
-            <Button type="link" danger onClick={() => removeProductRow(index)}>
-              Remove
+          {selectedProducts.map((item, index) => (
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                marginBottom: 10,
+              }}
+            >
+              <Select
+                showSearch
+                style={{ width: "40%" }}
+                value={item.productId || undefined}
+                placeholder="Search and select product"
+                onChange={(value) => handleProductChange(index, value)}
+                filterOption={(input, option) =>
+                  option.children
+                    ?.toString()
+                    ?.toLowerCase()
+                    ?.includes(input.toLowerCase())
+                }
+              >
+                {products.map((product) => (
+                  <Option key={product._id} value={product._id}>
+                    {`${product.name || ""} - ${product.sku || ""}`}
+                  </Option>
+                ))}
+              </Select>
+
+              <span>{item.unit}</span>
+              <span>Rs. {item.sellingPrice || 0}</span>
+
+              <Input
+                type="text"
+                value={item.quantity === "" ? "" : item.quantity}
+                onChange={(e) =>
+                  handleQuantityChange(index, e.target.value)
+                }
+                placeholder="Enter quantity"
+                style={{ width: "100px" }}
+              />
+
+              <Button type="link" danger onClick={() => removeProductRow(index)}>
+                Remove
+              </Button>
+            </div>
+          ))}
+
+          <Form.Item label="Discount">
+            <Input
+              type="text"
+              value={discount}
+              onChange={(e) => handleDiscountChange(e.target.value)}
+              placeholder="Enter discount %"
+            />
+          </Form.Item>
+
+          <Form.Item label="Total Price">
+            <Input value={totalPrice} readOnly />
+          </Form.Item>
+
+          <Form.Item label="Final Price">
+            <Input value={finalPrice} readOnly />
+          </Form.Item>
+
+          <Form.Item label="Upload Image">
+            <Upload
+              beforeUpload={(file) => {
+                setImage(file);
+                setPreview(URL.createObjectURL(file));
+                return false;
+              }}
+              showUploadList={false}
+            >
+              <Button>Browse Image</Button>
+            </Upload>
+
+            {preview && (
+              <img
+                src={preview}
+                alt="Preview"
+                style={{
+                  marginLeft: "10px",
+                  maxWidth: "200px",
+                  display: "block",
+                }}
+              />
+            )}
+          </Form.Item>
+
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Add Package
             </Button>
-          </div>
-        ))}
-
-        <Form.Item label="Discount">
-        <Input
-          type="text"
-        value={discount}
-          onChange={(e) => handleDiscountChange(e.target.value)}
-           placeholder="Enter discount %"
-             />
-        </Form.Item>
-
-        <Form.Item label="Total Price">
-          <Input value={totalPrice} readOnly />
-        </Form.Item>
-
-        <Form.Item label="Final Price">
-          <Input value={finalPrice} readOnly />
-        </Form.Item>
-
-        <Form.Item label="Upload Image">
-          <Upload beforeUpload={(file) => { setImage(file); return false; }} showUploadList={false}>
-            <Button>Upload Image</Button>
-          </Upload>
-        </Form.Item>
-
-        <Form.Item>
-          <Button type="primary" htmlType="submit">Add Package</Button>
-        </Form.Item>
-      </Form>
+          </Form.Item>
+        </Form>
+      </div>
     </div>
   );
 };

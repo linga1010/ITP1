@@ -81,7 +81,7 @@ const ViewPackage = () => {
   style={{ 
     position: "fixed", 
     top: "20px", 
-    left: "20px", 
+    right: "20px", 
     zIndex: 1000, 
     padding: "5px 10px",  
     minWidth: "auto", 
