@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import ViewBookings from './pages/ViewBookings';
 import ForgotPassword from './pages/ForgotPassword';
 import ProfilePage from './pages/ProfilePage';
 import AdminDashboard from './pages/AdminDashboard';
@@ -49,6 +50,8 @@ function App() {
           <Route path="/order" element={<OrderPage />} />
           <Route path="/PaymentDetails" element={<PaymentDetails />}/>
           <Route path="/OrderHistoryDetails" element={<OrderHistoryPage  />}/>
+          <Route path="/admin/view-bookings" element={<ViewBookings />} />
+
 
       </Routes>
     </Router>
