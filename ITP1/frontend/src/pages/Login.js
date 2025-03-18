@@ -1,16 +1,13 @@
 import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth"; // Import useAuth hook
-import { useNavigate } from "react-router-dom";
 import '../styles/Login.css';  // Import the enhanced CSS file
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(""); // For error messages
-  const [loading, setLoading] = useState(false); // Loading state for the form
   const [successMessage, setSuccessMessage] = useState(""); // Success message after login
   const { login } = useAuth(); // Use the login function from the hook
-  const navigate = useNavigate(); // To handle redirection after login
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,36 +20,17 @@ const Login = () => {
       return;
     }
   
-    setLoading(true); // Start loading state
-  
     try {
       const user = await login(email, password); // Call the login function from the hook
-  
+
       if (user) {
-        setSuccessMessage("Login successful!"); // Show success message
-  
-        // Wait for 2 seconds before redirecting
-        setTimeout(() => {
-          // Check if the logged-in user is an admin
-          if (user.isAdmin) {
-            // Redirect to the admin dashboard if admin
-            navigate("/admin-dashboard");
-          } else {
-            // Redirect to the user home page if not admin
-            navigate("/user-home");
-          }
-        }, 2000); // 2 seconds delay
       } else {
-        setError("Invalid email or password."); // Use your original error message
+        setError("Invalid email or password.");
       }
     } catch (error) {
-      setError("Error during login."); // Use your original error message
-    } finally {
-      setLoading(false); // End loading after login attempt
+      setError("Error during login.");
     }
   };
-  
-  
 
   return (
     <div className="box">
@@ -88,8 +66,8 @@ const Login = () => {
               />
             </div>
             <div className="form-field">
-              <button type="submit" disabled={loading} className="login-btn">
-                {loading ? "Logging in..." : "Login"}
+              <button type="submit" className="login-btn">
+                Login
               </button>
             </div>
           </form>
