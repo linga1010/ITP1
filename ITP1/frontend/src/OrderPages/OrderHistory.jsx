@@ -57,10 +57,22 @@ const OrderHistory = () => {
             ))}
           </ul>
           <h3>Total: ₹{order.total}</h3>
+          <h3>Status: 
+  <span className={ 
+    order.status === "success" 
+      ? "status-success" 
+      : order.status === "removed" 
+        ? "status-removed" 
+        : "status-pending"
+  }>
+    {order.status === "removed" ? "Removed " : order.status}
+  </span>
+</h3>
+
         </div>
       ))}
 
-      <button className="back-button" onClick={() => navigate("/order")}>⬅ Back to Order</button>
+      <button className="back-button" onClick={() => navigate("/order")}>⬅ Back to OrderPage</button>
     </div>
   );
 };
