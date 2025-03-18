@@ -1,27 +1,25 @@
 import React, { useState } from "react";
 import { useAuth } from "../hooks/useAuth"; // Import useAuth hook
-import '../styles/Login.css';  // Import the enhanced CSS file
+import '../styles/Login.css'; 
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); // For error messages
-  const [successMessage, setSuccessMessage] = useState(""); // Success message after login
-  const { login } = useAuth(); // Use the login function from the hook
+  const [error, setError] = useState(""); 
+  const [successMessage, setSuccessMessage] = useState(""); 
+  const { login } = useAuth(); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Clear previous error message
-    setSuccessMessage(""); // Clear previous success message
-  
-    // Basic validation
+    setError(""); 
+    setSuccessMessage(""); 
     if (!email || !password) {
       setError("Please fill out all fields.");
       return;
     }
   
     try {
-      const user = await login(email, password); // Call the login function from the hook
+      const user = await login(email, password); 
 
       if (user) {
       } else {
@@ -39,7 +37,6 @@ const Login = () => {
           <h2>
             <i className="fa-solid fa-right-to-bracket"></i>Login<i className="fa-solid fa-heart"></i>
           </h2>
-          {/* Show error and success messages below the heading */}
           {error && <div className="error-message">{error}</div>}
           {successMessage && <div className="success-message">{successMessage}</div>}
           <form onSubmit={handleSubmit} className="login-form">
