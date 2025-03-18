@@ -49,6 +49,18 @@ const ViewBookings = () => {
     fetchBookings();
   }, [navigate]);
 
+  const confirmOrder = async (orderId) => {
+    try {
+      await axios.put(`http://localhost:5000/api/orders/${orderId}/confirm`);
+      setBookings((prev) =>
+        prev.map((order) => (order._id === orderId ? { ...order, status: "success" } : order))
+      );
+    } catch (err) {
+      console.error("Failed to update order status:", err);
+      alert("Error updating order status. Please try again.");
+    }
+  };
+
   if (loading) return <p>Loading bookings...</p>;
   if (error) return <p>{error}</p>;
 
@@ -75,6 +87,7 @@ const ViewBookings = () => {
                 <th>Total</th>
                 <th>Status</th>
                 <th>Created At</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -85,14 +98,25 @@ const ViewBookings = () => {
                     <ul>
                       {order.items.map((item, index) => (
                         <li key={index}>
-                          {item.name} (x{item.quantity}) - ${item.price}
+                          {item.name} (x{item.quantity}) - ₹{item.price}
                         </li>
                       ))}
                     </ul>
                   </td>
-                  <td>${order.total}</td>
-                  <td>{order.status}</td>
+                  <td>₹{order.total}</td>
+                  <td>
+                    <span className={order.status === "success" ? "status-success" : "status-pending"}>
+                      {order.status}
+                    </span>
+                  </td>
                   <td>{new Date(order.createdAt).toLocaleString()}</td>
+                  <td>
+                    {order.status === "pending" && (
+                      <button className="confirm-btn" onClick={() => confirmOrder(order._id)}>
+                        ✅ Confirm
+                      </button>
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

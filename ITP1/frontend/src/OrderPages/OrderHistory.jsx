@@ -57,6 +57,7 @@ const OrderHistory = () => {
             ))}
           </ul>
           <h3>Total: ₹{order.total}</h3>
+          <h3>Status: <span className={order.status === "success" ? "status-success" : "status-pending"}>{order.status}</span></h3>
         </div>
       ))}
 
