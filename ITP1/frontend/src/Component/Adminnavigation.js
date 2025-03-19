@@ -106,8 +106,8 @@ const Adminnaviagtion = () => {
     {
       title: 'Feedback Management',
       links: [
-        { to: '/priests', label: 'View Priests' },
-        { to: '/ratings', label: 'View Ratings' },
+        { to: '/adminFeedback', label: 'View Feedback' },
+        
       ],
     },
   ];

@@ -24,6 +24,8 @@ import OrderPage from './OrderPages/Order';
 import PaymentDetails from './OrderPages/Payment'
 import OrderHistoryPage from './OrderPages/OrderHistory';
 import ViewBookings from './OrderPages/VeiwBookings';
+import FeedbackPage from './Feedback/pages/FeedbackPage';
+import AdminFeedbackPage from './Feedback/pages/AdminFeedbackPage';
 
 
 
@@ -55,7 +57,8 @@ function App() {
           <Route path="/admin/view-bookings" element={<ViewBookings />} />
           <Route path="/create-invoice" element={<Createinvoice />} />
           <Route path="/invoices" element={<Invoices />} />
-
+          <Route path="/Feedback" element={<FeedbackPage />} />
+          <Route path="/adminFeedback" element={<AdminFeedbackPage />} />
 
       </Routes>
     </Router>

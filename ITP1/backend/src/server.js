@@ -13,6 +13,7 @@ import productRoutes from './routers/productRoutes.js';
 import packageRoutes from './routers/packageRoutes.js';
 import invoiceRoutes from './routers/invoiceRoutes.js';
 import OrderRoutes from './routers/OrderRoutes.js';
+import feedbackRoutes from './routers/FeedbackRoutes.js';  // Corrected import with .js extension
 
 dotenv.config(); // Load environment variables
 
@@ -51,6 +52,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/packages', packageRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/orders', OrderRoutes);
+app.use('/api/feedback', feedbackRoutes);  // Correct route
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
