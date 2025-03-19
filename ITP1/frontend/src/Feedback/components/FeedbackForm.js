@@ -50,7 +50,9 @@ const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
           </span>
         ))}
       </div>
+      <div>
       <button type="submit">{editFeedback ? "Update Feedback" : "Submit Feedback"}</button>
+      </div>
     </form>
   );
 };

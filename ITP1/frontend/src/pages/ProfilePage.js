@@ -33,6 +33,10 @@ const ProfilePage = () => {
 
   const fetchProfile = () => {
     const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return;
+    }
     axios
       .get('http://localhost:5000/api/users/profile', {
         headers: { Authorization: `Bearer ${token}` },
@@ -40,7 +44,11 @@ const ProfilePage = () => {
       .then((response) => {
         setUser(response.data);
       })
-      .catch(() => {
+      .catch((err) => {
+        if (err.response && err.response.status === 401) {
+          navigate('/login');
+          return;
+        }
         setError('❌ Error fetching profile');
         setMessage('');
       });
@@ -89,7 +97,7 @@ const ProfilePage = () => {
       {error && <p className="error-message">{error}</p>}
 
       <div className="profile-info">
-      <p><strong>Email:</strong> {user.email}</p>
+        <p><strong>Email:</strong> {user.email}</p>
 
         <p><strong>Name:</strong> {user.name}</p>
         {isEditingName ? (
@@ -106,7 +114,6 @@ const ProfilePage = () => {
         ) : (
           <button onClick={() => { setNewName(user.name); setIsEditingName(true); }}>Change Name</button>
         )}
-
 
         <p><strong>Address:</strong> {user.address}</p>
         {isEditingAddress ? (
