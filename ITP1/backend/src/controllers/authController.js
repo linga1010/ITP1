@@ -137,7 +137,7 @@ export const getProfile = async (req, res) => {
 // Update User Profile
 export const updateProfile = async (req, res) => {
   try {
-    const { name, address, phone } = req.body;
+    const { name, address, phone, profilePic } = req.body;
 
     const user = await User.findById(req.user.id);
     if (!user) {
@@ -147,6 +147,7 @@ export const updateProfile = async (req, res) => {
     user.name = name || user.name;
     user.address = address || user.address;
     user.phone = phone || user.phone;
+    user.profilePic = profilePic || user.profilePic;
 
     await user.save();
     res.json({ message: "Profile updated successfully." });
@@ -155,7 +156,6 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: "Server error." });
   }
 };
-
 // Change Password
 export const changePassword = async (req, res) => {
   try {

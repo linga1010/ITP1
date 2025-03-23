@@ -51,7 +51,7 @@ const DeleteAccountPage = () => {
       />
 
       <button className="profile-btn delete-btn" onClick={handleDeleteAccount}>Delete Account</button>
-      <button className="profile-btn cancel-btn" onClick={() => navigate('/profile')}>Cancel</button>
+      <button className="profile-btn cancel-btn" onClick={() => navigate('/view-profile')}>Cancel</button>
     </div>
   );
 };

@@ -104,7 +104,7 @@ const ChangePasswordPage = () => {
       />
 
       <button className="profile-btn save-btn" onClick={handleChangePassword}>Update Password</button>
-      <button className="profile-btn cancel-btn" onClick={() => navigate('/profile')}>Cancel</button>
+      <button className="profile-btn cancel-btn" onClick={() => navigate('/view-profile')}>Cancel</button>
     </div>
   );
 };

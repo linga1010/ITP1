@@ -1,3 +1,4 @@
+// models/user.model.js
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
@@ -7,6 +8,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   address: { type: String, required: true },
   phone: { type: String, required: true },
+  profilePic: { type: String, default: '' }, 
   sex: { type: String, required: false },
   isAdmin: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },

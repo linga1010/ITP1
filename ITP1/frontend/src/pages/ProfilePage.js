@@ -7,13 +7,18 @@ const ProfilePage = () => {
   const [user, setUser] = useState({});
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingAddress, setIsEditingAddress] = useState(false);
   const [isEditingPhone, setIsEditingPhone] = useState(false);
+  const [isEditingProfilePic, setIsEditingProfilePic] = useState(false);
 
   const [newName, setNewName] = useState('');
   const [newAddress, setNewAddress] = useState('');
   const [newPhone, setNewPhone] = useState('');
+  const [newProfilePic, setNewProfilePic] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -33,10 +38,6 @@ const ProfilePage = () => {
 
   const fetchProfile = () => {
     const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/login');
-      return;
-    }
     axios
       .get('http://localhost:5000/api/users/profile', {
         headers: { Authorization: `Bearer ${token}` },
@@ -44,20 +45,47 @@ const ProfilePage = () => {
       .then((response) => {
         setUser(response.data);
       })
-      .catch((err) => {
-        if (err.response && err.response.status === 401) {
-          navigate('/login');
-          return;
-        }
+      .catch(() => {
         setError('❌ Error fetching profile');
-        setMessage('');
       });
+  };
+
+  // Upload file directly to Cloudinary and get the URL
+  const uploadImageToCloudinary = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'vkaura'); // Replace with your unsigned preset
+    try {
+      setUploading(true);
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/dsi3mcpie/upload`, // Replace with your cloud name
+        formData
+      );
+      setUploading(false);
+      return response.data.secure_url;
+    } catch (err) {
+      setUploading(false);
+      setError('❌ Image upload failed.');
+      return null;
+    }
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setSelectedFile(file);
+    const url = await uploadImageToCloudinary(file);
+    if (url) {
+      setNewProfilePic(url);
+      setMessage('Image uploaded. Please confirm to update profile.');
+    }
   };
 
   const handleUpdate = (field) => {
     setMessage('');
     setError('');
 
+    // Validate phone number if updating phone
     if (field === 'phone') {
       const phoneRegex = /^0\d{9}$/;
       if (!phoneRegex.test(newPhone)) {
@@ -68,7 +96,16 @@ const ProfilePage = () => {
 
     const token = localStorage.getItem('token');
     const updatedData = {
-      [field]: field === 'name' ? newName : field === 'address' ? newAddress : newPhone,
+      [field]:
+        field === 'name'
+          ? newName
+          : field === 'address'
+          ? newAddress
+          : field === 'phone'
+          ? newPhone
+          : field === 'profilePic'
+          ? newProfilePic
+          : '',
     };
 
     axios
@@ -77,16 +114,20 @@ const ProfilePage = () => {
       })
       .then(() => {
         setMessage(`✅ ${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully`);
-        setError('');
         fetchProfile();
         if (field === 'name') setIsEditingName(false);
         if (field === 'address') setIsEditingAddress(false);
         if (field === 'phone') setIsEditingPhone(false);
+        if (field === 'profilePic') setIsEditingProfilePic(false);
       })
       .catch(() => {
         setError(`❌ Error updating ${field}`);
-        setMessage('');
       });
+  };
+
+  // Prepare a cropped image URL using Cloudinary transformations
+  const getCroppedImageUrl = (url) => {
+    return url.replace('/upload/', '/upload/c_fill,w_150,h_150,g_face/');
   };
 
   return (
@@ -97,9 +138,43 @@ const ProfilePage = () => {
       {error && <p className="error-message">{error}</p>}
 
       <div className="profile-info">
-        <p><strong>Email:</strong> {user.email}</p>
+        {/* Display Profile Picture */}
+        <div className="profile-pic-section">
+          <img
+            src={
+              user.profilePic
+                ? getCroppedImageUrl(user.profilePic)
+                : 'https://via.placeholder.com/150'
+            }
+            alt="Profile"
+            className="profile-pic"
+          />
+          {isEditingProfilePic ? (
+            <div>
+              <input type="file" accept="image/*" onChange={handleFileChange} />
+              {uploading && <p>Uploading image...</p>}
+              {newProfilePic && (
+                <div>
+                  <button onClick={() => handleUpdate('profilePic')}>Confirm</button>
+                  <button onClick={() => setIsEditingProfilePic(false)}>Cancel</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              onClick={() => {
+                setIsEditingProfilePic(true);
+                setNewProfilePic(user.profilePic || '');
+              }}
+            >
+              Change Profile Pic
+            </button>
+          )}
+        </div>
 
-        <p><strong>Name:</strong> {user.name}</p>
+        <p>
+          <strong>Name:</strong> {user.name}
+        </p>
         {isEditingName ? (
           <div>
             <input
@@ -115,7 +190,13 @@ const ProfilePage = () => {
           <button onClick={() => { setNewName(user.name); setIsEditingName(true); }}>Change Name</button>
         )}
 
-        <p><strong>Address:</strong> {user.address}</p>
+        <p>
+          <strong>Email:</strong> {user.email}
+        </p>
+
+        <p>
+          <strong>Address:</strong> {user.address}
+        </p>
         {isEditingAddress ? (
           <div>
             <input
@@ -131,7 +212,9 @@ const ProfilePage = () => {
           <button onClick={() => { setNewAddress(user.address); setIsEditingAddress(true); }}>Change Address</button>
         )}
 
-        <p><strong>Phone:</strong> {user.phone}</p>
+        <p>
+          <strong>Phone:</strong> {user.phone}
+        </p>
         {isEditingPhone ? (
           <div>
             <input
@@ -147,10 +230,9 @@ const ProfilePage = () => {
           <button onClick={() => { setNewPhone(user.phone); setIsEditingPhone(true); }}>Change Phone</button>
         )}
       </div>
-
-      <button className="profile-btn back-btn" onClick={() => navigate('/user-home')}>⬅ Back to Home</button>
-      <button className="profile-btn change-password-btn" onClick={() => navigate('/change-password')}>Change Password</button>
-      <button className="profile-btn delete-account-btn" onClick={() => navigate('/delete-account')}>Delete Account</button>
+      <button className="profile-btn back-btn" onClick={() => navigate('/view-profile')}>
+  ⬅ Back to Profile
+</button>
     </div>
   );
 };

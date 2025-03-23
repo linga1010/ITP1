@@ -25,6 +25,8 @@ import PaymentDetails from './OrderPages/Payment'
 import OrderHistoryPage from './OrderPages/OrderHistory';
 import ViewBookings from './OrderPages/VeiwBookings';
 import FeedbackPage from './Feedback/pages/FeedbackPage';
+import ViewProfilePage from './pages/ViewProfilePage';
+
 import AdminFeedbackPage from './Feedback/pages/AdminFeedbackPage';
 
 
@@ -37,6 +39,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/view-profile" element={<ViewProfilePage />} />
+
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/user-home" element={<UserHomePage />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
