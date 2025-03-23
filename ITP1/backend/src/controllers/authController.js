@@ -64,7 +64,7 @@ export const verifyOTP = async (req, res) => {
   }
 };
 
-// Register User
+
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password, confirmPassword, address, phone } = req.body;
