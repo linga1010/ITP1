@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Profile.css';
 
+const defaultProfilePicUrl = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+
 const ProfilePage = () => {
   const [user, setUser] = useState({});
   const [message, setMessage] = useState('');
@@ -51,7 +53,7 @@ const ProfilePage = () => {
       });
   };
 
-  // Upload file directly to Cloudinary and get the URL
+  // Upload file to Cloudinary
   const uploadImageToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -59,7 +61,7 @@ const ProfilePage = () => {
     try {
       setUploading(true);
       const response = await axios.post(
-        `https://api.cloudinary.com/v1_1/dsi3mcpie/upload`, // Replace with your cloud name
+        'https://api.cloudinary.com/v1_1/dsi3mcpie/upload', // Replace with your cloud name
         formData
       );
       setUploading(false);
@@ -126,11 +128,23 @@ const ProfilePage = () => {
       });
   };
 
-  // When user chooses to remove their profile picture, we update it to empty,
-  // so the default profile icon will be displayed.
+  // Remove profile picture by sending the default image URL directly
   const handleRemoveProfilePic = () => {
-    setNewProfilePic('');
-    handleUpdate('profilePic');
+    const token = localStorage.getItem('token');
+    axios
+      .put(
+        'http://localhost:5000/api/users/profile',
+        { profilePic: defaultProfilePicUrl },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      .then(() => {
+        setMessage("✅ ProfilePic updated successfully");
+        fetchProfile();
+        setIsEditingProfilePic(false);
+      })
+      .catch(() => {
+        setError("❌ Error updating profilePic");
+      });
   };
 
   // Prepare a cropped image URL using Cloudinary transformations
@@ -152,7 +166,7 @@ const ProfilePage = () => {
             src={
               user.profilePic
                 ? getCroppedImageUrl(user.profilePic)
-                : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+                : defaultProfilePicUrl
             }
             style={{ width: '150px', height: '150px', borderRadius: '50%' }}
             alt="Profile"
@@ -174,12 +188,12 @@ const ProfilePage = () => {
               <button
                 onClick={() => {
                   setIsEditingProfilePic(true);
-                  setNewProfilePic(user.profilePic || '');
+                  setNewProfilePic(user.profilePic || defaultProfilePicUrl);
                 }}
               >
                 Change Profile Pic
               </button>
-              {user.profilePic && (
+              {user.profilePic && user.profilePic !== defaultProfilePicUrl && (
                 <button onClick={handleRemoveProfilePic}>Remove Profile Pic</button>
               )}
             </div>
