@@ -146,10 +146,11 @@ export const updateProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    user.name = name || user.name;
-    user.address = address || user.address;
-    user.phone = phone || user.phone;
-    user.profilePic = profilePic || user.profilePic;
+    // Update each field only if it is provided in the request body (even if it's an empty string)
+    if (name !== undefined) user.name = name;
+    if (address !== undefined) user.address = address;
+    if (phone !== undefined) user.phone = phone;
+    if (profilePic !== undefined) user.profilePic = profilePic;
 
     await user.save();
     res.json({ message: "Profile updated successfully." });
@@ -158,6 +159,7 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: "Server error." });
   }
 };
+
 
 // Change Password
 export const changePassword = async (req, res) => {

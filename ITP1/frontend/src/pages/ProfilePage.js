@@ -1,3 +1,4 @@
+// src/pages/ProfilePage.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -125,6 +126,13 @@ const ProfilePage = () => {
       });
   };
 
+  // When user chooses to remove their profile picture, we update it to empty,
+  // so the default profile icon will be displayed.
+  const handleRemoveProfilePic = () => {
+    setNewProfilePic('');
+    handleUpdate('profilePic');
+  };
+
   // Prepare a cropped image URL using Cloudinary transformations
   const getCroppedImageUrl = (url) => {
     return url.replace('/upload/', '/upload/c_fill,w_150,h_150,g_face/');
@@ -144,8 +152,9 @@ const ProfilePage = () => {
             src={
               user.profilePic
                 ? getCroppedImageUrl(user.profilePic)
-                : 'https://via.placeholder.com/150'
+                : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
             }
+            style={{ width: '150px', height: '150px', borderRadius: '50%' }}
             alt="Profile"
             className="profile-pic"
           />
@@ -161,14 +170,19 @@ const ProfilePage = () => {
               )}
             </div>
           ) : (
-            <button
-              onClick={() => {
-                setIsEditingProfilePic(true);
-                setNewProfilePic(user.profilePic || '');
-              }}
-            >
-              Change Profile Pic
-            </button>
+            <div>
+              <button
+                onClick={() => {
+                  setIsEditingProfilePic(true);
+                  setNewProfilePic(user.profilePic || '');
+                }}
+              >
+                Change Profile Pic
+              </button>
+              {user.profilePic && (
+                <button onClick={handleRemoveProfilePic}>Remove Profile Pic</button>
+              )}
+            </div>
           )}
         </div>
 
@@ -231,8 +245,8 @@ const ProfilePage = () => {
         )}
       </div>
       <button className="profile-btn back-btn" onClick={() => navigate('/view-profile')}>
-  ⬅ Back to Profile
-</button>
+        ⬅ Back to Profile
+      </button>
     </div>
   );
 };
