@@ -1,7 +1,10 @@
+// src/pages/ProfilePage.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Profile.css';
+
+const defaultProfilePicUrl = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
 const ProfilePage = () => {
   const [user, setUser] = useState({});
@@ -50,7 +53,7 @@ const ProfilePage = () => {
       });
   };
 
-  // Upload file directly to Cloudinary and get the URL
+  // Upload file to Cloudinary
   const uploadImageToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
@@ -58,7 +61,7 @@ const ProfilePage = () => {
     try {
       setUploading(true);
       const response = await axios.post(
-        `https://api.cloudinary.com/v1_1/dsi3mcpie/upload`, // Replace with your cloud name
+        'https://api.cloudinary.com/v1_1/dsi3mcpie/upload', // Replace with your cloud name
         formData
       );
       setUploading(false);
@@ -125,6 +128,25 @@ const ProfilePage = () => {
       });
   };
 
+  // Remove profile picture by sending the default image URL directly
+  const handleRemoveProfilePic = () => {
+    const token = localStorage.getItem('token');
+    axios
+      .put(
+        'http://localhost:5000/api/users/profile',
+        { profilePic: defaultProfilePicUrl },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
+      .then(() => {
+        setMessage("✅ ProfilePic updated successfully");
+        fetchProfile();
+        setIsEditingProfilePic(false);
+      })
+      .catch(() => {
+        setError("❌ Error updating profilePic");
+      });
+  };
+
   // Prepare a cropped image URL using Cloudinary transformations
   const getCroppedImageUrl = (url) => {
     return url.replace('/upload/', '/upload/c_fill,w_150,h_150,g_face/');
@@ -144,8 +166,9 @@ const ProfilePage = () => {
             src={
               user.profilePic
                 ? getCroppedImageUrl(user.profilePic)
-                : 'https://via.placeholder.com/150'
+                : defaultProfilePicUrl
             }
+            style={{ width: '150px', height: '150px', borderRadius: '50%' }}
             alt="Profile"
             className="profile-pic"
           />
@@ -161,14 +184,19 @@ const ProfilePage = () => {
               )}
             </div>
           ) : (
-            <button
-              onClick={() => {
-                setIsEditingProfilePic(true);
-                setNewProfilePic(user.profilePic || '');
-              }}
-            >
-              Change Profile Pic
-            </button>
+            <div>
+              <button
+                onClick={() => {
+                  setIsEditingProfilePic(true);
+                  setNewProfilePic(user.profilePic || defaultProfilePicUrl);
+                }}
+              >
+                Change Profile Pic
+              </button>
+              {user.profilePic && user.profilePic !== defaultProfilePicUrl && (
+                <button onClick={handleRemoveProfilePic}>Remove Profile Pic</button>
+              )}
+            </div>
           )}
         </div>
 
@@ -231,8 +259,8 @@ const ProfilePage = () => {
         )}
       </div>
       <button className="profile-btn back-btn" onClick={() => navigate('/view-profile')}>
-  ⬅ Back to Profile
-</button>
+        ⬅ Back to Profile
+      </button>
     </div>
   );
 };

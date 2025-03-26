@@ -221,7 +221,7 @@ const Signup = () => {
               />
               <input
                 className="input-field"
-                type="text"
+                type="number"
                 name="phone"
                 placeholder="Phone Number"
                 value={formData.phone}

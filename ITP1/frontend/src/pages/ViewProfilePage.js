@@ -35,7 +35,7 @@ const ViewProfilePage = () => {
 
       <div className="profile-info centered-profile">
         <img
-          src={user.profilePic ? getCroppedImageUrl(user.profilePic) : 'https://via.placeholder.com/150'}
+          src={user.profilePic ? getCroppedImageUrl(user.profilePic) : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}
           alt="Profile"
           className="profile-pic"
         />
