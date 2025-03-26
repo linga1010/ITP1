@@ -13,6 +13,13 @@ export const useAuth = () => {
     const token = localStorage.getItem("token");
 
     if (token) {
+      // Set timeout to remove token after 1 hour (3600000 ms)
+      const timer = setTimeout(() => {
+        localStorage.removeItem("token");
+        setUser(null); // Clear user data
+        navigate("/login"); // Redirect to login if the token expires
+      }, 3600000); // 1 hour
+
       // Fetch the user profile using the stored token
       axios
         .get("http://localhost:5000/api/users/profile", {
@@ -30,6 +37,9 @@ export const useAuth = () => {
         .finally(() => {
           setLoading(false); // End loading after profile fetch attempt
         });
+
+      // Clear the timeout if the component is unmounted
+      return () => clearTimeout(timer);
     } else {
       setLoading(false); // End loading if no token is present
       setUser(null); // No user data if token is missing
@@ -42,7 +52,7 @@ export const useAuth = () => {
       const res = await axios.post("http://localhost:5000/api/users/login", { email, password });
       localStorage.setItem("token", res.data.token); // Save token to localStorage
       setUser(res.data.user); // Set user profile after successful login
-  
+
       // Check if the user is an admin
       if (res.data.isAdmin) {  // Corrected here, accessing `isAdmin` directly from the response
         // Redirect to admin dashboard if the user is an admin
@@ -57,6 +67,7 @@ export const useAuth = () => {
       setError("Invalid email or password."); // Set error message to be displayed in Login page
     }
   };
+
   // Logout function
   const logout = () => {
     localStorage.removeItem("token"); // Remove token from localStorage

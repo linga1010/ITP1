@@ -18,6 +18,7 @@ const Signup = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false); // State for OTP loading
   const [passwordCriteria, setPasswordCriteria] = useState({
     length: false,
     number: false,
@@ -79,6 +80,21 @@ const Signup = () => {
     } catch (err) {
       setError(err.response?.data?.message || "Failed to send OTP.");
       setLoading(false);
+    }
+  };
+
+  const resendOTP = async () => {
+    setOtpLoading(true); // Set OTP loading state to true
+    setMessage(""); // Clear any previous messages
+    setError(""); // Clear any previous errors
+
+    try {
+      await axios.post("http://localhost:5000/api/users/send-otp", { email: formData.email });
+      setMessage("✅ OTP resent to your email!");
+      setOtpLoading(false); // Reset OTP loading state
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to resend OTP.");
+      setOtpLoading(false); // Reset OTP loading state
     }
   };
 
@@ -186,6 +202,9 @@ const Signup = () => {
               <button className="btn" type="button" onClick={verifyOTP}>
                 Verify OTP
               </button>
+              <button className="btn resend-otp" type="button" onClick={resendOTP} disabled={otpLoading}>
+                {otpLoading ? "Resending..." : "Resend OTP"}
+              </button>
             </div>
           )}
 
@@ -219,32 +238,30 @@ const Signup = () => {
                 required
               />
               <div className="gender-container">
-                                <div className="gender-radio-group">
-
-                <label className="gender-label">Sex:</label>
-                <label>
-                  <input
-                    type="radio"
-                    name="sex"
-                    value="Male"
-                    onChange={handleChange}
-                    required
-                  />
-                  Male
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="sex"
-                    value="Female"
-                    onChange={handleChange}
-                    required
-                  />
-                  Female
-                </label>
+                <div className="gender-radio-group">
+                  <label className="gender-label">Sex:</label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="sex"
+                      value="Male"
+                      onChange={handleChange}
+                      required
+                    />
+                    Male
+                  </label>
+                  <label>
+                    <input
+                      type="radio"
+                      name="sex"
+                      value="Female"
+                      onChange={handleChange}
+                      required
+                    />
+                    Female
+                  </label>
+                </div>
               </div>
-              </div>
-
 
               <input
                 className="input-field"

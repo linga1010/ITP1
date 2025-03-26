@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../styles/AdminUser.css';  // Ensure this path is correct based on your folder structure
+import '../styles/AdminUser.css';
 import { useNavigate } from 'react-router-dom';
-import "../styles/Body.css";
-import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component
 
 const AdminManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [admins, setAdmins] = useState([]);
   const [error, setError] = useState('');
   const [loggedInUser, setLoggedInUser] = useState(null);
-  const [showModal, setShowModal] = useState(false);  // State to control modal visibility
-  const [userToDelete, setUserToDelete] = useState(null);  // Store the user ID to be deleted
-  const navigate = useNavigate(); // Hook for navigation
+  const [showModal, setShowModal] = useState(false);
+  const [userToDelete, setUserToDelete] = useState(null);
+  const [deletionReason, setDeletionReason] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -39,43 +38,45 @@ const AdminManageUsers = () => {
   }, []);
 
   const handleDeleteUser = (userId) => {
-    setUserToDelete(userId); // Set the user ID to delete
-    setShowModal(true); // Show the confirmation modal
+    setUserToDelete(userId);
+    setShowModal(true);
   };
 
   const confirmDelete = async () => {
+    if (!deletionReason) {
+      alert('❌ Please provide a reason for deleting the user.');
+      return;
+    }
+
     try {
+      // DELETE endpoint now handles both deletion and sending email
       await axios.delete(`http://localhost:5000/api/admin/users/${userToDelete}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        data: { reason: deletionReason }
       });
 
       alert('User successfully deleted');
       setUsers(users.filter((user) => user._id !== userToDelete));
-      setShowModal(false); // Close the modal
+      setShowModal(false);
     } catch (err) {
       alert('❌ Error deleting user');
-      setShowModal(false); // Close the modal on error
+      setShowModal(false);
     }
   };
 
   const cancelDelete = () => {
-    setShowModal(false); // Close the modal without deleting
+    setShowModal(false);
   };
 
   const handleGoToAdminDashboard = () => {
-    navigate('/admin-dashboard'); // Navigate to the Admin Dashboard
+    navigate('/admin-dashboard');
   };
 
   return (
-    <div className="admin-dashboard-container">
-    <Adminnaviagtion /> {/* Add the Admin navigation component here */}
-
-    <div className="main-content">
     <div>
       <h2>Manage Admins</h2>
       {error && <p>{error}</p>}
 
-      {/* Admin Section */}
       <h3>Admin Details</h3>
       <table>
         <thead>
@@ -83,7 +84,7 @@ const AdminManageUsers = () => {
             <th>Name</th>
             <th>Email</th>
             <th>Phone</th>
-            <th>Address</th> {/* Added Address column */}
+            <th>Address</th>
           </tr>
         </thead>
         <tbody>
@@ -92,13 +93,12 @@ const AdminManageUsers = () => {
               <td>{admin.name}</td>
               <td>{admin.email}</td>
               <td>{admin.phone}</td>
-              <td>{admin.address ? admin.address : 'No address available'}</td> {/* Display address */}
+              <td>{admin.address ? admin.address : 'No address available'}</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {/* Manage Users Section */}
       <h3>Manage Users</h3>
       <table>
         <thead>
@@ -106,7 +106,7 @@ const AdminManageUsers = () => {
             <th>Name</th>
             <th>Email</th>
             <th>Phone</th>
-            <th>Address</th> {/* Added Address column */}
+            <th>Address</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -116,9 +116,8 @@ const AdminManageUsers = () => {
               <td>{user.name}</td>
               <td>{user.email}</td>
               <td>{user.phone}</td>
-              <td>{user.address ? user.address : 'No address available'}</td> {/* Display address */}
+              <td>{user.address ? user.address : 'No address available'}</td>
               <td>
-                {/* Show delete button only for users */}
                 <button onClick={() => handleDeleteUser(user._id)}>Delete</button>
               </td>
             </tr>
@@ -133,6 +132,13 @@ const AdminManageUsers = () => {
             <div className="modal-header">
               <h4>Are you sure you want to delete this user?</h4>
             </div>
+            <div className="modal-body">
+              <textarea
+                placeholder="Enter reason for deletion"
+                value={deletionReason}
+                onChange={(e) => setDeletionReason(e.target.value)}
+              ></textarea>
+            </div>
             <div className="modal-footer">
               <button className="confirm" onClick={confirmDelete}>
                 Delete
@@ -145,10 +151,9 @@ const AdminManageUsers = () => {
         </div>
       )}
 
-      {/* Button to navigate to Admin Dashboard */}
-      <button className="go-back-btn" onClick={handleGoToAdminDashboard}>Go to Admin Dashboard</button>
-    </div>
-    </div>
+      <button className="go-back-btn" onClick={handleGoToAdminDashboard}>
+        Go to Admin Dashboard
+      </button>
     </div>
   );
 };

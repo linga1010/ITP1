@@ -21,6 +21,7 @@ const ForgotPassword = () => {
     uppercase: false,
     specialChar: false,
   });
+  const [isResendDisabled, setIsResendDisabled] = useState(false);  // Track if Resend OTP button should be disabled
   const navigate = useNavigate();
   const messageRef = useRef(null);
 
@@ -82,6 +83,7 @@ const ForgotPassword = () => {
     setMessage("");
     setError("");
     setLoading(true);
+    setIsResendDisabled(true); // Disable the button once OTP is being sent
 
     try {
       console.log("Sending OTP...");
@@ -94,6 +96,7 @@ const ForgotPassword = () => {
       scrollToMessage();
     } finally {
       setLoading(false);
+      setIsResendDisabled(false); // Re-enable the button after process completes
     }
   };
 
@@ -214,6 +217,16 @@ const ForgotPassword = () => {
               />
               <button type="button" className="btn" onClick={verifyOTP} disabled={loading}>
                 {loading ? "Verifying..." : "Verify OTP"}
+              </button>
+
+              {/* Resend OTP Button (Same class name 'btn') */}
+              <button
+                type="button"
+                className="btn resend-otp-btn"
+                onClick={sendForgotPasswordOTP}
+                disabled={isResendDisabled || loading} // Disable button when OTP is being sent
+              >
+                {loading ? "Resending..." : "Resend OTP"}
               </button>
             </>
           )}
