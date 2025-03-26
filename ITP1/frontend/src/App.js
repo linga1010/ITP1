@@ -26,6 +26,7 @@ import OrderHistoryPage from './OrderPages/OrderHistory';
 import ViewBookings from './OrderPages/VeiwBookings';
 import FeedbackPage from './Feedback/pages/FeedbackPage';
 import ViewProfilePage from './pages/ViewProfilePage';
+import AdminDeletedUsers from './pages/AdminDeletedUsers';
 
 import AdminFeedbackPage from './Feedback/pages/AdminFeedbackPage';
 
@@ -63,6 +64,8 @@ function App() {
           <Route path="/invoices" element={<Invoices />} />
           <Route path="/Feedback" element={<FeedbackPage />} />
           <Route path="/adminFeedback" element={<AdminFeedbackPage />} />
+          <Route path="/admin/deleted-users" element={<AdminDeletedUsers />} />
+
 
       </Routes>
     </Router>

@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
 import sendOTPEmail from "../utils/emailService.js";
 import TempUser from "../models/tempUser.model.js";
+import sendSurveyEmail from '../utils/sendSurveyEmail.js'; // Import the new function
+
 
 // Check Email
 export const checkEmail = async (req, res) => {
@@ -64,7 +66,7 @@ export const verifyOTP = async (req, res) => {
   }
 };
 
-
+// Register User
 export const registerUser = async (req, res) => {
   try {
     const { name, email, password, confirmPassword, address, phone } = req.body;
@@ -156,6 +158,7 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: "Server error." });
   }
 };
+
 // Change Password
 export const changePassword = async (req, res) => {
   try {
@@ -312,6 +315,9 @@ export const deleteAccount = async (req, res) => {
     }
 
     await User.findByIdAndDelete(userId);
+    // Send survey email after account deletion
+    await sendSurveyEmail(user.email);
+
     res.json({ message: "Account deleted successfully." });
   } catch (error) {
     console.error("❌ Error in deleteAccount:", error);
