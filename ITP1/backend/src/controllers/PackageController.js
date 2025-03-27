@@ -1,0 +1,147 @@
+// C:\Users\Admin\Desktop\new\ITP1\backend\src\models\Package.js
+// C:\Users\Admin\Desktop\new\ITP1\backend\src\controllers\PackageController.js
+
+import fs from 'fs';
+import path from 'path';
+import Package from '../models/Package.js';  // Add the .js extension
+import Product from '../models/Product.js';  // Add the .js extension if not done already
+
+
+// Create a package
+export const createPackage = async (req, res) => {
+  try {
+    const { name, discount, products } = req.body;
+    const image = req.file ? `/uploads/${req.file.filename}` : null;
+
+    let parsedProducts;
+    try {
+      parsedProducts = JSON.parse(products);
+      if (!Array.isArray(parsedProducts)) {
+        return res.status(400).json({ message: "Products should be an array" });
+      }
+    } catch (error) {
+      return res.status(400).json({ message: "Invalid products format" });
+    }
+
+    // Validate if all product IDs exist
+    const productDetails = await Promise.all(
+      parsedProducts.map(async (item) => {
+        const product = await Product.findById(item.productId);
+        if (!product) throw new Error(`Product ID ${item.productId} not found`);
+        return { price: product.sellingPrice, quantity: item.quantity };
+      })
+    );
+
+    // Calculate total and final price
+    const totalPrice = productDetails.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const finalPrice = discount ? totalPrice - (totalPrice * (discount / 100)) : totalPrice;
+
+    const newPackage = new Package({
+      name,
+      discount,
+      totalPrice,
+      finalPrice,
+      image,
+      products: parsedProducts,
+    });
+
+    await newPackage.save();
+    res.status(201).json(newPackage);
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding package', error: error.message });
+  }
+};
+
+// Get all packages
+export const getPackages = async (req, res) => {
+  try {
+    const packages = await Package.find().populate('products.productId', 'name sellingPrice unit quantity');
+    res.status(200).json(packages);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Get a single package
+export const getPackageById = async (req, res) => {
+  try {
+    const pkg = await Package.findById(req.params.id).populate('products.productId', 'name sellingPrice unit');
+    if (!pkg) return res.status(404).json({ message: "Package not found" });
+    res.status(200).json(pkg);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Update package
+export const updatePackage = async (req, res) => {
+  try {
+    const { name, products, discount } = req.body;
+    const image = req.file ? `/uploads/${req.file.filename}` : req.body.image; // Retain the old image if new one isn't uploaded
+
+    // Validate discount value
+    if (discount && (isNaN(discount) || discount < 0 || discount > 100)) {
+      return res.status(400).json({ message: "Discount should be a valid number between 0 and 100" });
+    }
+
+    let parsedProducts;
+    try {
+      parsedProducts = JSON.parse(products);
+      if (!Array.isArray(parsedProducts)) {
+        return res.status(400).json({ message: "Products should be an array" });
+      }
+    } catch (error) {
+      return res.status(400).json({ message: "Invalid products format" });
+    }
+
+    // Validate if all product IDs exist
+    const productDetails = await Promise.all(
+      parsedProducts.map(async (item) => {
+        const product = await Product.findById(item.productId);
+        if (!product) throw new Error(`Product ID ${item.productId} not found`);
+        return { price: product.sellingPrice, quantity: item.quantity };
+      })
+    );
+
+    // Calculate total and final price
+    const totalPrice = productDetails.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const finalPrice = discount ? totalPrice - (totalPrice * (discount / 100)) : totalPrice;
+
+    // Update the package in the database
+    const updatedPackage = await Package.findByIdAndUpdate(
+      req.params.id,
+      { name, image, products: parsedProducts, totalPrice, discount, finalPrice },
+      { new: true }
+    );
+
+    if (!updatedPackage) return res.status(404).json({ message: "Package not found" });
+
+    res.status(200).json({ message: "Package updated successfully", package: updatedPackage });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+// Delete package
+export const deletePackage = async (req, res) => {
+  try {
+    const deletedPackage = await Package.findByIdAndDelete(req.params.id);
+    if (!deletedPackage) return res.status(404).json({ message: "Package not found" });
+
+    // Delete package image if exists
+    if (deletedPackage.image) {
+      const imagePath = path.join(__dirname, '..', deletedPackage.image);
+      try {
+        if (fs.existsSync(imagePath)) {
+          fs.unlinkSync(imagePath);
+        }
+      } catch (err) {
+        console.error("Error deleting image:", err);
+      }
+    }
+
+    res.status(200).json({ message: "Package deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
