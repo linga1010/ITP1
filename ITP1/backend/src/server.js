@@ -7,13 +7,15 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+
 import userRoutes from './routers/user.router.js';
 import adminRoutes from './routers/admin.router.js';
 import productRoutes from './routers/productRoutes.js';
 import packageRoutes from './routers/packageRoutes.js';
 import invoiceRoutes from './routers/invoiceRoutes.js';
-import OrderRoutes from './routers/OrderRoutes.js';
-import feedbackRoutes from './routers/FeedbackRoutes.js';  // Corrected import with .js extension
+import orderRoutes from './routers/OrderRoutes.js';
+import feedbackRoutes from './routers/FeedbackRoutes.js';
+import purchaseRoutes from './routers/purchaseRoutes.js';  // ✅ Added Purchase Routes
 
 dotenv.config(); // Load environment variables
 
@@ -51,8 +53,9 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/packages', packageRoutes);
 app.use('/api/invoices', invoiceRoutes);
-app.use('/api/orders', OrderRoutes);
-app.use('/api/feedback', feedbackRoutes);  // Correct route
+app.use('/api/orders', orderRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/purchases', purchaseRoutes);  // ✅ New Purchase API
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
@@ -70,4 +73,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
-

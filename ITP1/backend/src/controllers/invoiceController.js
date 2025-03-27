@@ -101,3 +101,4 @@ export const getAllInvoices = async (req, res) => {
     res.status(500).json({ message: 'Error fetching invoices', error: error.message });
   }
 };
+//C:\Destop\Linga\ITP1\ITP1\backend\src\controllers\invoiceController.js

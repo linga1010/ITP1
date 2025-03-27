@@ -20,3 +20,5 @@ const InvoiceSchema = new mongoose.Schema({
 
 
 export default mongoose.model('Invoice', InvoiceSchema);
+
+//C:\Destop\Linga\ITP1\ITP1\backend\src\models\invoice.js
