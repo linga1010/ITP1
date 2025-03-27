@@ -1,7 +1,8 @@
-
-
 import mongoose from 'mongoose';
+import Product from './Product.js';
 
+
+// Package model: Add reference to Product model
 const packageSchema = new mongoose.Schema({
   name: { type: String, required: true },
   image: { type: String, required: true },
@@ -15,5 +16,6 @@ const packageSchema = new mongoose.Schema({
   discount: { type: Number, default: 0 },
   finalPrice: { type: Number, required: true }
 }, { timestamps: true });
+
 
 export default mongoose.model('Package', packageSchema);

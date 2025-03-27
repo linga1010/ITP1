@@ -48,20 +48,24 @@ const ViewBookings = () => {
     fetchBookings();
   }, [navigate]);
 
+
+  
   const confirmOrder = async (orderId) => {
     try {
-      // Call the backend to confirm the order (change status to 'success')
-      const response = await axios.put(`http://localhost:5000/api/orders/${orderId}/confirm`);
+        const response = await axios.put(`http://localhost:5000/api/orders/${orderId}/confirm`);
 
-      // Update the order status locally in the frontend
-      setBookings((prev) =>
-        prev.map((order) => (order._id === orderId ? { ...order, status: "success" } : order))
-      );
+        // Update order status locally
+        setBookings((prev) =>
+            prev.map((order) => (order._id === orderId ? { ...order, status: "success" } : order))
+        );
+
+        alert(response.data.message);
     } catch (err) {
-      console.error("Failed to update order status:", err);
-      alert("Error updating order status. Please try again.");
+        console.error("Failed to confirm order:", err);
+        alert(err.response?.data?.message || "Error confirming order. Please try again.");
     }
-  };
+};
+
 
   const removeOrder = async (orderId) => {
     try {
