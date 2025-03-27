@@ -7,7 +7,7 @@ import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin 
 
 const InvoiceList = ({ onSalesUpdate }) => { // Add onSalesUpdate as a prop
   const [invoices, setInvoices] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(''); // State for search input
+  const [searchQuery, setSearchQuery] = useState('');
   const [filteredInvoices, setFilteredInvoices] = useState([]);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -20,8 +20,12 @@ const InvoiceList = ({ onSalesUpdate }) => { // Add onSalesUpdate as a prop
   useEffect(() => {
     // Whenever filteredInvoices change, calculate total sales and pass it to AdminDashboard
     const totalSales = calculateTotalSales();
-    onSalesUpdate(totalSales);
-  }, [filteredInvoices]);
+    if (typeof onSalesUpdate === 'function') {
+      onSalesUpdate(totalSales);
+    } else {
+      console.warn('onSalesUpdate is not a function');
+    }
+  }, [filteredInvoices, onSalesUpdate]); // Ensure the function is passed in dependencies
 
   const fetchInvoices = async () => {
     try {
@@ -164,3 +168,5 @@ const InvoiceList = ({ onSalesUpdate }) => { // Add onSalesUpdate as a prop
 };
 
 export default InvoiceList;
+
+//C:\Destop\Linga\ITP1\ITP1\frontend\src\invontorypage\InvoiceList.js

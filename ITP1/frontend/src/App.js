@@ -27,9 +27,9 @@ import ViewBookings from './OrderPages/VeiwBookings';
 import FeedbackPage from './Feedback/pages/FeedbackPage';
 import ViewProfilePage from './pages/ViewProfilePage';
 import AdminDeletedUsers from './pages/AdminDeletedUsers';
-
 import AdminFeedbackPage from './Feedback/pages/AdminFeedbackPage';
-
+import CreatePurchase from './invontorypage/CreatePurchase';
+import PurchaseList from './invontorypage/PurchaseList';
 
 
 function App() {
@@ -65,6 +65,9 @@ function App() {
           <Route path="/Feedback" element={<FeedbackPage />} />
           <Route path="/adminFeedback" element={<AdminFeedbackPage />} />
           <Route path="/admin/deleted-users" element={<AdminDeletedUsers />} />
+
+          <Route path="/purchases" element={<PurchaseList />} />
+        <Route path="/purchases/create" element={<CreatePurchase />} />
 
 
       </Routes>

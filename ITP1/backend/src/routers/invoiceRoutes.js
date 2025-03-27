@@ -3,13 +3,16 @@ import { addInvoice, deleteInvoice, getAllInvoices } from '../controllers/invoic
 
 const router = express.Router();
 
-// Add new invoice
+
 router.post('/', addInvoice);
 
-// Delete an invoice
+
 router.delete('/:invoiceNumber', deleteInvoice);
 
-// Get all invoices
+
 router.get('/', getAllInvoices);
 
 export default router;
+
+
+//C:\Destop\Linga\ITP1\ITP1\backend\src\routers\invoiceRoutes.js
