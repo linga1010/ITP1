@@ -43,6 +43,7 @@ export const useAuth = () => {
     } else {
       setLoading(false); // End loading if no token is present
       setUser(null); // No user data if token is missing
+      navigate("/login") // redirect to login if no token is present.
     }
   }, [navigate]);
 
