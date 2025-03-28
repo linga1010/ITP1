@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Input, Button, Card, Row, Col } from "antd";
+import { Input, Button, Card, Row, Col, message } from "antd";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 const ViewPackage = () => {
+  const { user } = useAuth(); // Get logged-in user
   const [packages, setPackages] = useState([]);
   const [filteredPackages, setFilteredPackages] = useState([]);
   const [search, setSearch] = useState("");
@@ -34,26 +36,34 @@ const ViewPackage = () => {
   };
 
   const addToCart = (pkg) => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    if (!user) {
+      message.error("Please log in to add items to the cart.");
+      navigate("/login");
+      return;
+    }
+
+    const cartKey = `cart_user_${user._id}`;
+    const cart = JSON.parse(localStorage.getItem(cartKey)) || [];
     const existingItemIndex = cart.findIndex(item => item._id === pkg._id);
-    
+
     if (existingItemIndex > -1) {
       cart[existingItemIndex].quantity += 1;
     } else {
       cart.push({ ...pkg, quantity: 1 });
     }
 
-    localStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.setItem(cartKey, JSON.stringify(cart));
+    message.success(`${pkg.name} added to cart.`);
   };
 
   const handlePlaceOrder = () => {
     navigate("/order");
   };
-  
+
   const handleBack = () => {
     navigate("/user-home");
   };
-  
+
   const renderProducts = (products) => {
     const rows = [];
     for (let i = 0; i < products.length; i += 4) {
@@ -75,25 +85,24 @@ const ViewPackage = () => {
   return (
     <div style={{ padding: "20px", position: "relative" }}>
       <Button 
-  className="backbutton" 
-  onClick={handleBack} 
-  type="default" 
-  style={{ 
-    position: "fixed", 
-    top: "20px", 
-    right: "20px", 
-    zIndex: 1000, 
-    padding: "5px 10px",  
-    minWidth: "auto", 
-    height: "auto", 
-    backgroundColor:"#007bff",
-    color:"white",
-  }}
->
-  ← Back to Home
-</Button>
+        className="backbutton" 
+        onClick={handleBack} 
+        type="default" 
+        style={{ 
+          position: "fixed", 
+          top: "20px", 
+          right: "20px", 
+          zIndex: 1000, 
+          padding: "5px 10px",  
+          minWidth: "auto", 
+          height: "auto", 
+          backgroundColor:"#007bff",
+          color:"white",
+        }}
+      >
+        ← Back to Home
+      </Button>
 
-      
       <h2 style={{ textAlign: "center" }}>User Package List</h2>
 
       <Input

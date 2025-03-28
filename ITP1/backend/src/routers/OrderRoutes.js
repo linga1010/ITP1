@@ -33,11 +33,6 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
-
-    if (!orders.length) {
-      return res.status(404).json({ message: "No orders found." });
-    }
-
     res.status(200).json(orders);
   } catch (error) {
     console.error("❌ Fetch All Orders Error:", error.message);
@@ -48,13 +43,14 @@ router.get("/", async (req, res) => {
 // ✅ GET: Fetch orders by user ID (User View)
 router.get("/:userId", async (req, res) => {
   try {
-    const userId = req.params.userId; // Extract userId from the route parameter
+    const userId = decodeURIComponent(req.params.userId);
+    console.log("Fetching orders for user:", userId);
     const orders = await Order.find({ user: userId }).sort({ createdAt: -1 });
 
+    // Instead of returning 404, return an empty array if no orders found
     if (!orders.length) {
-      return res.status(404).json({ message: "No orders found for this user." });
+      return res.status(200).json([]);
     }
-
     res.status(200).json(orders);
   } catch (error) {
     console.error("❌ Fetch Orders Error:", error.message);
@@ -94,7 +90,6 @@ router.put("/:id/remove", async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Change status to "removed"
     order.status = "removed";
     await order.save();
 

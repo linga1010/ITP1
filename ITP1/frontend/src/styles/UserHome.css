@@ -127,7 +127,7 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  animation: changeBackground 100s infinite alternate ease-in-out;
+  animation: changeBackground 60s infinite alternate ease-in-out;
   overflow-x: hidden;
 }
 
