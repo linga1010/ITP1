@@ -19,21 +19,25 @@ const HomePage = () => {
 
   return (
     <div className="home-container">
+      {/* Navigation Bar */}
+      <nav className="user-navbar">
+        <button className="home-btn profile-btn" onClick={handleManageProfile}>Manage Profile</button>
+        <ul className="nav-links">
+          <li><Link to="/user-home">Homepage</Link></li>
+          <li><Link to="/view-package">Packages</Link></li>
+          <li><Link to="/OrderHistoryDetails">Order History</Link></li>
+          <li><Link to="/Feedback">Feedbacks</Link></li>
+          <li><Link to="/about-us">About Us</Link></li>
+        </ul>
+        <button className="home-btn logout-btn" onClick={handleLogout}>Logout</button>
+      </nav>
+      <br/>
       <h1 className="home-title">Welcome to Vk Aura</h1>
       <p className="welcome-message">
         Welcome back, <strong>{user?.name || 'User'}</strong>
       </p>
 
-      <div className="home-buttons">
-        <button className="home-btn profile-btn" onClick={handleManageProfile}>Manage Profile</button>
-        <button className="home-btn logout-btn" onClick={handleLogout}>Logout</button>
-      </div>
-
-      <ul>
-        <li>
-          <Link to="/view-package">All Packages</Link>
-        </li>
-      </ul>
+      
     </div>
   );
 };
