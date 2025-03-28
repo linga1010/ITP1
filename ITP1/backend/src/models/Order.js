@@ -6,7 +6,8 @@ const OrderSchema = new mongoose.Schema({
     {
       name: String,
       price: Number,
-      quantity: Number,
+      finalPrice: Number, // Add finalPrice field
+      quantity: { type: Number, min: 1, max: 100 },
     },
   ],
   total: { type: Number, required: true },
@@ -16,4 +17,4 @@ const OrderSchema = new mongoose.Schema({
 
 const Order = mongoose.model("Order", OrderSchema);
 
-export default Order; // Ensure default export
+export default Order;

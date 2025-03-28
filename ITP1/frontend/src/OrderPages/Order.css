@@ -1,45 +1,105 @@
+.containerorder {
+  padding: 20px;
+  background-color:rgba(255, 250, 250, 0.8);
+}
 
-.container {
-    padding: 20px;
-  }
-  
-  .cart {
-    margin-top: 20px;
-  }
-  
+.cart {
+  margin-top: 20px;
+}
+
+.cart-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr; /* Name | Price | Quantity | Remove */
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.cart-item h4 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.cart-item p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.cart-item input {
+  width: 50px;
+  text-align: center;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.cart-item button {
+  margin: 5px;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+#b3 {
+  background-color: #e42121;
+  color: #ffffff;
+  border-radius: 5px;
+}
+
+#b3:hover {
+  background-color: #c41818;
+}
+
+.pay-button {
+  margin-top: 20px;
+  background-color: #ff9900;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: 5px;
+}
+
+.pay-button:hover {
+  background-color: #e68a00;
+}
+
+.order-history-button {
+  margin-top: 10px;
+  background-color: #01850c;
+  color: #ffffff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+}
+
+.order-history-button:hover {
+  background-color: #016a0a;
+}
+
+.back-button {
+  margin-bottom: 20px;
+  background-color: #01850c;
+  color: #ffffff;
+  border: 1px solid #ccc;
+  padding: 8px 15px;
+  border-radius: 5px;
+}
+
+.back-button:hover {
+  background-color: #016a0a;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
   .cart-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .cart-item button {
-    margin: 5px;
-
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+      text-align: center;
   }
 
-  #b1,#b2{
-    background-color: #3296f3;
-    color :#ffffff
+  .cart-item input {
+      width: 40px;
   }
-  #b3{
-    background-color: #e42121;
-  }
-  
-  .pay-button {
-    margin-top: 20px;
-  }
-  
-  .order-history-button {
-    margin-top: 10px;
-    background-color: #01850c;
-    color: #ffffff;
-  }
-  
-  .back-button {
-    margin-bottom: 20px;
-    background-color: #01850c;
-    color: #ffffff;
-    border: 1px solid #ccc;
-  }
+}
