@@ -1,4 +1,3 @@
-// src/pages/ProfilePage.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -10,25 +9,24 @@ const ProfilePage = () => {
   const [user, setUser] = useState({});
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [isEditingAddress, setIsEditingAddress] = useState(false);
-  const [isEditingPhone, setIsEditingPhone] = useState(false);
-  const [isEditingProfilePic, setIsEditingProfilePic] = useState(false);
-
-  const [newName, setNewName] = useState('');
-  const [newAddress, setNewAddress] = useState('');
-  const [newPhone, setNewPhone] = useState('');
-  const [newProfilePic, setNewProfilePic] = useState('');
+  const [isEditing, setIsEditing] = useState({ name: false, address: false, phone: false, profilePic: false });
+  const [formData, setFormData] = useState({ name: '', address: '', phone: '', profilePic: '' });
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
   const navigate = useNavigate();
 
+  // Redirect to login if no token exists
   useEffect(() => {
-    fetchProfile();
-  }, []);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+    } else {
+      fetchProfile();
+    }
+  }, [navigate]);
 
+  // Auto-clear messages after 3 seconds
   useEffect(() => {
     if (message || error) {
       const timer = setTimeout(() => {
@@ -41,6 +39,8 @@ const ProfilePage = () => {
 
   const fetchProfile = () => {
     const token = localStorage.getItem('token');
+    if (!token) return;
+
     axios
       .get('http://localhost:5000/api/users/profile', {
         headers: { Authorization: `Bearer ${token}` },
@@ -53,15 +53,15 @@ const ProfilePage = () => {
       });
   };
 
-  // Upload file to Cloudinary
   const uploadImageToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', 'vkaura'); // Replace with your unsigned preset
+    formData.append('upload_preset', 'vkaura'); // Replace with your Cloudinary preset
+
     try {
       setUploading(true);
       const response = await axios.post(
-        'https://api.cloudinary.com/v1_1/dsi3mcpie/upload', // Replace with your cloud name
+        'https://api.cloudinary.com/v1_1/dsi3mcpie/upload', // Replace with your Cloudinary cloud name
         formData
       );
       setUploading(false);
@@ -79,8 +79,8 @@ const ProfilePage = () => {
     setSelectedFile(file);
     const url = await uploadImageToCloudinary(file);
     if (url) {
-      setNewProfilePic(url);
-      setMessage('Image uploaded. Please confirm to update profile.');
+      setFormData((prev) => ({ ...prev, profilePic: url }));
+      setMessage('✅ Image uploaded. Please confirm to update profile.');
     }
   };
 
@@ -88,68 +88,57 @@ const ProfilePage = () => {
     setMessage('');
     setError('');
 
-    // Validate phone number if updating phone
+    // Validate phone number format
     if (field === 'phone') {
       const phoneRegex = /^0\d{9}$/;
-      if (!phoneRegex.test(newPhone)) {
-        setError('❌ Invalid phone number format, Phone must be 10 digits and start with 0');
+      if (!phoneRegex.test(formData.phone)) {
+        setError('❌ Invalid phone number. Must be 10 digits and start with 0.');
         return;
       }
     }
 
     const token = localStorage.getItem('token');
-    const updatedData = {
-      [field]:
-        field === 'name'
-          ? newName
-          : field === 'address'
-          ? newAddress
-          : field === 'phone'
-          ? newPhone
-          : field === 'profilePic'
-          ? newProfilePic
-          : '',
-    };
+    if (!token) {
+      navigate('/login');
+      return;
+    }
 
     axios
-      .put('http://localhost:5000/api/users/profile', updatedData, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      .put('http://localhost:5000/api/users/profile', { [field]: formData[field] }, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => {
-        setMessage(`✅ ${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully`);
+        setMessage(`✅ ${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully.`);
         fetchProfile();
-        if (field === 'name') setIsEditingName(false);
-        if (field === 'address') setIsEditingAddress(false);
-        if (field === 'phone') setIsEditingPhone(false);
-        if (field === 'profilePic') setIsEditingProfilePic(false);
+        setIsEditing((prev) => ({ ...prev, [field]: false }));
       })
       .catch(() => {
         setError(`❌ Error updating ${field}`);
       });
   };
 
-  // Remove profile picture by sending the default image URL directly
   const handleRemoveProfilePic = () => {
     const token = localStorage.getItem('token');
     axios
-      .put(
-        'http://localhost:5000/api/users/profile',
-        { profilePic: defaultProfilePicUrl },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
+      .put('http://localhost:5000/api/users/profile', { profilePic: defaultProfilePicUrl }, { headers: { Authorization: `Bearer ${token}` } })
       .then(() => {
-        setMessage("✅ ProfilePic updated successfully");
+        setMessage('✅ Profile picture removed.');
         fetchProfile();
-        setIsEditingProfilePic(false);
+        setIsEditing((prev) => ({ ...prev, profilePic: false }));
       })
       .catch(() => {
-        setError("❌ Error updating profilePic");
+        setError('❌ Error removing profile picture.');
       });
   };
 
-  // Prepare a cropped image URL using Cloudinary transformations
-  const getCroppedImageUrl = (url) => {
-    return url.replace('/upload/', '/upload/c_fill,w_150,h_150,g_face/');
+  const getCroppedImageUrl = (url) => url.replace('/upload/', '/upload/c_fill,w_150,h_150,g_face/');
+
+  const handleBackToProfile = () => {
+    if (!user || !user.isAdmin) {
+      navigate('/view-profile'); // Normal user
+    } else if (user.isAdmin) {
+      navigate('/admin/view-profile'); // Admin user
+    } else {
+      navigate('/login'); // If no valid user or admin, redirect to login
+    }
   };
 
   return (
@@ -160,107 +149,62 @@ const ProfilePage = () => {
       {error && <p className="error-message">{error}</p>}
 
       <div className="profile-info">
-        {/* Display Profile Picture */}
+        {/* Profile Picture */}
         <div className="profile-pic-section">
           <img
-            src={
-              user.profilePic
-                ? getCroppedImageUrl(user.profilePic)
-                : defaultProfilePicUrl
-            }
-            style={{ width: '150px', height: '150px', borderRadius: '50%' }}
+            src={user.profilePic ? getCroppedImageUrl(user.profilePic) : defaultProfilePicUrl}
             alt="Profile"
             className="profile-pic"
+            style={{ width: '150px', height: '150px', borderRadius: '50%' }}
           />
-          {isEditingProfilePic ? (
+          {isEditing.profilePic ? (
             <div>
               <input type="file" accept="image/*" onChange={handleFileChange} />
               {uploading && <p>Uploading image...</p>}
-              {newProfilePic && (
+              {formData.profilePic && (
                 <div>
                   <button onClick={() => handleUpdate('profilePic')}>Confirm</button>
-                  <button onClick={() => setIsEditingProfilePic(false)}>Cancel</button>
+                  <button onClick={() => setIsEditing((prev) => ({ ...prev, profilePic: false }))}>Cancel</button>
                 </div>
               )}
             </div>
           ) : (
             <div>
-              <button
-                onClick={() => {
-                  setIsEditingProfilePic(true);
-                  setNewProfilePic(user.profilePic || defaultProfilePicUrl);
-                }}
-              >
-                Change Profile Pic
-              </button>
-              {user.profilePic && user.profilePic !== defaultProfilePicUrl && (
-                <button onClick={handleRemoveProfilePic}>Remove Profile Pic</button>
-              )}
+              <button onClick={() => setIsEditing((prev) => ({ ...prev, profilePic: true }))}>Change Profile Pic</button>
+              {user.profilePic && user.profilePic !== defaultProfilePicUrl && <button onClick={handleRemoveProfilePic}>Remove</button>}
             </div>
           )}
         </div>
 
-        <p>
-          <strong>Name:</strong> {user.name}
-        </p>
-        {isEditingName ? (
+        {/* Name */}
+        <p><strong>Name:</strong> {user.name}</p>
+        {isEditing.name ? (
           <div>
-            <input
-              type="text"
-              placeholder="New Name"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-            />
+            <input type="text" value={formData.name} onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))} />
             <button onClick={() => handleUpdate('name')}>Confirm</button>
-            <button onClick={() => setIsEditingName(false)}>Cancel</button>
+            <button onClick={() => setIsEditing((prev) => ({ ...prev, name: false }))}>Cancel</button>
           </div>
         ) : (
-          <button onClick={() => { setNewName(user.name); setIsEditingName(true); }}>Change Name</button>
+          <button onClick={() => setIsEditing((prev) => ({ ...prev, name: true }))}>Change Name</button>
         )}
 
-        <p>
-          <strong>Email:</strong> {user.email}
-        </p>
+        {/* Email (Non-editable) */}
+        <p><strong>Email:</strong> {user.email}</p>
 
-        <p>
-          <strong>Address:</strong> {user.address}
-        </p>
-        {isEditingAddress ? (
+        {/* Address */}
+        <p><strong>Address:</strong> {user.address}</p>
+        {isEditing.address ? (
           <div>
-            <input
-              type="text"
-              placeholder="New Address"
-              value={newAddress}
-              onChange={(e) => setNewAddress(e.target.value)}
-            />
+            <input type="text" value={formData.address} onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))} />
             <button onClick={() => handleUpdate('address')}>Confirm</button>
-            <button onClick={() => setIsEditingAddress(false)}>Cancel</button>
+            <button onClick={() => setIsEditing((prev) => ({ ...prev, address: false }))}>Cancel</button>
           </div>
         ) : (
-          <button onClick={() => { setNewAddress(user.address); setIsEditingAddress(true); }}>Change Address</button>
-        )}
-
-        <p>
-          <strong>Phone:</strong> {user.phone}
-        </p>
-        {isEditingPhone ? (
-          <div>
-            <input
-              type="number"
-              placeholder="New Phone"
-              value={newPhone}
-              onChange={(e) => setNewPhone(e.target.value)}
-            />
-            <button onClick={() => handleUpdate('phone')}>Confirm</button>
-            <button onClick={() => setIsEditingPhone(false)}>Cancel</button>
-          </div>
-        ) : (
-          <button onClick={() => { setNewPhone(user.phone); setIsEditingPhone(true); }}>Change Phone</button>
+          <button onClick={() => setIsEditing((prev) => ({ ...prev, address: true }))}>Change Address</button>
         )}
       </div>
-      <button className="profile-btn back-btn" onClick={() => navigate('/view-profile')}>
-        ⬅ Back to Profile
-      </button>
+
+      <button className="profile-btn back-btn" onClick={handleBackToProfile}>⬅ Back to Profile</button>
     </div>
   );
 };

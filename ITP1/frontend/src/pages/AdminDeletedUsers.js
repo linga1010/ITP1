@@ -1,26 +1,55 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/Profile.css';
 
 const AdminDeletedUsers = () => {
+  const navigate = useNavigate();
   const [deletedUsers, setDeletedUsers] = useState([]);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchDeletedUsers = async () => {
-      try {
-        const res = await axios.get('http://localhost:5000/api/admin/deleted-users', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-        });
-        setDeletedUsers(res.data);
-      } catch (err) {
-        setError('❌ Failed to fetch deleted users.');
-      }
-    };
-    fetchDeletedUsers();
+    verifyAdminAndFetchDeletedUsers();
   }, []);
+
+  const verifyAdminAndFetchDeletedUsers = async () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      // Verify admin status
+      const res = await axios.get('http://localhost:5000/api/users/profile', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.data.isAdmin) {
+        navigate('/login');
+        return;
+      }
+
+      // Fetch deleted users if admin
+      fetchDeletedUsers(token);
+    } catch (err) {
+      console.error('Error verifying admin:', err);
+      localStorage.removeItem('token');
+      navigate('/login');
+    }
+  };
+
+  const fetchDeletedUsers = async (token) => {
+    try {
+      const res = await axios.get('http://localhost:5000/api/admin/deleted-users', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setDeletedUsers(res.data);
+    } catch (err) {
+      setError('❌ Failed to fetch deleted users.');
+    }
+  };
 
   return (
     <div>

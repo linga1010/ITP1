@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/Profile.css';
 
-const ViewProfilePage = () => {
+const AdminProfile = () => {
   const [user, setUser] = useState({});
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -72,4 +72,4 @@ const ViewProfilePage = () => {
   );
 };
 
-export default ViewProfilePage;
+export default AdminProfile;

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/AdminUser.css';
-import { useNavigate } from 'react-router-dom';
 
 const AdminManageUsers = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [admins, setAdmins] = useState([]);
   const [error, setError] = useState('');
@@ -11,31 +12,54 @@ const AdminManageUsers = () => {
   const [showModal, setShowModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);
   const [deletionReason, setDeletionReason] = useState('');
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await axios.get('http://localhost:5000/api/admin/users', {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });
-
-        const fetchedUsers = res.data;
-        const loggedInUserData = JSON.parse(localStorage.getItem('user'));
-        setLoggedInUser(loggedInUserData);
-
-        const normalUsers = fetchedUsers.filter(user => !user.isAdmin);
-        const adminUsers = fetchedUsers.filter(user => user.isAdmin);
-
-        setUsers(normalUsers);
-        setAdmins(adminUsers);
-      } catch (err) {
-        setError('❌ Failed to fetch users.');
-      }
-    };
-
-    fetchUsers();
+    verifyAdminAndFetchUsers();
   }, []);
+
+  const verifyAdminAndFetchUsers = async () => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      // Verify admin status
+      const res = await axios.get('http://localhost:5000/api/users/profile', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!res.data.isAdmin) {
+        navigate('/login');
+        return;
+      }
+
+      // Fetch users if admin
+      fetchUsers(token);
+    } catch (err) {
+      console.error('Error verifying admin:', err);
+      localStorage.removeItem('token');
+      navigate('/login');
+    }
+  };
+
+  const fetchUsers = async (token) => {
+    try {
+      const res = await axios.get('http://localhost:5000/api/admin/users', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const fetchedUsers = res.data;
+      setLoggedInUser(JSON.parse(localStorage.getItem('user')));
+
+      setUsers(fetchedUsers.filter((user) => !user.isAdmin));
+      setAdmins(fetchedUsers.filter((user) => user.isAdmin));
+    } catch (err) {
+      setError('❌ Failed to fetch users.');
+    }
+  };
 
   const handleDeleteUser = (userId) => {
     setUserToDelete(userId);
@@ -49,10 +73,9 @@ const AdminManageUsers = () => {
     }
 
     try {
-      // DELETE endpoint now handles both deletion and sending email
       await axios.delete(`http://localhost:5000/api/admin/users/${userToDelete}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
-        data: { reason: deletionReason }
+        data: { reason: deletionReason },
       });
 
       alert('User successfully deleted');
@@ -62,14 +85,6 @@ const AdminManageUsers = () => {
       alert('❌ Error deleting user');
       setShowModal(false);
     }
-  };
-
-  const cancelDelete = () => {
-    setShowModal(false);
-  };
-
-  const handleGoToAdminDashboard = () => {
-    navigate('/admin-dashboard');
   };
 
   return (
@@ -93,7 +108,7 @@ const AdminManageUsers = () => {
               <td>{admin.name}</td>
               <td>{admin.email}</td>
               <td>{admin.phone}</td>
-              <td>{admin.address ? admin.address : 'No address available'}</td>
+              <td>{admin.address || 'No address available'}</td>
             </tr>
           ))}
         </tbody>
@@ -116,7 +131,7 @@ const AdminManageUsers = () => {
               <td>{user.name}</td>
               <td>{user.email}</td>
               <td>{user.phone}</td>
-              <td>{user.address ? user.address : 'No address available'}</td>
+              <td>{user.address || 'No address available'}</td>
               <td>
                 <button onClick={() => handleDeleteUser(user._id)}>Delete</button>
               </td>
@@ -143,7 +158,7 @@ const AdminManageUsers = () => {
               <button className="confirm" onClick={confirmDelete}>
                 Delete
               </button>
-              <button className="cancel" onClick={cancelDelete}>
+              <button className="cancel" onClick={() => setShowModal(false)}>
                 Cancel
               </button>
             </div>
@@ -151,7 +166,7 @@ const AdminManageUsers = () => {
         </div>
       )}
 
-      <button className="go-back-btn" onClick={handleGoToAdminDashboard}>
+      <button className="go-back-btn" onClick={() => navigate('/admin-dashboard')}>
         Go to Admin Dashboard
       </button>
     </div>
