@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/AdminUser.css';
+import "../styles/Body.css";
+import Adminnaviagtion from "../Component/Adminnavigation"; 
 
 const AdminManageUsers = () => {
   const navigate = useNavigate();
@@ -88,6 +90,11 @@ const AdminManageUsers = () => {
   };
 
   return (
+
+    <div className="admin-dashboard-container">
+    <Adminnaviagtion />
+
+    <div className="main-content">
     <div>
       <h2>Manage Admins</h2>
       {error && <p>{error}</p>}
@@ -169,6 +176,8 @@ const AdminManageUsers = () => {
       <button className="go-back-btn" onClick={() => navigate('/admin-dashboard')}>
         Go to Admin Dashboard
       </button>
+    </div>
+    </div>
     </div>
   );
 };

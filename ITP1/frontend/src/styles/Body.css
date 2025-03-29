@@ -1,5 +1,6 @@
 /* Main content area (Unchanged) */
 .main-content {
+  background-color: white;
     margin-left: 20%; /* Leaves space for the sidebar */
     width: 100%; /* Takes up 80% of the width */
     padding: 80px;
