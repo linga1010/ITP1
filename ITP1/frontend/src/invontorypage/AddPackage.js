@@ -142,42 +142,52 @@ const AddPackage = () => {
           </Form.Item>
 
           <Button
-            type="dashed"
-            onClick={addProductRow}
-            style={{ marginBottom: 20 }}
-          >
-            + Add Product
-          </Button>
+  type="dashed"
+  onClick={addProductRow}
+  style={{ marginBottom: 20 }}
+>
+  + Add Product
+</Button>
 
-          {selectedProducts.map((item, index) => (
-            <div
-              key={index}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                marginBottom: 10,
-              }}
-            >
-              <Select
-                showSearch
-                style={{ width: "40%" }}
-                value={item.productId || undefined}
-                placeholder="Search and select product"
-                onChange={(value) => handleProductChange(index, value)}
-                filterOption={(input, option) =>
-                  option.children
-                    ?.toString()
-                    ?.toLowerCase()
-                    ?.includes(input.toLowerCase())
-                }
-              >
-                {products.map((product) => (
-                  <Option key={product._id} value={product._id}>
-                    {`${product.name || ""} - ${product.sku || ""}`}
-                  </Option>
-                ))}
-              </Select>
+{selectedProducts.map((item, index) => (
+  <div
+    key={index}
+    style={{
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+      marginBottom: 10,
+    }}
+  >
+    <Select
+      showSearch
+      style={{ width: "40%" }}
+      value={item.productId || undefined}
+      placeholder="Search and select product"
+      onChange={(value) => handleProductChange(index, value)}
+      filterOption={(input, option) =>
+        option.children
+          ?.toString()
+          ?.toLowerCase()
+          ?.includes(input.toLowerCase())
+      }
+    >
+      {products.map((product) => {
+        // Disable option if product is already selected in another row.
+        const isSelected = selectedProducts.some(
+          (selected, idx) => selected.productId === product._id && idx !== index
+        );
+        return (
+          <Option
+            key={product._id}
+            value={product._id}
+            disabled={isSelected}
+          >
+            {`${product.name || ""} - ${product.sku || ""}`}
+          </Option>
+        );
+      })}
+    </Select>
 
               <span>{item.unit}</span>
               <span>Rs. {item.sellingPrice || 0}</span>
