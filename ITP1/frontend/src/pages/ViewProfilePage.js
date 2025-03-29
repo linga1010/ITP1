@@ -2,8 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/Profile.css';
-import "../styles/Body.css";
-import Adminnaviagtion from "../Component/Adminnavigation"; 
+
 
 const ViewProfilePage = () => {
   const [user, setUser] = useState({});
@@ -48,10 +47,9 @@ const ViewProfilePage = () => {
 
   return (
 
-    <div className="admin-dashboard-container">
-    <Adminnaviagtion />
+   
 
-    <div className="main-content">
+   
     <div className="profile-container">
       <h1>Your Profile</h1>
 
@@ -76,8 +74,7 @@ const ViewProfilePage = () => {
         <button className="profile-btn" onClick={() => navigate('/delete-account')}>🗑️ Delete Account</button>
       </div>
     </div>
-    </div>
-    </div>
+   
   );
 };
 
