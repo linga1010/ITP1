@@ -9,6 +9,7 @@ const ViewBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const navigate = useNavigate();
 
   const [orderCounts, setOrderCounts] = useState({
@@ -16,7 +17,8 @@ const ViewBookings = () => {
     pendingOrders: 0,
     shippingOrders: 0,
     deliveredOrders: 0,
-    removedOrders: 0,  // Added removedOrders count
+    removedOrders: 0,
+    canceledOrders: 0,
   });
 
   useEffect(() => {
@@ -47,7 +49,6 @@ const ViewBookings = () => {
 
         setBookings(sortedBookings);
         updateOrderCounts(sortedBookings);
-
       } catch (err) {
         console.error("❌ Failed to fetch bookings:", err);
         setError("❌ Failed to fetch bookings or profile.");
@@ -64,16 +65,24 @@ const ViewBookings = () => {
     const pendingOrders = bookings.filter(order => order.status === "pending").length;
     const shippingOrders = bookings.filter(order => order.status === "shipped").length;
     const deliveredOrders = bookings.filter(order => order.status === "delivered").length;
-    const removedOrders = bookings.filter(order => order.status === "removed").length;  // Added removedOrders
+    const removedOrders = bookings.filter(order => order.status === "removed").length;
+    const canceledOrders = bookings.filter(order => order.status === "canceled").length;
 
     setOrderCounts({
       totalOrders,
       pendingOrders,
       shippingOrders,
       deliveredOrders,
-      removedOrders,  // Update removedOrders count
+      removedOrders,
+      canceledOrders,
     });
   };
+
+  const filteredBookings = bookings.filter(order =>
+    order.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    order.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    new Date(order.createdAt).toLocaleDateString().includes(searchTerm)
+  );
 
   const updateOrderStatus = async (orderId, status) => {
     const token = localStorage.getItem("token");
@@ -101,16 +110,6 @@ const ViewBookings = () => {
     }
   };
 
-  const handleRemoveOrder = (orderId) => {
-    const isConfirmed = window.confirm("Are you sure you want to remove this order?");
-
-    if (isConfirmed) {
-      updateOrderStatus(orderId, "remove");
-    } else {
-      alert("❌ Order removal canceled.");
-    }
-  };
-
   if (loading) return <p>Loading bookings...</p>;
   if (error) return <p>{error}</p>;
 
@@ -122,17 +121,26 @@ const ViewBookings = () => {
         <div className="view-bookings-container">
           <h2>All Order Booking Details</h2>
 
+          <input
+            type="text"
+            placeholder="Search by User, Status, or Date     🔍︎"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-bar"
+          />
+
           <div className="order-summary">
             <h3>Order Summary</h3>
             <p>Total Orders: {orderCounts.totalOrders}</p>
             <p>Pending Orders: {orderCounts.pendingOrders}</p>
             <p>Shipping Orders: {orderCounts.shippingOrders}</p>
             <p>Delivered Orders: {orderCounts.deliveredOrders}</p>
-            <p>Removed Orders: {orderCounts.removedOrders}</p> {/* Display Removed Orders */}
+            <p>Removed Orders: {orderCounts.removedOrders}</p>
+            <p>Canceled Orders: {orderCounts.canceledOrders}</p>
           </div>
 
           <div className="booking-table">
-            {bookings.length === 0 ? (
+            {filteredBookings.length === 0 ? (
               <p>No bookings found.</p>
             ) : (
               <table>
@@ -147,36 +155,18 @@ const ViewBookings = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {bookings.map((order) => (
+                  {filteredBookings.map((order) => (
                     <tr key={order._id}>
                       <td>{order.user}</td>
                       <td>
                         <ul>
                           {order.items.map((item, index) => (
-                            <li key={index}>
-                              {item.name} (x{item.quantity}) - Rs.{item.finalPrice || item.price}
-                            </li>
+                            <li key={index}>{item.name} (x{item.quantity}) - Rs.{item.finalPrice || item.price}</li>
                           ))}
                         </ul>
                       </td>
                       <td>RS.{order.total}</td>
-                      <td>
-                        <span
-                          className={
-                            order.status === "success"
-                              ? "status-success"
-                              : order.status === "shipped"
-                              ? "status-shipped"
-                              : order.status === "delivered"
-                              ? "status-delivered"
-                              : order.status === "removed"
-                              ? "status-removed"
-                              : "status-pending"
-                          }
-                        >
-                          {order.status}
-                        </span>
-                      </td>
+                      <td>{order.status}</td>
                       <td>{new Date(order.createdAt).toLocaleString()}</td>
                       <td>
                         {order.status === "pending" ? (
@@ -190,7 +180,7 @@ const ViewBookings = () => {
                             <br />
                             <button
                               className="remove-btn"
-                              onClick={() => handleRemoveOrder(order._id)}
+                              onClick={() => updateOrderStatus(order._id, "remove")}
                             >
                               ❌ Remove Order
                             </button>
@@ -213,6 +203,8 @@ const ViewBookings = () => {
                           <p>✅ Order Delivered</p>
                         ) : order.status === "removed" ? (
                           <p>❌ Removed Order</p>
+                        ) : order.status === "canceled" ? (
+                          <p>❌ Canceled Order</p> // Display text instead of button
                         ) : (
                           <p>✔ Order Confirmed</p>
                         )}
