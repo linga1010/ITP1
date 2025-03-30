@@ -8,6 +8,7 @@ const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
 
@@ -25,7 +26,6 @@ const OrderHistory = () => {
         setOrders(response.data);
       } catch (err) {
         setError("Failed to fetch orders. Please try again.");
-        console.error("❌ Fetch Orders Error:", err.message);
       } finally {
         setLoading(false);
       }
@@ -34,39 +34,58 @@ const OrderHistory = () => {
     fetchOrders();
   }, [user, authLoading, navigate]);
 
+  const handleCancelOrder = async (orderId) => {
+    const confirmCancel = window.confirm("Are you sure you want to cancel this order? \nyour money will be returned⚠️");
+    if (!confirmCancel) return;
+
+    try {
+      await axios.put(`http://localhost:5000/api/orders/${orderId}/cancel`);
+      setOrders(orders.map(order =>
+        order._id === orderId ? { ...order, status: "canceled" } : order
+      ));
+      alert("Order has been canceled.\n📌Contact us to get your money back❗");
+    } catch (error) {
+      alert("Failed to cancel order.");
+    }
+  };
+
+  const filteredOrders = orders.filter(order =>
+    order.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    new Date(order.createdAt).toLocaleDateString().includes(searchQuery)
+  );
+
   return (
     <div className="order-history-container">
       <h2>🛒 Order History</h2>
+      <input
+        type="text"
+        className="search-bar"
+        placeholder="Search by date or status...🔍︎"
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
       {loading && <p>Loading...</p>}
       {error && <p className="error">{error}</p>}
-      {!loading && orders.length === 0 && <p>No orders found.</p>}
-      {orders.map((order) => (
+      {!loading && filteredOrders.length === 0 && <p>No matching orders found.</p>}
+      {filteredOrders.map((order) => (
         <div key={order._id} className="order-card">
-          <h3>📅 Order Date: {new Date(order.createdAt).toLocaleDateString()}</h3>
-          <h3>⏰ Order Time: {new Date(order.createdAt).toLocaleTimeString()}</h3>
-          <h4>🛍️ Ordered Items:</h4>
+          <h3>📅 Date: {new Date(order.createdAt).toLocaleDateString()}</h3>
+          <h3>⏰ Time: {new Date(order.createdAt).toLocaleTimeString()}</h3>
           <ul>
             {order.items.map((item, index) => (
-              <li key={index}>
-                {item.name} (x{item.quantity}) - Rs.{item.finalPrice ? item.finalPrice : item.price}
-              </li>
+              <li key={index}>{item.name} (x{item.quantity}) - Rs.{item.finalPrice}</li>
             ))}
           </ul>
           <h3>Total: Rs.{order.total}</h3>
-          <h3>Status: 
-            <span className={ 
-              order.status === "success" 
-                ? "status-success" 
-                : order.status === "removed" 
-                  ? "status-removed" 
-                  : "status-pending"
-            }>
-              {order.status === "removed" ? "Removed Order" : order.status}
-            </span>
-          </h3>
+          <h3>Status: {order.status}</h3>
+          {order.status === "pending" && (
+            <div className="order-actions">
+              <button onClick={() => handleCancelOrder(order._id)}>❌ Cancel</button>
+            </div>
+          )}
         </div>
       ))}
-      <button className="back-button" onClick={() => navigate("/order")}>⬅ Back to OrderPage</button>
+      <button className="back-button" onClick={() => navigate("/order")}>⬅ Back to Order Page</button>
     </div>
   );
 };
