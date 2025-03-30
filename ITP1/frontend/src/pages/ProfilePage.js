@@ -16,7 +16,6 @@ const ProfilePage = () => {
 
   const navigate = useNavigate();
 
-  // Redirect to login if no token exists
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -26,7 +25,6 @@ const ProfilePage = () => {
     }
   }, [navigate]);
 
-  // Auto-clear messages after 3 seconds
   useEffect(() => {
     if (message || error) {
       const timer = setTimeout(() => {
@@ -56,12 +54,12 @@ const ProfilePage = () => {
   const uploadImageToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', 'vkaura'); // Replace with your Cloudinary preset
+    formData.append('upload_preset', 'vkaura'); 
 
     try {
       setUploading(true);
       const response = await axios.post(
-        'https://api.cloudinary.com/v1_1/dsi3mcpie/upload', // Replace with your Cloudinary cloud name
+        'https://api.cloudinary.com/v1_1/dsi3mcpie/upload', 
         formData
       );
       setUploading(false);
@@ -88,7 +86,6 @@ const ProfilePage = () => {
     setMessage('');
     setError('');
 
-    // Validate phone number format
     if (field === 'phone') {
       const phoneRegex = /^0\d{9}$/;
       if (!phoneRegex.test(formData.phone)) {
@@ -133,11 +130,11 @@ const ProfilePage = () => {
 
   const handleBackToProfile = () => {
     if (!user || !user.isAdmin) {
-      navigate('/view-profile'); // Normal user
+      navigate('/view-profile');
     } else if (user.isAdmin) {
-      navigate('/admin/view-profile'); // Admin user
+      navigate('/admin/view-profile');
     } else {
-      navigate('/login'); // If no valid user or admin, redirect to login
+      navigate('/login');
     }
   };
 
@@ -149,7 +146,6 @@ const ProfilePage = () => {
       {error && <p className="error-message">{error}</p>}
 
       <div className="profile-info">
-        {/* Profile Picture */}
         <div className="profile-pic-section">
           <img
             src={user.profilePic ? getCroppedImageUrl(user.profilePic) : defaultProfilePicUrl}
@@ -176,7 +172,6 @@ const ProfilePage = () => {
           )}
         </div>
 
-        {/* Name */}
         <p><strong>Name:</strong> {user.name}</p>
         {isEditing.name ? (
           <div>
@@ -188,10 +183,8 @@ const ProfilePage = () => {
           <button onClick={() => setIsEditing((prev) => ({ ...prev, name: true }))}>Change Name</button>
         )}
 
-        {/* Email (Non-editable) */}
         <p><strong>Email:</strong> {user.email}</p>
 
-        {/* Address */}
         <p><strong>Address:</strong> {user.address}</p>
         {isEditing.address ? (
           <div>
@@ -201,6 +194,17 @@ const ProfilePage = () => {
           </div>
         ) : (
           <button onClick={() => setIsEditing((prev) => ({ ...prev, address: true }))}>Change Address</button>
+        )}
+
+        <p><strong>Phone:</strong> {user.phone}</p>
+        {isEditing.phone ? (
+          <div>
+            <input type="text" value={formData.phone} onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))} />
+            <button onClick={() => handleUpdate('phone')}>Confirm</button>
+            <button onClick={() => setIsEditing((prev) => ({ ...prev, phone: false }))}>Cancel</button>
+          </div>
+        ) : (
+          <button onClick={() => setIsEditing((prev) => ({ ...prev, phone: true }))}>Change Phone</button>
         )}
       </div>
 
