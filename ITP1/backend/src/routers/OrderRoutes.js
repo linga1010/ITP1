@@ -131,5 +131,21 @@ router.put("/:id/remove", async (req, res) => {
     res.status(500).json({ message: "❌ Internal Server Error", error: error.message });
   }
 });
+// Cancel pending order
+router.put("/:id/cancel", async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (order.status !== "pending") return res.status(400).json({ message: "Only pending orders can be canceled" });
+
+    order.status = "canceled";
+    await order.save();
+
+    res.json({ message: "✅ Order canceled successfully!", order });
+  } catch (error) {
+    console.error("❌ Cancel Order Error:", error.message);
+    res.status(500).json({ message: "❌ Server Error", error: error.message });
+  }
+});
 
 export default router;
