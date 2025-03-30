@@ -10,6 +10,7 @@ const OrderPage = () => {
   const { user } = useAuth();
   const [cart, setCart] = useState([]);
   const [isAgreed, setIsAgreed] = useState(false);
+  
 
   // Load the cart only for the logged-in user
   useEffect(() => {

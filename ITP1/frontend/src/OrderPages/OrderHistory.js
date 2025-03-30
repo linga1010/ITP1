@@ -1,4 +1,3 @@
-// OrderHistory.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -49,7 +48,7 @@ const OrderHistory = () => {
           <ul>
             {order.items.map((item, index) => (
               <li key={index}>
-                {item.name} - Rs.{item.price ?? "N/A"} x {item.quantity} (Final Price: Rs.{item.finalPrice ?? "N/A"})
+                {item.name} (x{item.quantity}) - Rs.{item.finalPrice ? item.finalPrice : item.price}
               </li>
             ))}
           </ul>

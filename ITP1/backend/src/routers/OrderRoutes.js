@@ -3,7 +3,7 @@ import Order from "../models/Order.js";
 
 const router = express.Router();
 
-// ✅ POST: Place an order
+//  Place an order
 router.post("/", async (req, res) => {
   try {
     const { user, items, total } = req.body;
@@ -29,7 +29,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// ✅ GET: Fetch all orders (Admin View)
+//  Fetch all orders (Admin View)
 router.get("/", async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// ✅ GET: Fetch orders by user ID (User View)
+//  Fetch orders by user ID (User View)
 router.get("/:userId", async (req, res) => {
   try {
     const userId = decodeURIComponent(req.params.userId);
@@ -58,7 +58,7 @@ router.get("/:userId", async (req, res) => {
   }
 });
 
-// ✅ PUT: Confirm order (Change status to "success")
+//  Confirm order (Change status to "success")
 router.put("/:id/confirm", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -80,8 +80,40 @@ router.put("/:id/confirm", async (req, res) => {
     res.status(500).json({ message: "❌ Internal Server Error", error: error.message });
   }
 });
+//  Ship Order
+router.put("/:id/ship", async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (order.status !== "success") return res.status(400).json({ message: "Order cannot be shipped" });
 
-// ✅ PUT: Change order status to "removed" (instead of deleting the order)
+    order.status = "shipped";
+    await order.save();
+    res.json({ message: "✅ Order marked as shipped", order });
+  } catch (error) {
+    console.error("❌ Ship Order Error:", error.message);
+    res.status(500).json({ message: "❌ Server Error", error: error.message });
+  }
+});
+
+//  Deliver Order
+router.put("/:id/deliver", async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (order.status !== "shipped") return res.status(400).json({ message: "Order cannot be delivered" });
+
+    order.status = "delivered";
+    await order.save();
+    res.json({ message: "✅ Order marked as delivered", order });
+  } catch (error) {
+    console.error("❌ Deliver Order Error:", error.message);
+    res.status(500).json({ message: "❌ Server Error", error: error.message });
+  }
+});
+
+
+//  Change order status to "removed" (instead of deleting the order)
 router.put("/:id/remove", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
