@@ -29,4 +29,9 @@
     background-color: #333;
     color: white;
   }
-  
+  .confirm-btn{
+    margin: 5px;
+  }
+  .remove-btn{
+    margin: 5px;
+  }

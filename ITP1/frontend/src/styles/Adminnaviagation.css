@@ -18,9 +18,9 @@ body, html {
     position: fixed;
     top: 0;
     right: 0;
-    width: 80%; /* Takes up 80% of the page width */
+    width: 100%; /* Takes up 80% of the page width */
     height: 10%; /* Takes up 10% of the viewport height */
-    z-index: 10; /* Ensures navbar is above other content */
+    z-index: 100; /* Ensures navbar is above other content */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
   }
   
@@ -49,6 +49,7 @@ body, html {
   .back-btn {
     background-color: #4CAF50; /* Green color */
     color: white;
+    margin-top: 10px;
   }
   
   .back-btn:hover {
@@ -174,7 +175,11 @@ body, html {
 .hamburger-icon {
     background: none;
     border: none;
+    margin-left: 30px;
     color: white;
     font-size: 24px;
     cursor: pointer;
+}
+.Admin{
+  margin-top: 110px;
 }

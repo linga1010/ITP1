@@ -149,7 +149,7 @@ const Adminnaviagtion = () => {
       </header>
 
       <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
-        <h2>Admin</h2>
+       <h2 className="Admin" >Admin</h2>
         <ul className="sidebar-menu">
           {sidebarItems.map((item, index) => (
             <li key={index}>
