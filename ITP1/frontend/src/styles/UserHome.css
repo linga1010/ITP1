@@ -127,29 +127,27 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  animation: changeBackground 60s infinite alternate ease-in-out;
+  animation: changeBackground 30s infinite alternate ease-in-out;
   overflow-x: hidden;
 }
 
 /* Ensure animation runs smoothly */
 @keyframes changeBackground {
   0% {
-    background-image: url('temp1.webp');
-  }
-  20% {
-    background-image: url('Temp2.jpg');
-  }
-  40% {
-    background-image: url('temp3.jpg');
-  }
-  60% {
-    background-image: url('temp4.jpg');
-  }
-  80% {
     background-image: url('Temple.jpg');
   }
+  25% {
+    background-image: url('Temp2.jpg');
+  }
+  50% {
+    background-image: url('temp3.jpg');
+  }
+  75% {
+    background-image: url('temp4.jpg');
+  }
+  
   100% {
-    background-image: url('temp1.webp');
+    background-image: url('Temple.jpg');
   }
 }
 

@@ -9,7 +9,7 @@
 
 .cart-item {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr; /* Name | Price | Quantity | Remove */
+  grid-template-columns: 2fr 1fr 1fr 1fr; 
   align-items: center;
   gap: 10px;
   padding: 10px;
