@@ -56,7 +56,7 @@ const OrderHistory = () => {
 
   return (
     <div className="order-history-container">
-      <h2>🛒 Order History</h2>
+      <h1 className="OrderHis">🛒 Order History</h1>
       <input
         type="text"
         className="search-bar"

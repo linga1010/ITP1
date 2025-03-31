@@ -2,9 +2,13 @@
   padding: 20px;
   max-width: 600px;
   margin: 0 auto;
-  border: 1px solid #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Optional: Transparent white border */
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background: white;/* Make the background transparent */
+  backdrop-filter: blur(10px); /* Adds a glass effect */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
+  color: black; /* Ensure text is black */
+  font-size: 18px; /* Increased font size */
 }
 
 .profile-info {
@@ -12,19 +16,21 @@
 }
 
 .profile-input {
-  width: 100%;
-  padding: 10px;
+  width: 95%;
+  padding: 10px; /* Increased padding for better input size */
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-size: 16px; /* Larger input text */
 }
 
 .profile-btn {
-  padding: 10px 15px;
+  padding: 12px 18px; /* Increased button padding */
   margin: 5px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 16px; /* Larger button text */
 }
 
 .save-btn {
@@ -56,13 +62,16 @@
 
 .success-message {
   color: #28a745;
+  font-size: 16px; /* Larger message text */
 }
 
 .error-message {
   color: #dc3545;
+  font-size: 16px; /* Larger message text */
 }
+
 .profile-pic {
-  width: 150px;  /* Reduced size from 150px to 100px */
+  width: 150px;
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
