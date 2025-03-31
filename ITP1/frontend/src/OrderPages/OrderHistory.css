@@ -14,8 +14,16 @@
 }
 
 h2, h3, h4 {
-  color: #333;
+  color: #333333;
 }
+.OrderHis {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border-radius: 15px;
+  padding: 10px;
+  color:rgb(255, 174, 0);
+  display: inline-block;
+}
+
 
 ul {
   list-style-type: none;

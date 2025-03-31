@@ -4,7 +4,7 @@
   margin: 0 auto;
   border: 1px solid rgba(255, 255, 255, 0.3); /* Optional: Transparent white border */
   border-radius: 8px;
-  background: transparent; /* Make the background transparent */
+  background: white;/* Make the background transparent */
   backdrop-filter: blur(10px); /* Adds a glass effect */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
   color: black; /* Ensure text is black */
@@ -16,8 +16,8 @@
 }
 
 .profile-input {
-  width: 100%;
-  padding: 120px; /* Increased padding for better input size */
+  width: 95%;
+  padding: 10px; /* Increased padding for better input size */
   margin-bottom: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;

@@ -104,9 +104,10 @@
 
 .nav-links li {
   display: inline;
-  background-color: #384047;
+  background-color: #007bff;
   color: aliceblue;
 }
+
 
 .nav-links a {
   color: white;
