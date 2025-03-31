@@ -1,42 +1,172 @@
+/* Home Container */
 .home-container {
-    text-align: center;
-    padding: 50px;
-    background-color: #f4f4f4;
-    min-height: 100vh;
+  text-align: center;
+  padding: 50px 20px;
+  background-color: #f4f4f4;
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 80px; /* Prevents content from being hidden behind navbar */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Keeps background image fixed */
+  animation: changeBackground 20s infinite alternate ease-in-out;
+}
+
+/* Home Title */
+.home-title {
+  font-size: 2.5rem;
+  color: #222;
+  margin-bottom: 25px;
+  font-weight: bold;
+}
+
+/* Welcome Message */
+.welcome-message {
+  font-size: 1.2rem;
+  color: #000000;
+  margin-bottom: 30px;
+}
+
+/* Home Buttons */
+.home-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+/* General Button Styling */
+.home-btn {
+  padding: 12px 24px;
+  font-size: 17px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out, transform 0.2s;
+  font-weight: bold;
+}
+
+.home-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Profile Button */
+.profile-btn {
+  background-color: #007bff;
+  color: white;
+  
+}
+
+.profile-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Logout Button */
+.logout-btn {
+  background-color: #dc3545;
+  color: white;
+  position: fixed;
+  z-index: 1200;
+}
+
+.logout-btn:hover {
+  background-color: #b22234;
+}
+
+/* User Navigation Bar */
+.user-navbar {
+  width: 100%;
+  background-color: rgba(221, 221, 221, 0.01); /* Slight transparency */
+  backdrop-filter: blur(10px); /* Blur effect */
+  padding: 15px 0;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  padding: 0;
+  margin: 0;
+  
+}
+
+.nav-links li {
+  display: inline;
+  background-color: #007bff;
+  color: aliceblue;
+}
+
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;
+  transition: color 0.3s ease-in-out, border-bottom 0.3s;
+  padding: 5px 10px;
+}
+
+.nav-links a:hover {
+  color: #61dafb;
+  border-bottom: 2px solid #61dafb;
+}
+
+/* Background Image Fixed */
+body {
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  animation: changeBackground 30s infinite alternate ease-in-out;
+  overflow-x: hidden;
+}
+
+/* Ensure animation runs smoothly */
+@keyframes changeBackground {
+  0% {
+    background-image: url('Temple.jpg');
+  }
+  25% {
+    background-image: url('Temp2.jpg');
+  }
+  50% {
+    background-image: url('temp3.jpg');
+  }
+  75% {
+    background-image: url('temp4.jpg');
   }
   
-  .home-title {
-    font-size: 2rem;
-    color: #333;
-    margin-bottom: 20px;
+  100% {
+    background-image: url('Temple.jpg');
   }
-  
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .home-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+    flex-direction: column;
+    gap: 10px;
   }
-  
-  .home-btn {
-    padding: 12px 20px;
+
+  .nav-links {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .nav-links a {
     font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s;
   }
-  
-  .profile-btn {
-    background-color: #007bff;
-    color: white;
-  }
-  
-  .logout-btn {
-    background-color: #dc3545;
-    color: white;
-  }
-  
-  .home-btn:hover {
-    opacity: 0.8;
-  }
-  
+}
