@@ -1,14 +1,23 @@
 /* Main content area (Unchanged) */
 .main-content {
+  margin-top: 30px; /* Space between navbar and main content */
+   background-color: white; /* Background color for the main content area */
+   border: 10px solid #020202; /* Border for the main content area */
     margin-left: 20%; /* Leaves space for the sidebar */
-    width: 100%; /* Takes up 80% of the width */
+    width: 100%; /* Takes up 80% osf the width */
     padding: 80px;
     color: black;
     flex: 1;
     height: auto; /* Adjust height to fit content */
     min-height: calc(100vh - 80px); /* Ensures it takes at least the viewport height minus navbar height */
     padding: 20px; /* Optional: Add padding for better spacing */
-    overflow-y: auto; /* Allows scrolling if content overflows */
+    overflow-y: auto;
+    overflow-x: auto; /* Allows scrolling if content overflows */
     transition: margin-left 0.1 ease;
-    margin-top: 10%;
+    
   }
+
+
+
+
+ 
