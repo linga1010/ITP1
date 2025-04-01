@@ -107,7 +107,11 @@ const Adminnaviagtion = () => {
     {
       title: 'Booking Management',
       links: [
-        { to: '/create-invoice', label: 'Create Invoice' },
+  
+        { to: '/admin/add-priest', label: 'Add Priest' },
+        { to: '/admin/priest-list', label: 'View All Priests' },
+        { to: '/admin/booking-list', label: 'View Bookings' },
+      
       ],
     },
     {
