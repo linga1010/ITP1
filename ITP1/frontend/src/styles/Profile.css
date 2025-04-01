@@ -1,78 +1,131 @@
 .profile-container {
-  padding: 20px;
   max-width: 600px;
-  margin: 0 auto;
-  border: 1px solid rgba(255, 255, 255, 0.3); /* Optional: Transparent white border */
-  border-radius: 8px;
-  background: white;/* Make the background transparent */
-  backdrop-filter: blur(10px); /* Adds a glass effect */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Soft shadow */
-  color: black; /* Ensure text is black */
-  font-size: 18px; /* Increased font size */
+  margin: 40px auto;
+  padding: 25px;
+  background: #f9f9fb; /* Dark background for consistency */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  font-family: "Poppins", sans-serif;
+  text-align: center;
+  color: #f5f3f3; /* White text */
 }
 
-.profile-info {
-  margin-bottom: 20px;
-}
-
-.profile-input {
-  width: 95%;
-  padding: 10px; /* Increased padding for better input size */
-  margin-bottom: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px; /* Larger input text */
-}
-
-.profile-btn {
-  padding: 12px 18px; /* Increased button padding */
-  margin: 5px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px; /* Larger button text */
-}
-
-.save-btn {
-  background-color: #28a745;
-  color: white;
-}
-
-.cancel-btn {
-  background-color: #ffc107;
-  color: white;
-}
-
-.edit-btn,
-.change-password-btn,
-.delete-account-btn {
-  background-color: #007bff;
-  color: white;
-}
-
-.delete-btn {
-  background-color: #dc3545;
-  color: white;
-}
-
-.back-btn {
-  background-color: #6c757d;
-  color: white;
+h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 0.5em;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  background: linear-gradient(45deg, #ff8c42, #ffd700);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  margin-bottom: 30px;
+  position: relative;
+  top: -20px;
 }
 
 .success-message {
-  color: #28a745;
-  font-size: 16px; /* Larger message text */
+  color: #4caf50;
+  font-size: 14px;
+  margin-bottom: 10px;
 }
 
 .error-message {
-  color: #dc3545;
-  font-size: 16px; /* Larger message text */
+  color: #e74c3c;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-pic-section {
+  position: relative;
+  margin-bottom: 20px;
 }
 
 .profile-pic {
-  width: 150px;
-  height: 150px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   object-fit: cover;
+  border: 3px solid #ffcc00;
+}
+
+.profile-info p {
+  font-size: 16px;
+  margin: 8px 0;
+  color: #0c0b0b;
+}
+
+.profile-info strong {
+  color: #ffcc00;
+}
+
+.profile-info input {
+  width: 90%;
+  padding: 10px;
+  margin-top: 5px;
+  border: 2px solid #ffcc00;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  color: #0b0b0b;
+  text-align: center;
+}
+
+/* Updated button styles */
+.profile-container button {
+  padding: 10px 15px;
+  margin: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  color: #1e1e2f;
+  background-color: #ffcc00; /* Default button color */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s ease-in-out;
+}
+
+.profile-container button:hover {
+  background-color: #e6b800;
+}
+
+.profile-container button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+/* Back button styles */
+.profile-container .back-btn {
+  background-color: #ffcc00; /* Default button color */
+  color: #121111;
+}
+
+.profile-container .back-btn:hover {
+  background-color: #e0482a;
+}
+
+@media (max-width: 600px) {
+  .profile-container {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .profile-info input {
+    width: 100%;
+  }
+
+  .profile-container button {
+    width: 100%;
+  }
 }
