@@ -89,7 +89,7 @@ h1 {
   font-size: 14px;
   font-weight: bold;
   color: #1e1e2f;
-  background-color: #ffcc00; /* Default button color */
+  background-color: #ffcc00; 
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -97,7 +97,7 @@ h1 {
 }
 
 .profile-container button:hover {
-  background-color: #e6b800;
+  background-color: #45a049;
 }
 
 .profile-container button:disabled {
