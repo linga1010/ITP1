@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Profile.css'; // Ensure this file exists
+import '../styles/DeleteAccountPage.css'; // Ensure this file exists
 
 const DeleteAccountPage = () => {
   const [deletePassword, setDeletePassword] = useState('');

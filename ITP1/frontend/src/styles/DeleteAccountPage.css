@@ -1,0 +1,100 @@
+/* DeleteAccountPage.css */
+
+.profile-container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 25px;
+    background: #f9f9fb; /* Light background for consistency */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    font-family: "Poppins", sans-serif;
+    text-align: center;
+    color: #f5f3f3; /* White text */
+  }
+  
+  h1 {
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    background: linear-gradient(45deg, #ff5733, #ff8c42);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+    margin-bottom: 30px;
+  }
+  
+  .success-message {
+    color: #4caf50;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  
+  .error-message {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  
+  .profile-input {
+    width: 90%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 2px solid #ffcc00;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+    color: #0b0b0b;
+    text-align: center;
+  }
+  
+  .profile-btn {
+    padding: 10px 15px;
+    margin: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #1e1e2f;
+    background-color: #ffcc00;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+  }
+  
+  .profile-btn:hover {
+    background-color: #e6b800;
+  }
+  
+  .delete-btn {
+    background-color: #e74c3c;
+    color: #ffffff;
+  }
+  
+  .delete-btn:hover {
+    background-color: #c0392b;
+  }
+  
+  .cancel-btn {
+    background-color: #3498db;
+    color: #ffffff;
+  }
+  
+  .cancel-btn:hover {
+    background-color: #2980b9;
+  }
+  
+  @media (max-width: 600px) {
+    .profile-container {
+      width: 90%;
+      padding: 15px;
+    }
+  
+    .profile-input {
+      width: 100%;
+    }
+  
+    .profile-btn {
+      width: 100%;
+    }
+  }
+  

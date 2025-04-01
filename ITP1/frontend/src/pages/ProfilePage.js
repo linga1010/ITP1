@@ -1,3 +1,4 @@
+import '../styles/Profile.css';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -52,15 +53,15 @@ const ProfilePage = () => {
   };
 
   const uploadImageToCloudinary = async (file) => {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'vkaura'); 
+    const data = new FormData();
+    data.append('file', file);
+    data.append('upload_preset', 'vkaura');
 
     try {
       setUploading(true);
       const response = await axios.post(
-        'https://api.cloudinary.com/v1_1/dsi3mcpie/upload', 
-        formData
+        'https://api.cloudinary.com/v1_1/dsi3mcpie/upload',
+        data
       );
       setUploading(false);
       return response.data.secure_url;
@@ -101,11 +102,17 @@ const ProfilePage = () => {
     }
 
     axios
-      .put('http://localhost:5000/api/users/profile', { [field]: formData[field] }, { headers: { Authorization: `Bearer ${token}` } })
+      .put(
+        'http://localhost:5000/api/users/profile',
+        { [field]: formData[field] },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
       .then(() => {
         setMessage(`✅ ${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully.`);
         fetchProfile();
+        // Reset edit state and clear form data for that field
         setIsEditing((prev) => ({ ...prev, [field]: false }));
+        setFormData((prev) => ({ ...prev, [field]: '' }));
       })
       .catch(() => {
         setError(`❌ Error updating ${field}`);
@@ -115,11 +122,16 @@ const ProfilePage = () => {
   const handleRemoveProfilePic = () => {
     const token = localStorage.getItem('token');
     axios
-      .put('http://localhost:5000/api/users/profile', { profilePic: defaultProfilePicUrl }, { headers: { Authorization: `Bearer ${token}` } })
+      .put(
+        'http://localhost:5000/api/users/profile',
+        { profilePic: defaultProfilePicUrl },
+        { headers: { Authorization: `Bearer ${token}` } }
+      )
       .then(() => {
         setMessage('✅ Profile picture removed.');
         fetchProfile();
         setIsEditing((prev) => ({ ...prev, profilePic: false }));
+        setFormData((prev) => ({ ...prev, profilePic: '' }));
       })
       .catch(() => {
         setError('❌ Error removing profile picture.');
@@ -157,58 +169,145 @@ const ProfilePage = () => {
             <div>
               <input type="file" accept="image/*" onChange={handleFileChange} />
               {uploading && <p>Uploading image...</p>}
-              {formData.profilePic && (
-                <div>
-                  <button onClick={() => handleUpdate('profilePic')}>Confirm</button>
-                  <button onClick={() => setIsEditing((prev) => ({ ...prev, profilePic: false }))}>Cancel</button>
-                </div>
+              {formData.profilePic && formData.profilePic !== user.profilePic && (
+                <button onClick={() => handleUpdate('profilePic')}>
+                  Confirm
+                </button>
               )}
+              <button
+                onClick={() => {
+                  setIsEditing((prev) => ({ ...prev, profilePic: false }));
+                  setFormData((prev) => ({ ...prev, profilePic: '' }));
+                }}
+              >
+                Cancel
+              </button>
             </div>
           ) : (
             <div>
-              <button onClick={() => setIsEditing((prev) => ({ ...prev, profilePic: true }))}>Change Profile Pic</button>
-              {user.profilePic && user.profilePic !== defaultProfilePicUrl && <button onClick={handleRemoveProfilePic}>Remove</button>}
+              <button onClick={() => setIsEditing((prev) => ({ ...prev, profilePic: true }))}>
+                Change Profile Pic
+              </button>
+              {user.profilePic && user.profilePic !== defaultProfilePicUrl && (
+                <button onClick={handleRemoveProfilePic}>Remove</button>
+              )}
             </div>
           )}
         </div>
 
-        <p><strong>Name:</strong> {user.name}</p>
+        <p>
+          <strong>Name:</strong> {user.name}
+        </p>
         {isEditing.name ? (
           <div>
-            <input type="text" value={formData.name} onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))} />
-            <button onClick={() => handleUpdate('name')}>Confirm</button>
-            <button onClick={() => setIsEditing((prev) => ({ ...prev, name: false }))}>Cancel</button>
+            <input
+              type="text"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, name: e.target.value }))
+              }
+            />
+            {formData.name.trim() !== '' && formData.name !== user.name && (
+              <button onClick={() => handleUpdate('name')}>Confirm</button>
+            )}
+            <button
+              onClick={() => {
+                setIsEditing((prev) => ({ ...prev, name: false }));
+                setFormData((prev) => ({ ...prev, name: '' }));
+              }}
+            >
+              Cancel
+            </button>
           </div>
         ) : (
-          <button onClick={() => setIsEditing((prev) => ({ ...prev, name: true }))}>Change Name</button>
+          <button
+            onClick={() => {
+              setFormData((prev) => ({ ...prev, name: user.name || '' }));
+              setIsEditing((prev) => ({ ...prev, name: true }));
+            }}
+          >
+            Change Name
+          </button>
         )}
 
-        <p><strong>Email:</strong> {user.email}</p>
+        <p>
+          <strong>Email:</strong> {user.email}
+        </p>
 
-        <p><strong>Address:</strong> {user.address}</p>
+        <p>
+          <strong>Address:</strong> {user.address}
+        </p>
         {isEditing.address ? (
           <div>
-            <input type="text" value={formData.address} onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))} />
-            <button onClick={() => handleUpdate('address')}>Confirm</button>
-            <button onClick={() => setIsEditing((prev) => ({ ...prev, address: false }))}>Cancel</button>
+            <input
+              type="text"
+              value={formData.address}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, address: e.target.value }))
+              }
+            />
+            {formData.address.trim() !== '' && formData.address !== user.address && (
+              <button onClick={() => handleUpdate('address')}>Confirm</button>
+            )}
+            <button
+              onClick={() => {
+                setIsEditing((prev) => ({ ...prev, address: false }));
+                setFormData((prev) => ({ ...prev, address: '' }));
+              }}
+            >
+              Cancel
+            </button>
           </div>
         ) : (
-          <button onClick={() => setIsEditing((prev) => ({ ...prev, address: true }))}>Change Address</button>
+          <button
+            onClick={() => {
+              setFormData((prev) => ({ ...prev, address: user.address || '' }));
+              setIsEditing((prev) => ({ ...prev, address: true }));
+            }}
+          >
+            Change Address
+          </button>
         )}
 
-        <p><strong>Phone:</strong> {user.phone}</p>
+        <p>
+          <strong>Phone:</strong> {user.phone}
+        </p>
         {isEditing.phone ? (
           <div>
-            <input type="text" value={formData.phone} onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))} />
-            <button onClick={() => handleUpdate('phone')}>Confirm</button>
-            <button onClick={() => setIsEditing((prev) => ({ ...prev, phone: false }))}>Cancel</button>
+            <input
+              type="text"
+              value={formData.phone}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, phone: e.target.value }))
+              }
+            />
+            {formData.phone.trim() !== '' && formData.phone !== user.phone && (
+              <button onClick={() => handleUpdate('phone')}>Confirm</button>
+            )}
+            <button
+              onClick={() => {
+                setIsEditing((prev) => ({ ...prev, phone: false }));
+                setFormData((prev) => ({ ...prev, phone: '' }));
+              }}
+            >
+              Cancel
+            </button>
           </div>
         ) : (
-          <button onClick={() => setIsEditing((prev) => ({ ...prev, phone: true }))}>Change Phone</button>
+          <button
+            onClick={() => {
+              setFormData((prev) => ({ ...prev, phone: user.phone || '' }));
+              setIsEditing((prev) => ({ ...prev, phone: true }));
+            }}
+          >
+            Change Phone
+          </button>
         )}
       </div>
 
-      <button className="profile-btn back-btn" onClick={handleBackToProfile}>⬅ Back to Profile</button>
+      <button className="profile-btn back-btn" onClick={handleBackToProfile}>
+        ⬅ Back to Profile
+      </button>
     </div>
   );
 };
