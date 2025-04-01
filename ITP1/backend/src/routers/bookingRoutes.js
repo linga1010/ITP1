@@ -3,8 +3,13 @@ import { bookPriest, cancelBooking, getUserBookings } from '../controllers/booki
 
 const router = express.Router();
 
-router.post('/book', bookPriest);
-router.put('/cancel/:id', cancelBooking);
+// Create a booking for a priest on the base route
+router.post('/', bookPriest);
+
+// Cancel a booking (note: endpoint now becomes /api/bookings/:id/cancel)
+router.put('/:id/cancel', cancelBooking);
+
+// Get bookings for the logged-in user (endpoint: /api/bookings/user)
 router.get('/user', getUserBookings);
 
 export default router;

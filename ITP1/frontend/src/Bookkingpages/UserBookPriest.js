@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { useAuth } from '../hooks/useAuth'; // Importing the useAuth hook
 
 const UserBookPriest = () => {
   const [event, setEvent] = useState('');
@@ -10,19 +11,21 @@ const UserBookPriest = () => {
   const [error, setError] = useState('');
   const [availabilityChecked, setAvailabilityChecked] = useState(false);
 
+  const { user, loading: authLoading } = useAuth(); // Get current user
+
   const API_BASE_URL = 'http://localhost:5000';
 
-  // Get the current date, and then calculate the range from 7 to 60 days
+  // Calculate minimum and maximum selectable dates
   const getMinDate = () => {
     const today = new Date();
-    today.setDate(today.getDate() + 7); // 7 days from now
-    return today.toISOString().split('T')[0]; // Return date in yyyy-mm-dd format
+    today.setDate(today.getDate() + 7);
+    return today.toISOString().split('T')[0];
   };
 
   const getMaxDate = () => {
     const today = new Date();
-    today.setDate(today.getDate() + 60); // 60 days from now
-    return today.toISOString().split('T')[0]; // Return date in yyyy-mm-dd format
+    today.setDate(today.getDate() + 60);
+    return today.toISOString().split('T')[0];
   };
 
   const fetchAvailablePriests = async () => {
@@ -30,6 +33,16 @@ const UserBookPriest = () => {
       setError('Please select a date first!');
       return;
     }
+
+    const minDate = new Date(getMinDate());
+    const maxDate = new Date(getMaxDate());
+    const selectedDate = new Date(date);
+
+    if (selectedDate < minDate || selectedDate > maxDate) {
+      setError('The selected date must be between 7 and 60 days from today.');
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await axios.get(`${API_BASE_URL}/api/priests/available?date=${date}`);
@@ -50,6 +63,11 @@ const UserBookPriest = () => {
       setError('Please complete all fields: Event, Date, and Priest selection.');
       return;
     }
+    if (!user) {
+      setError('You need to be logged in to book a priest.');
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await axios.post(`${API_BASE_URL}/api/bookings`, {
@@ -63,13 +81,10 @@ const UserBookPriest = () => {
     } catch (error) {
       console.error('Error booking priest:', error.response?.data || error.message);
       if (error.response) {
-        // Backend error (status codes like 400, 500)
         setError(`Error: ${error.response.data?.error || 'Unknown error'}`);
       } else if (error.request) {
-        // No response received from server
         setError('No response from server. Please check the backend.');
       } else {
-        // Other errors (network issues, etc.)
         setError('An error occurred while making the request.');
       }
     } finally {
@@ -77,8 +92,11 @@ const UserBookPriest = () => {
     }
   };
 
+  if (authLoading) return <p>Loading...</p>;
+  if (!user) return <p>Please log in to book a priest.</p>;
+
   return (
-    <div>
+    <div className="user-book-priest-container">
       <h2>Book a Priest</h2>
       <form onSubmit={handleSubmit}>
         <div>

@@ -4,6 +4,7 @@ import Priest from '../models/Priest.js';
 export const bookPriest = async (req, res) => {
   try {
     const { priestId, event, date } = req.body;
+    // Use authenticated user ID if available
     const userId = req.user && req.user.userId ? req.user.userId : '000000000000000000000000';
 
     const priest = await Priest.findById(priestId);
@@ -24,13 +25,21 @@ export const bookPriest = async (req, res) => {
       return res.status(400).json({ error: 'Events cannot be booked more than 2 months in advance' });
     }
 
+    // Compare dates in ISO format
     const normalizedRequestedDate = eventDate.toISOString();
     const isUnavailable = priest.unavailableDates.some(d => new Date(d).toISOString() === normalizedRequestedDate);
     if (isUnavailable) {
       return res.status(400).json({ error: 'Priest unavailable on this date' });
     }
 
-    const booking = new Booking({ user: userId, priest: priestId, event, date: eventDate });
+    // Explicitly set booking status to "Booked"
+    const booking = new Booking({ 
+      user: userId, 
+      priest: priestId, 
+      event, 
+      date: eventDate,
+      status: 'Booked'
+    });
     await booking.save();
 
     res.status(201).json(booking);
