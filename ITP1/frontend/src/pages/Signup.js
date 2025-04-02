@@ -192,7 +192,7 @@ const Signup = () => {
             <div className="step-container">
               <input
                 className="input-field"
-                type="text"
+                type="number"
                 name="otp"
                 placeholder="Enter OTP"
                 value={formData.otp}
