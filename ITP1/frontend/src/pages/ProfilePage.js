@@ -275,7 +275,7 @@ const ProfilePage = () => {
         {isEditing.phone ? (
           <div>
             <input
-              type="text"
+              type="number"
               value={formData.phone}
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, phone: e.target.value }))
