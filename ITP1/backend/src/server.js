@@ -18,7 +18,13 @@ import packageRoutes from './routers/packageRoutes.js';
 import invoiceRoutes from './routers/invoiceRoutes.js';
 import orderRoutes from './routers/OrderRoutes.js';
 import feedbackRoutes from './routers/FeedbackRoutes.js';
+
+import purchaseRoutes from './routers/purchaseRoutes.js';  // ✅ Added Purchase Routes
+import paymentRoutes from './routers/PaymentRoutes.js';
+import viewPaymentRoutes from './routers/ViewPaymentRoutes.js';
+
 import purchaseRoutes from './routers/purchaseRoutes.js';
+
 
 dotenv.config(); // Load environment variables
 
@@ -81,7 +87,13 @@ app.use('/api/packages', packageRoutes);
 app.use('/api/invoices', invoiceRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/feedback', feedbackRoutes);
+
+app.use('/api/purchases', purchaseRoutes);  // ✅ New Purchase API
+app.use('/api/payment', paymentRoutes);
+app.use('/api/viewPaymentDetails', viewPaymentRoutes);
+
 app.use('/api/purchases', purchaseRoutes);
+
 
 // 404 Handler
 app.use((req, res, next) => {

@@ -30,11 +30,15 @@ import AdminFeedbackPage from './Feedback/pages/AdminFeedbackPage';
 import CreatePurchase from './invontorypage/CreatePurchase';
 import PurchaseList from './invontorypage/PurchaseList';
 import AdminProfile from './pages/AdminProfile';
+
+import ViewPayment from './OrderPages/ViewPaymentDetails';
+
 import AdminAddPriest from './Bookkingpages/AdminAddPriest';
 import AdminPriestList from './Bookkingpages/AdminPriestList';
 import AdminBookingList from './Bookkingpages/AdminBookingList';
 import UserBookPriest from './Bookkingpages/UserBookPriest';
 import UserBookingList from './Bookkingpages/UserBookingList';
+
 
 
 
@@ -75,11 +79,15 @@ function App() {
         <Route path="/purchases" element={<PurchaseList />} />
         <Route path="/purchases/create" element={<CreatePurchase />} />
         <Route path="/admin/view-profile" element={<AdminProfile />} />
+
+        <Route path="/admin/viewPayment" element={<ViewPayment />} />
+
         <Route path="/admin/add-priest" element={<AdminAddPriest />} />
         <Route path="/admin/priest-list" element={<AdminPriestList />} />
         <Route path="/admin/booking-list" element={<AdminBookingList />} />
         <Route path="/user/book-priest" element={<UserBookPriest />} />
         <Route path="/user/booking-list" element={<UserBookingList />} />
+
 
       </Routes>
     </Router>
