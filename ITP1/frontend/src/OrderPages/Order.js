@@ -144,7 +144,7 @@ const OrderPage = () => {
         Order History
       </Button>
 
-      {/* Modal to ask for location */}
+      
       <Modal title="Enter Your Location" open={modalVisible} onOk={handleConfirmLocation} onCancel={() => setModalVisible(false)} okText="Pay">
         <Input placeholder="Enter your location" value={location} onChange={(e) => setLocation(e.target.value)} />
       </Modal>

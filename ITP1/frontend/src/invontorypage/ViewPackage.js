@@ -104,7 +104,7 @@ const ViewPackage = () => {
   };
 
   return (
-    <div style={{ padding: "20px", position: "relative" }}>
+    <div  style={{ padding: "20px", position: "relative", backgroundColor:" rgba(43, 43, 43, 0.5)"}}>
       <Button
         className="backbutton"
         onClick={handleBack}

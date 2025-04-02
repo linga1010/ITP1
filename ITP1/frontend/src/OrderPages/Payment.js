@@ -122,7 +122,7 @@ const Payment = () => {
 
   return (
     <div className="payment-container">
-      <h2>💳 Payment Page</h2>
+      <h2 >💳 Payment Page</h2>
       {error && <p ref={errorRef} className="error">{error}</p>}
 
       <form onSubmit={handleSubmit}>
