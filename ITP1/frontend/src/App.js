@@ -30,6 +30,7 @@ import AdminFeedbackPage from './Feedback/pages/AdminFeedbackPage';
 import CreatePurchase from './invontorypage/CreatePurchase';
 import PurchaseList from './invontorypage/PurchaseList';
 import AdminProfile from './pages/AdminProfile';
+import ViewPayment from './OrderPages/ViewPaymentDetails';
 
 function App() {
   return (
@@ -66,6 +67,7 @@ function App() {
         <Route path="/purchases" element={<PurchaseList />} />
         <Route path="/purchases/create" element={<CreatePurchase />} />
         <Route path="/admin/view-profile" element={<AdminProfile />} />
+        <Route path="/admin/viewPayment" element={<ViewPayment />} />
       </Routes>
     </Router>
   );

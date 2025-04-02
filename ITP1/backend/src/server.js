@@ -16,6 +16,8 @@ import invoiceRoutes from './routers/invoiceRoutes.js';
 import orderRoutes from './routers/OrderRoutes.js';
 import feedbackRoutes from './routers/FeedbackRoutes.js';
 import purchaseRoutes from './routers/purchaseRoutes.js';  // ✅ Added Purchase Routes
+import paymentRoutes from './routers/PaymentRoutes.js';
+import viewPaymentRoutes from './routers/ViewPaymentRoutes.js';
 
 dotenv.config(); // Load environment variables
 
@@ -56,6 +58,8 @@ app.use('/api/invoices', invoiceRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/purchases', purchaseRoutes);  // ✅ New Purchase API
+app.use('/api/payment', paymentRoutes);
+app.use('/api/viewPaymentDetails', viewPaymentRoutes);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
