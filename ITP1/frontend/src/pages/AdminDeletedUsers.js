@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/Profile.css';
+import '../styles/AdminUser.css';
 import "../styles/Body.css";
 import Adminnaviagtion from "../Component/Adminnavigation"; 
 
@@ -87,7 +87,7 @@ const AdminDeletedUsers = () => {
         </tbody>
       </table>
 
-      <button onClick={() => navigate('/admin-dashboard')}>Back to Admin Dashboard</button>
+      <button className="go-back-btn" onClick={() => navigate('/admin-dashboard')}>Back to Admin Dashboard</button>
     </div>
     </div>
     </div>

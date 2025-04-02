@@ -28,6 +28,8 @@ const HomePage = () => {
           <li><Link to="/OrderHistoryDetails">Order History</Link></li>
           <li><Link to="/Feedback">Feedbacks</Link></li>
           <li><Link to="/about-us">About Us</Link></li>
+          <li><Link to="/user/booking-list">Bokking Details </Link></li>
+          <li><Link to="/user/book-priest">Book Priest</Link></li>
         </ul>
         <button className="home-btn logout-btn" onClick={handleLogout}>Logout</button>
       </nav>

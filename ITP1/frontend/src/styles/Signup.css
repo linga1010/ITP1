@@ -151,6 +151,7 @@ h2 i {
   border: 2px solid #ccc;
   border-radius: 30px;
   font-size: 1em;
+  margin-bottom: 15px;
   color: #333;
   background: rgba(255, 255, 255, 0.8);
   transition: border-color 0.3s ease;
@@ -161,7 +162,7 @@ h2 i {
 }
 
 .btn {
-  width: 100%;
+  width: 90%;
   padding: 10px 20px;
   background: #ff8c42;
   border: none;
@@ -170,6 +171,8 @@ h2 i {
   cursor: pointer;
   transition: background-color 0.3s ease;
   border-radius: 30px;
+  margin-bottom: 15px; 
+
 }
 
 .btn:disabled {
