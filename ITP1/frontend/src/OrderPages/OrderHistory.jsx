@@ -85,7 +85,7 @@ const OrderHistory = () => {
           )}
         </div>
       ))}
-      <button className="back-button" onClick={() => navigate("/order")}>⬅ Back to Order Page</button>
+      <button className="back-button" onClick={() => navigate("/user-home")}>⬅ Back to Home</button>
     </div>
   );
 };
