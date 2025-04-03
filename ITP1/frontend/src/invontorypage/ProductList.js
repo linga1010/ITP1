@@ -97,7 +97,7 @@ const ProductList = () => {
               <td>
                 <button onClick={() => handleEdit(product.sku)} className="edit" 
                 style={{ backgroundColor: "#ffcc00", color: "black" }}>Edit</button>
-                <button onClick={() => handleDelete(product.sku)} className="Delete">Delete</button>
+               {/* <button onClick={() => handleDelete(product.sku)} className="Delete">Delete</button> */}
               </td>
             </tr>
           ))}

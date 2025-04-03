@@ -55,11 +55,13 @@
 .nav-right {
   display: flex;
   align-items: center;
+  
 }
 
 .profile-wrapper {
-  margin-right: 1rem;
+  margin-right: 150px;
   cursor: pointer;
+  z-index: 1000;
 }
 
 .profile-photo {
@@ -87,6 +89,7 @@
 
 .logout-btn {
   background-color: #dc3545;
+  margin-top: 10px;
 }
 
 .logout-btn:hover {
@@ -124,11 +127,23 @@
   text-align: center;
 }
 
+
+
 .carousel-heading {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
-  color: #333;
+  font-size: 24px;
+  font-weight: bold;
+  color: rgb(7, 7, 7);
+  text-align: center;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+
+  background-color: rgba(255, 251, 251, 0.4); /* Background only for content */
+  background-size: auto;    /* Background fits only the content */
+  display: inline-block;    /* Makes background fit text size */
+  padding: 5px 10px;        /* Adds space around text */
 }
+
+
 
 .carousel-container {
   display: flex;
@@ -137,6 +152,13 @@
   gap: 1rem;
 }
 
+.nav-item123
+{
+  width:150px;
+  height:30px;
+  text-align: center;
+
+}
 /* Arrow Button Styling */
 .arrow-button {
   background-color: #fff;
@@ -230,20 +252,20 @@ body {
 /* Ensure animation runs smoothly */
 @keyframes changeBackground {
   0% {
-    background-image: url('Temple.jpg');
+    background-image: url('img2.jpg');
   }
   25% {
-    background-image: url('Temp2.jpg');
+    background-image: url('img3.webp');
   }
   50% {
-    background-image: url('temp3.jpg');
+    background-image: url('img4.webp');
   }
   75% {
-    background-image: url('temp4.jpg');
+    background-image: url('img5.jpg');
   }
 
   100% {
-    background-image: url('Temple.jpg');
+    background-image: url('img2.jpg');
   }
 }
 
