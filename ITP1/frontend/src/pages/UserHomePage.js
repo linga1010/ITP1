@@ -77,6 +77,9 @@ const UserDashboard = () => {
     navigate("/login");
   };
 
+  const defaultProfilePicUrl =
+    "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+
   const handleProfileClick = () => {
     navigate("/view-profile");
   };
@@ -90,7 +93,7 @@ const UserDashboard = () => {
               <li className="nav-item123">
                 <Link to="/view-package">Packages</Link>
               </li>
-              <li className="nav-item123" >
+              <li className="nav-item123">
                 <Link to="/OrderHistoryDetails">Order History</Link>
               </li>
               <li className="nav-item123">
@@ -105,23 +108,17 @@ const UserDashboard = () => {
               <li className="nav-item123">
                 <Link to="/user/book-priest">Book Priest</Link>
               </li>
-             
             </ul>
           </div>
           <div className="nav-right">
-
-          <div className="profile-wrapper" onClick={handleProfileClick}>
-                <img
-                  src={
-                    user?.profilePic
-                      ? user.profilePic
-                      : "https://via.placeholder.com/50"
-                  }
-                  alt="Profile"
-                  className="profile-photo"
-                />
-              </div>
-
+            <div className="profile-wrapper" onClick={handleProfileClick}>
+              <img
+                src={user?.profilePic ? user.profilePic : defaultProfilePicUrl}
+                alt="Profile"
+                className="profile-photo"
+                onClick={handleProfileClick} // Navigation works regardless of the image
+              />
+            </div>
             <button className="nav-btn logout-btn" onClick={handleLogout}>
               Logout
             </button>
