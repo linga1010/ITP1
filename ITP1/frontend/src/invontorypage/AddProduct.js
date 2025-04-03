@@ -75,6 +75,26 @@ const AddProduct = () => {
       console.error("Error saving product:", error.response ? error.response.data : error);
     }
   };
+
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    setName(value); // Always update state first
+    if (value.length < 4 || value.length > 25) {
+      setErrorMessage("Product name must be between 4 and 25 characters.");
+    } else {
+      setErrorMessage(""); // Clear error message if valid
+    }
+  };
+  
+  const handleSkuChange = (e) => {
+    const value = e.target.value;
+    setSku(value); // Always update state first
+    if (value.length < 4 || value.length > 25) {
+      setErrorMessage("SKU must be between 4 and 25 characters.");
+    } else {
+      setErrorMessage(""); // Clear error message if valid
+    }
+  };
   
 
   return (
@@ -109,7 +129,7 @@ const AddProduct = () => {
             <input
               type="text"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={handleNameChange}
               placeholder="Product Name"
               required
             />
@@ -120,7 +140,7 @@ const AddProduct = () => {
             <input
               type="text"
               value={sku}
-              onChange={(e) => setSku(e.target.value)}
+              onChange={handleSkuChange}
               placeholder="SKU"
               required
             />
