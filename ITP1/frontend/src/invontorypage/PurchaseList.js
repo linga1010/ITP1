@@ -78,6 +78,7 @@ const PurchaseList = ({ onPurchasesUpdate }) => {
         <h2>Purchase Orders List</h2>
         <div className="create-purchase-container">
           <button onClick={() => navigate('/purchases/create')}>Create Purchase Order</button>
+          <p></p>
           <div className="search-container">
             <input type="text" value={searchQuery} onChange={handleSearch} placeholder="Search by Purchase Order Number" />
           </div>

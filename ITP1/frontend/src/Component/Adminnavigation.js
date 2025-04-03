@@ -93,8 +93,9 @@ const Adminnaviagtion = () => {
         { to: '/packages', label: 'View All Packages' },
         { to: '/create-invoice', label: 'Create Invoice' },
         { to: '/invoices', label: 'View All Invoices' },
+        { to: '/purchases/create', label: 'Create the bill' },
         { to: '/purchases', label: 'View all bill' },
-        { to: '/purchases/create', label: 'create the bill' },
+        
 
       ],
     },

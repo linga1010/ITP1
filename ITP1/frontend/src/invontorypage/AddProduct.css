@@ -25,7 +25,7 @@
 
 .image-label {
   cursor: pointer;
-  color: blue;
+  color: #000000;
   margin-bottom: 5px;
 }
 
@@ -78,7 +78,7 @@
   grid-column: span 2;
   padding: 10px 20px;
   background-color: #ffcc00;
-  color: white;
+  color: rgb(0, 0, 0);
   border: none;
   cursor: pointer;
   width: 100%;

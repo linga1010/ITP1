@@ -60,7 +60,16 @@ const UserBookPriest = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!event || !date || !selectedPriest) {
+    
+   
+    if (!event || event.length <= 5 || /[^a-zA-Z]/.test(event)) {
+      setError('Event name must be more than 5 characters (no numbers or symbols).');
+      return;
+    }
+    
+    
+    
+    if (!date || !selectedPriest) {
       setError('Please complete all fields: Event, Date, and Priest selection.');
       return;
     }
@@ -68,7 +77,7 @@ const UserBookPriest = () => {
       setError('You need to be logged in to book a priest.');
       return;
     }
-
+  
     setLoading(true);
     try {
       await axios.post(`${API_BASE_URL}/api/bookings`, {

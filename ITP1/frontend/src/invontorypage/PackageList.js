@@ -66,7 +66,7 @@ const PackageList = () => {
           onChange={handleSearch}
           style={{ width: "300px", marginBottom: "20px" }}
         />
-
+        <div className="tablelist">
         <table>
           <thead>
             <tr>
@@ -80,6 +80,7 @@ const PackageList = () => {
             </tr>
           </thead>
           <tbody>
+
             {filteredPackages.map((pkg) => (
               <tr key={pkg._id}>
                 <td>
@@ -108,6 +109,7 @@ const PackageList = () => {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );

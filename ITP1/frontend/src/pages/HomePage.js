@@ -71,9 +71,14 @@ const HomePage = () => {
 
   return (
     <div className="dashboard-container">
+
+
       
       <main className="dashboard-content">
+
         <section className="carousel-section">
+        <p className="carousel-heading">Welcome to Vk Aura</p>
+        <br></br>
           <p className="carousel-heading">Packages</p>
           <div className="carousel-container">
             <button
