@@ -51,16 +51,24 @@ const CreateInvoice = () => {
   };
 
   const handleQuantityChange = (index, quantity) => {
-    // Allow input with up to 2 decimal places
-    if (quantity === "" || /^[0-9]*\.?[0-9]{0,2}$/.test(quantity)) {
-      setSelectedProducts((prev) => {
-        const updatedProducts = [...prev];
-        updatedProducts[index].quantity = quantity; // Keep as string temporarily
-        updatedProducts[index].amount = updatedProducts[index].rate * quantity; // Update the amount
-        calculateTotal(updatedProducts, discount); // Recalculate prices
-        return updatedProducts;
-      });
-    }
+    setSelectedProducts((prev) => {
+      const updatedProducts = [...prev];
+      const unit = updatedProducts[index].unit;
+
+      if (quantity === "") {
+        updatedProducts[index].quantity = "";
+      } else if (unit === "kg" && /^[0-9]*\.?[0-9]{0,2}$/.test(quantity)  && parseFloat(quantity) <= 1000) {
+        updatedProducts[index].quantity = quantity;
+      } else if (unit === "pcs" && /^\d+$/.test(quantity) && parseFloat(quantity) <= 1000) {
+        updatedProducts[index].quantity = quantity;
+      } else {
+        return prev;
+      }
+
+      updatedProducts[index].amount = updatedProducts[index].rate * parseFloat(updatedProducts[index].quantity || 0);
+      calculateTotal(updatedProducts, discount);
+      return updatedProducts;
+    });
   };
   
 

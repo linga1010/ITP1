@@ -87,17 +87,40 @@ const AddPackage = () => {
     });
   };
 
-  // Handle quantity change (Allow decimals)
-  const handleQuantityChange = (index, quantity) => {
-    if (quantity === "" || /^[0-9]*\.?[0-9]{0,2}$/.test(quantity)) {
-      setSelectedProducts((prev) => {
-        const updatedProducts = [...prev];
-        updatedProducts[index].quantity = quantity;
-        calculatePrices(updatedProducts, discount);
-        return updatedProducts;
-      });
+ // Handle quantity change (Allow decimals for kg and only integers for pis)
+const handleQuantityChange = (index, quantity) => {
+  setSelectedProducts((prev) => {
+    const updatedProducts = [...prev];
+    const unit = updatedProducts[index].unit; // Get the unit for this product
+
+    // Allow empty input to clear the field
+    if (quantity === "") {
+      updatedProducts[index].quantity = quantity;
+      calculatePrices(updatedProducts, discount);
+      return updatedProducts;
     }
-  };
+
+    if (unit === "kg") {
+      
+      if (/^[0-9]*\.?[0-9]{0,2}$/.test(quantity) && parseInt(quantity) <= 1000 ) {
+        updatedProducts[index].quantity = quantity;
+      }
+    } else if (unit === "pcs") {
+     
+      if (/^\d+$/.test(quantity) && parseInt(quantity) <= 1000) {
+        updatedProducts[index].quantity = quantity;
+      }
+    } else {
+      
+      if (/^[0-9]*\.?[0-9]{0,2}$/.test(quantity) && parseInt(quantity) <= 1000) {
+        updatedProducts[index].quantity = quantity;
+      }
+    }
+     calculatePrices(updatedProducts, discount);
+    return updatedProducts;
+  });
+};
+
 
   // Remove product row
   const removeProductRow = (index) => {
@@ -108,12 +131,31 @@ const AddPackage = () => {
     });
   };
 
-  // Update discount and recalculate prices
-  const handleDiscountChange = (value) => {
-    const discountValue = parseFloat(value) || 0;
-    setDiscount(discountValue);
-    calculatePrices(selectedProducts, discountValue);
-  };
+// Update discount and recalculate prices
+const handleDiscountChange = (value) => {
+  // Allow empty input to default discount to 0
+  if (value === "") {
+    setDiscount(0);
+    calculatePrices(selectedProducts, 0);
+    return;
+  }
+
+  // Allow only numbers with up to 2 decimal places
+  const validDiscountRegex = /^\d+(\.\d{0,2})?$/;
+  if (!validDiscountRegex.test(value)) {
+    return; // Input is not valid; do nothing
+  }
+
+  const discountValue = parseFloat(value);
+  if (discountValue > 100) {
+    message.error("Discount cannot be more than 100");
+    return;
+  }
+
+  setDiscount(discountValue);
+  calculatePrices(selectedProducts, discountValue);
+};
+
 
   // Calculate total and final price dynamically
   const calculatePrices = (selected, discount) => {

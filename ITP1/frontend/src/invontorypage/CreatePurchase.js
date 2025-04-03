@@ -50,15 +50,24 @@ const CreatePurchase = () => {
   };
 
   const handleQuantityChange = (index, quantity) => {
-    if (quantity === "" || /^[0-9]*\.?[0-9]{0,2}$/.test(quantity)) {
-      setSelectedProducts((prev) => {
-        const updatedProducts = [...prev];
+    setSelectedProducts((prev) => {
+      const updatedProducts = [...prev];
+      const unit = updatedProducts[index].unit;
+
+      if (quantity === "") {
+        updatedProducts[index].quantity = "";
+      } else if (unit === "kg" && /^[0-9]*\.?[0-9]{0,2}$/.test(quantity) && parseFloat(quantity) <= 1000) {
         updatedProducts[index].quantity = quantity;
-        updatedProducts[index].amount = updatedProducts[index].rate * quantity;
-        calculateTotal(updatedProducts, discount);
-        return updatedProducts;
-      });
-    }
+      } else if (unit === "pcs" && /^\d+$/.test(quantity) && parseFloat(quantity) <= 1000) {
+        updatedProducts[index].quantity = quantity;
+      } else {
+        return prev;
+      }
+
+      updatedProducts[index].amount = updatedProducts[index].rate * parseFloat(updatedProducts[index].quantity || 0);
+      calculateTotal(updatedProducts, discount);
+      return updatedProducts;
+    });
   };
 
   const handleDiscountChange = (value) => {

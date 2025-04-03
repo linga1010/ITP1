@@ -32,7 +32,7 @@ const PackageList = () => {
     if (window.confirm("Are you sure you want to delete this package?")) {
       try {
         await axios.delete(`http://localhost:5000/api/packages/${id}`);
-        fetchPackages();
+        setPackages((prevPackages) => prevPackages.filter((pkg) => pkg._id !== id));
       } catch (error) {
         console.error("Error deleting package:", error);
       }
