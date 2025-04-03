@@ -144,7 +144,7 @@ const AddPackage = () => {
           <Button
   type="dashed"
   onClick={addProductRow}
-  style={{ marginBottom: 20 }}
+  style={{ marginBottom: 20 , backgroundColor: "#ffcc00", color: "black"}}
 >
   + Add Product
 </Button>
@@ -251,9 +251,9 @@ const AddPackage = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit">
-              Add Package
-            </Button>
+          <Button style={{ backgroundColor: "#ffcc00", color: "black" }} type="primary" htmlType="submit">
+           Add Package
+          </Button>
           </Form.Item>
         </Form>
       </div>

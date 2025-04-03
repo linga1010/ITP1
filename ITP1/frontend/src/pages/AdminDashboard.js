@@ -5,16 +5,18 @@ const AdminDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <main className="main-content">
+     <>
+    <div style={{ marginTop: '40px' }}></div>
+    
+    <main className="main-content" >
+        
       <section className="dashboard-info">
         <Navbar onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
         
-        {/* Dashboard welcome section */}
-        <div className="dashboard-welcome">
+      
+        <div className="dashboard-welcome" >
           <h1>Welcome to the Admin Dashboard</h1>
-          {/* Add dynamic content here */}
-        </div>
-
+          </div>
         {/* Dashboard main content */}
         <p>Manage your sections here...</p>
         
@@ -28,6 +30,7 @@ const AdminDashboard = () => {
         </div>
       )}
     </main>
+    </>
   );
 }
 

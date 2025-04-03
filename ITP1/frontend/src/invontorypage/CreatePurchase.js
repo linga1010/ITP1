@@ -122,7 +122,7 @@ const CreatePurchase = () => {
           </Form.Item>
 
           
-          <Button type="dashed" onClick={addProductRow}>
+          <Button style={{ backgroundColor: "#ffcc00", color: "black" }} type="dashed" onClick={addProductRow}>
                     + Add Product
                   </Button>
           
@@ -167,7 +167,7 @@ const CreatePurchase = () => {
             <Input type="number" min="0" max="100" value={discount} onChange={(e) => handleDiscountChange(Number(e.target.value))} />
           </Form.Item>
 
-          <Button type="primary" htmlType="submit">
+          <Button   style={{ backgroundColor: "#ffcc00", color: "black" }} type="primary" htmlType="submit">
             Create Purchase
           </Button>
         </Form>

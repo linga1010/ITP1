@@ -7,16 +7,16 @@ const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
   const [photo, setPhoto] = useState(null);
   const [photoError, setPhotoError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const fileInputRef = useRef(null); // Reference to file input
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (editFeedback) {
       setRating(editFeedback.rating);
       setComment(editFeedback.comment);
-      setPhoto(null); // Reset photo when editing
+      setPhoto(null);
       setPhotoError("");
       if (fileInputRef.current) {
-        fileInputRef.current.value = ""; // Clear file input field
+        fileInputRef.current.value = "";
       }
     }
   }, [editFeedback]);
@@ -25,13 +25,12 @@ const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
     const file = e.target.files[0];
 
     if (file) {
-      const maxSize = 2 * 1024 * 1024; // 2MB
+      const maxSize = 2 * 1024 * 1024;
       if (file.size > maxSize) {
         setPhotoError("File size exceeds 2MB. Please upload a smaller file.");
         setPhoto(null);
         return;
       }
-
       setPhotoError("");
       setPhoto(file);
     }
@@ -71,7 +70,7 @@ const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
     setEditing(null);
 
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""; // Reset file input field
+      fileInputRef.current.value = "";
     }
 
     setTimeout(() => setSuccessMessage(""), 3000);
@@ -104,24 +103,24 @@ const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
         required
       ></textarea>
 
-      <div className="star-rating">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <span
-            key={star}
-            onClick={() => setRating(star)}
-            style={{
-              color: rating >= star ? "gold" : "gray",
-              cursor: "pointer",
-              fontSize: "30px",
-            }}
-          >
-            &#9733;
-          </span>
-        ))}
-      </div>
-
-      <div className="emoji-display">
-        {rating > 0 && <span style={{ fontSize: "50px" }}>{getEmoji(rating)}</span>}
+      {/* Star Rating and Emoji on Same Line */}
+      <div className="rating-container">
+        <div className="star-rating">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              onClick={() => setRating(star)}
+              style={{
+                color: rating >= star ? "gold" : "gray",
+                cursor: "pointer",
+                fontSize: "30px",
+              }}
+            >
+              &#9733;
+            </span>
+          ))}
+        </div>
+        {rating > 0 && <span className="emoji">{getEmoji(rating)}</span>}
       </div>
 
       <div>
@@ -131,7 +130,7 @@ const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
           id="photo"
           name="photo"
           accept="image/*"
-          ref={fileInputRef} // Assign ref to file input
+          ref={fileInputRef}
           onChange={handleFileChange}
         />
         {photoError && <p style={{ color: "red", fontSize: "12px" }}>{photoError}</p>}

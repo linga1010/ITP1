@@ -1,125 +1,220 @@
-/* Home Container */
-.home-container {
-  text-align: center;
-  padding: 50px 20px;
-  background-color: #f4f4f4;
+/* Overall Container */
+.dashboard-container {
+  width: 100%;
   min-height: 100vh;
-  width: 100vw;
+  background-color: rgba(255, 255, 255, 0.01);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding-top: 80px; /* Prevents content from being hidden behind navbar */
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed; /* Keeps background image fixed */
-  animation: changeBackground 20s infinite alternate ease-in-out;
 }
 
-/* Home Title */
-.home-title {
-  font-size: 2.5rem;
-  color: #222;
-  margin-bottom: 25px;
-  font-weight: bold;
+/* Header & Navbar */
+.dashboard-header {
+  background-color: #fff;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
-/* Welcome Message */
-.welcome-message {
-  font-size: 1.2rem;
-  color: #000000;
-  margin-bottom: 30px;
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
-/* Home Buttons */
-.home-buttons {
+/* Centered Navbar Links */
+.nav-center {
   display: flex;
   justify-content: center;
-  gap: 15px;
-  flex-wrap: wrap;
+  flex-grow: 1;
 }
 
-/* General Button Styling */
-.home-btn {
-  padding: 12px 24px;
-  font-size: 17px;
-  border: none;
-  border-radius: 8px;
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
+}
+
+.nav-links li a {
+  text-decoration: none;
+  color: #007bff;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.nav-links li a:hover {
+  color: #0056b3;
+}
+
+/* Right section (Profile and Logout) */
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.profile-wrapper {
+  margin-right: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease-in-out, transform 0.2s;
-  font-weight: bold;
 }
 
-.home-btn:hover {
-  transform: scale(1.05);
+.profile-photo {
+  width: 70px;
+  height: 70px;
+  border-radius: 100%;
+  object-fit: cover;
+  border: 2px solid #007bff;
 }
 
-/* Profile Button */
-.profile-btn {
+.nav-btn {
   background-color: #007bff;
-  color: white;
-  
+  border: none;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
 }
 
-.profile-btn:hover {
+.nav-btn:hover {
   background-color: #0056b3;
 }
 
-/* Logout Button */
 .logout-btn {
   background-color: #dc3545;
-  color: white;
-  position: fixed;
-  z-index: 1200;
 }
 
 .logout-btn:hover {
-  background-color: #b22234;
+  background-color: #c82333;
 }
 
-/* User Navigation Bar */
-.user-navbar {
-  width: 100%;
-  background-color: rgba(221, 221, 221, 0.01); /* Slight transparency */
-  backdrop-filter: blur(10px); /* Blur effect */
-  padding: 15px 0;
-  display: flex;
-  justify-content: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1000;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+/* Welcome Text */
+.welcome-text {
+  text-align: center;
+  margin-top: 120px;
+  max-height: 100px;
 }
 
-
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 20px;
-  padding: 0;
+.welcome-text h1 {
   margin: 0;
-  
+  font-size: 2rem;
+  color: #333;
 }
 
-.nav-links li {
-  display: inline;
-  background-color: #007bff;
-  color: aliceblue;
+.welcome-text p {
+  margin: 0.5rem 0;
+  font-size: 1.2rem;
+  color: #555;
 }
 
-
-.nav-links a {
-  color: white;
-  text-decoration: none;
-  font-size: 18px;
-  transition: color 0.3s ease-in-out, border-bottom 0.3s;
-  padding: 5px 10px;
+/* Main Content */
+.dashboard-content {
+  flex: 1;
+  padding: 2rem;
 }
 
-.nav-links a:hover {
-  color: #61dafb;
-  border-bottom: 2px solid #61dafb;
+/* Carousel Section */
+.carousel-section {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.carousel-heading {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.carousel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Arrow Button Styling */
+.arrow-button {
+  background-color: #fff;
+  border: 2px solid #ccc;
+  border-radius: 50%;
+  color: #333;
+  font-size: 2rem;
+  cursor: pointer;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.arrow-button:hover {
+  background-color: #e0e0e0;
+}
+
+/* Package Carousel */
+.package-section {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 20px;
+  overflow: hidden;
+  width: 70%;
+  justify-content: center;
+}
+
+.package-card {
+  width: 200px;
+  text-align: center;
+  cursor: pointer;
+  background: #fff;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.package-card:hover {
+  transform: scale(1.05);
+}
+
+.package-image {
+  width: 100%;
+  border-radius: 10px;
+}
+
+/* Priest Carousel */
+.priest-section {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 20px;
+  overflow: hidden;
+  width: 70%;
+  justify-content: center;
+}
+
+.priest-card {
+  width: 200px;
+  text-align: center;
+  cursor: pointer;
+  background: #fff;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.priest-card:hover {
+  transform: scale(1.05);
+}
+
+.priest-image {
+  width: 100%;
+  border-radius: 10px;
 }
 
 /* Background Image Fixed */
@@ -146,27 +241,178 @@ body {
   75% {
     background-image: url('temp4.jpg');
   }
-  
+
   100% {
     background-image: url('Temple.jpg');
   }
 }
 
+/* Footer */
+/* Footer */
+.footer {
+  background-color: rgba(44, 39, 39, 0.5) !important;
+  color: white;
+  width: 100vw; /* Use viewport width to ensure full width */
+  text-align: center;
+  padding: 20px 0; /* Adjust padding for better spacing */
+  position: relative;
+  left: 0; /* Ensure it starts from the very left */
+  right: 0; /* Ensure it extends to the very right */
+  margin-top: 40px;
+}
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .home-buttons {
-    flex-direction: column;
-    gap: 10px;
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Ensure the social media section is centered within the full width */
+.social-media {
+  margin-top: 20px;
+}
+
+.social-media a {
+  color: white;
+  font-size: 24px;
+  margin: 0 10px;
+  text-decoration: none;
+}
+
+.social-media a:hover {
+  color: #f1f1f1;
+}
+
+.footer-links {
+  list-style-type: none;
+  padding: 0;
+  margin: 10px 0 0;
+}
+
+.footer-links li {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.footer-links a {
+  color: white;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+/* Small devices (phones, up to 600px) */
+@media (max-width: 600px) {
+  .dashboard-container {
+      padding: 10px;
+  }
+
+  .dashboard-header {
+      padding: 0.8rem;
+  }
+
+  .navbar {
+      flex-direction: column;
+      align-items: center;
   }
 
   .nav-links {
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
+      flex-direction: column;
+      gap: 0.5rem;
   }
 
-  .nav-links a {
-    font-size: 16px;
+  .profile-photo {
+      width: 40px;
+      height: 40px;
+  }
+
+  .welcome-text h1 {
+      font-size: 1.5rem;
+  }
+
+  .package-section,
+  .priest-section {
+      width: 100%;
+      overflow-x: scroll;
+      justify-content: flex-start;
+  }
+
+  .package-card,
+  .priest-card {
+      min-width: 180px;
+  }
+
+  .carousel-container {
+      flex-direction: column;
+  }
+
+  .arrow-button {
+      font-size: 1.5rem;
+      width: 40px;
+      height: 40px;
+  }
+
+  .footer {
+      font-size: 14px;
+      padding: 15px;
+  }
+
+  .social-media a {
+      font-size: 20px;
+  }
+}
+
+/* Medium devices (tablets, 601px to 900px) */
+@media (max-width: 900px) {
+  .dashboard-header {
+      padding: 1rem;
+  }
+
+  .nav-links {
+      gap: 0.8rem;
+  }
+
+  .nav-btn {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+  }
+
+  .package-section,
+  .priest-section {
+      width: 90%;
+      flex-wrap: wrap;
+      justify-content: center;
+  }
+
+  .package-card,
+  .priest-card {
+      width: 180px;
+  }
+
+  .arrow-button {
+      font-size: 1.8rem;
+      width: 45px;
+      height: 45px;
+  }
+}
+
+/* Large devices (laptops, 901px to 1200px) */
+@media (max-width: 1200px) {
+  .dashboard-container {
+      padding: 20px;
+  }
+
+  .nav-links li a {
+      font-size: 1.1rem;
+  }
+
+  .package-section,
+  .priest-section {
+      width: 75%;
+  }
+
+  .package-card,
+  .priest-card {
+      width: 200px;
   }
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import axios from 'axios';
-import { useAuth } from '../hooks/useAuth'; // Importing the useAuth hook
+import { useAuth } from '../hooks/useAuth';
 
 const UserBookPriest = () => {
   const [event, setEvent] = useState('');
@@ -11,11 +12,11 @@ const UserBookPriest = () => {
   const [error, setError] = useState('');
   const [availabilityChecked, setAvailabilityChecked] = useState(false);
 
-  const { user, loading: authLoading } = useAuth(); // Get current user
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate(); // Initialize navigate
 
   const API_BASE_URL = 'http://localhost:5000';
 
-  // Calculate minimum and maximum selectable dates
   const getMinDate = () => {
     const today = new Date();
     today.setDate(today.getDate() + 7);
@@ -70,12 +71,11 @@ const UserBookPriest = () => {
 
     setLoading(true);
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/bookings`, {
+      await axios.post(`${API_BASE_URL}/api/bookings`, {
         priestId: selectedPriest,
         event,
         date,
       });
-      console.log('Booking response:', response);
       alert('Priest booked successfully!');
       window.location.reload();
     } catch (error) {
@@ -96,7 +96,14 @@ const UserBookPriest = () => {
   if (!user) return <p>Please log in to book a priest.</p>;
 
   return (
-    <div className="user-book-priest-container">
+    <div
+      className="user-book-priest-container"
+      style={{
+        backgroundColor: "rgba(255, 250, 250, 0.8)",
+        padding: "20px",
+        borderRadius: "10px",
+      }}
+    >
       <h2>Book a Priest</h2>
       <form onSubmit={handleSubmit}>
         <div>
@@ -174,6 +181,23 @@ const UserBookPriest = () => {
         )}
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      {/* Back Button with Corrected Navigation */}
+      <button
+        className="back-button"
+        onClick={() => navigate('/user-home')} // Corrected navigate function
+        style={{
+          padding: '10px',
+          backgroundColor: '#007bff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '4px',
+          cursor: 'pointer',
+          marginTop: '20px', // Adjusted spacing
+        }}
+      >
+        ⬅ Back to Home
+      </button>
     </div>
   );
 };
