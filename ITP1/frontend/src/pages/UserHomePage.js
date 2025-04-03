@@ -76,6 +76,7 @@ const UserDashboard = () => {
     localStorage.removeItem("user");
     navigate("/login");
   };
+  const defaultProfilePicUrl = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
   const handleProfileClick = () => {
     navigate("/view-profile");
@@ -106,15 +107,12 @@ const UserDashboard = () => {
                 <Link to="/user/book-priest">Book Priest</Link>
               </li>
               <div className="profile-wrapper" onClick={handleProfileClick}>
-                <img
-                  src={
-                    user?.profilePic
-                      ? user.profilePic
-                      : "https://via.placeholder.com/50"
-                  }
-                  alt="Profile"
-                  className="profile-photo"
-                />
+              <img
+  src={user?.profilePic ? user.profilePic : defaultProfilePicUrl}
+  alt="Profile"
+  className="profile-photo"
+  onClick={handleProfileClick} // Navigation works regardless of the image
+/>
               </div>
             </ul>
           </div>
