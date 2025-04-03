@@ -43,7 +43,7 @@ const UserDashboard = () => {
       if (packages.length) {
         setPackageIndex((prevIndex) => (prevIndex + 1) % packages.length);
       }
-    }, 600);
+    }, 1500);
     return () => clearInterval(packageInterval);
   }, [packages]);
 
@@ -52,7 +52,7 @@ const UserDashboard = () => {
       if (priests.length) {
         setPriestIndex((prevIndex) => (prevIndex + 1) % priests.length);
       }
-    }, 600);
+    }, 1500);
     return () => clearInterval(priestInterval);
   }, [priests]);
 
@@ -87,25 +87,30 @@ const UserDashboard = () => {
         <nav className="navbar">
           <div className="nav-center">
             <ul className="nav-links">
-              <li>
+              <li className="nav-item123">
                 <Link to="/view-package">Packages</Link>
               </li>
-              <li>
+              <li className="nav-item123" >
                 <Link to="/OrderHistoryDetails">Order History</Link>
               </li>
-              <li>
+              <li className="nav-item123">
                 <Link to="/Feedback">Feedbacks</Link>
               </li>
-              <li>
+              <li className="nav-item123">
                 <Link to="/about-us">About Us</Link>
               </li>
-              <li>
+              <li className="nav-item123">
                 <Link to="/user/booking-list">Booking Details</Link>
               </li>
-              <li>
+              <li className="nav-item123">
                 <Link to="/user/book-priest">Book Priest</Link>
               </li>
-              <div className="profile-wrapper" onClick={handleProfileClick}>
+             
+            </ul>
+          </div>
+          <div className="nav-right">
+
+          <div className="profile-wrapper" onClick={handleProfileClick}>
                 <img
                   src={
                     user?.profilePic
@@ -116,9 +121,7 @@ const UserDashboard = () => {
                   className="profile-photo"
                 />
               </div>
-            </ul>
-          </div>
-          <div className="nav-right">
+
             <button className="nav-btn logout-btn" onClick={handleLogout}>
               Logout
             </button>
@@ -134,7 +137,7 @@ const UserDashboard = () => {
 
       <main className="dashboard-content">
         <section className="carousel-section">
-          <h2 className="carousel-heading">Packages</h2>
+          <p className="carousel-heading">Packages</p>
           <div className="carousel-container">
             <button
               className="arrow-button"
@@ -183,7 +186,7 @@ const UserDashboard = () => {
         </section>
 
         <section className="carousel-section">
-          <h2 className="carousel-heading">Priests</h2>
+          <p className="carousel-heading">Priests</p>
           <div className="carousel-container">
             <button
               className="arrow-button"

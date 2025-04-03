@@ -68,6 +68,8 @@ const ViewPayments = () => {
   return (
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
+      
+      <div className="main-content">
       <div className="admin-payments-container">
         <h2>Payment Details</h2>
         {loading ? (
@@ -83,6 +85,7 @@ const ViewPayments = () => {
         )}
         {error && <p className="error">{error}</p>}
       </div>
+    </div>
     </div>
   );
 };

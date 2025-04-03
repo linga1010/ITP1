@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { getFeedbacks, addFeedback, updateFeedback, deleteFeedback } from "../api";
 import FeedbackForm from "../components/FeedbackForm";
 import FeedbackItem from "../components/FeedbackItem";
+import { useNavigate } from "react-router-dom";
 
 const FeedbackPage = () => {
+  const navigate = useNavigate();
   const [feedbacks, setFeedbacks] = useState([]);
   const [editing, setEditing] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -131,6 +133,7 @@ const FeedbackPage = () => {
           </>
         )}
       </div>
+      <button className="back-button" onClick={() => navigate("/user-home")}>⬅ Back to Home</button>
     </div>
   );
 };

@@ -43,7 +43,10 @@ const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
       alert("Your comment must be at least 25 characters long.");
       return;
     }
-
+    if (comment.length > 80) {
+      alert("Your comment can't be more than 80 characters long.");
+      return;
+    }
     if (rating === 0) {
       alert("Please provide a rating.");
       return;
@@ -103,7 +106,7 @@ const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
         required
       ></textarea>
 
-      {/* Star Rating and Emoji on Same Line */}
+      {/* Star Rating and Emoji Display on the Same Line */}
       <div className="rating-container">
         <div className="star-rating">
           {[1, 2, 3, 4, 5].map((star) => (
