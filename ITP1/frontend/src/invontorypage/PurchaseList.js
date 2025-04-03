@@ -85,10 +85,27 @@ const PurchaseList = ({ onPurchasesUpdate }) => {
         </div>
         <div className="filter-container">
           <div className="date-container">
-            <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-            <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+          <input
+  type="date"
+  value={startDate}
+  onChange={(e) => {
+    setStartDate(e.target.value);
+    setEndDate(""); // Reset end date to avoid conflicts
+  }}
+/>
+
+<input
+  type="date"
+  value={endDate}
+  onChange={(e) => setEndDate(e.target.value)}
+  min={startDate} // Prevents selecting an invalid date
+/>
+
             <button onClick={handleDateFilter}>Filter</button>
           </div>
+        </div>
+        <div className="total-sales">
+          <h3>Total Purchases: ₹{calculateTotalPurchases().toFixed(2)}</h3>
         </div>
         <table className="table">
           <thead>
@@ -137,9 +154,6 @@ const PurchaseList = ({ onPurchasesUpdate }) => {
             )}
           </tbody>
         </table>
-        <div className="total-sales">
-          <h3>Total Purchases: ₹{calculateTotalPurchases().toFixed(2)}</h3>
-        </div>
       </div>
     </div>
   );

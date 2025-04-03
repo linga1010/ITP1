@@ -43,7 +43,7 @@ const ProductList = () => {
     const productToEdit = products.find(product => product.sku === sku);
     navigate(`/edit-Product/${sku}`, { state: { product: productToEdit } });
   };
-  
+
   const handleSearch = (e) => {
     const value = e.target.value.toLowerCase();
     setSearch(value);
@@ -53,58 +53,68 @@ const ProductList = () => {
     setFilteredPackages(filtered);
   };
 
-  return (
+  // Calculate the total hand stock value (costPrice * quantity)
+  const totalHandStockValue = filteredPackages.reduce((acc, product) => {
+    return acc + (Number(product.costPrice) * Number(product.quantity));
+  }, 0);
 
+  return (
     <div className="admin-dashboard-container">
       <Adminnaviagtion /> {/* Add the Admin navigation component here */}
-
       <div className="main-content">
-    <div>
-      <h2>Product List</h2>
-
-      <input
-        placeholder="Search by package name or SKU"
-        value={search}
-        onChange={handleSearch}
-        style={{ width: "300px", marginBottom: "20px" }}
-      />
-      
-      <table>
-        <thead>
-          <tr>
-            <th>Image</th>
-            <th>Name</th>
-            <th>SKU</th>
-            <th>Selling Price</th>
-            <th>Cost Price</th>
-            <th>Quantity</th>
-            <th>Unit</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredPackages.map((product) => (
-            <tr key={product.sku}>
-              <td>
-                <img src={`http://localhost:5000/${product.image}`} alt="Product" />
-              </td>
-              <td>{product.name}</td>
-              <td>{product.sku}</td>
-              <td>{product.sellingPrice}</td>
-              <td>{product.costPrice}</td>
-              <td>{product.quantity}</td>
-              <td>{product.unit}</td>
-              <td>
-                <button onClick={() => handleEdit(product.sku)} className="edit" 
-                style={{ backgroundColor: "#ffcc00", color: "black" }}>Edit</button>
-               {/* <button onClick={() => handleDelete(product.sku)} className="Delete">Delete</button> */}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-    </div>
+        <div>
+          <h2>Product List</h2>
+          
+          <input
+            placeholder="Search by package name or SKU"
+            value={search}
+            onChange={handleSearch}
+            style={{ width: "300px", marginBottom: "20px" }}
+          />
+          
+          {/* Display total hand stock value */}
+          <h3>
+            Total Hand Stock Value: ₹{totalHandStockValue.toFixed(2)}
+          </h3>
+          
+          <table>
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>SKU</th>
+                <th>Selling Price</th>
+                <th>Cost Price</th>
+                <th>Quantity</th>
+                <th>Unit</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredPackages.map((product) => (
+                <tr key={product.sku}>
+                  <td>
+                    <img src={`http://localhost:5000/${product.image}`} alt="Product" />
+                  </td>
+                  <td>{product.name}</td>
+                  <td>{product.sku}</td>
+                  <td>{product.sellingPrice}</td>
+                  <td>{product.costPrice}</td>
+                  <td>{product.quantity}</td>
+                  <td>{product.unit}</td>
+                  <td>
+                    <button onClick={() => handleEdit(product.sku)} className="edit" 
+                      style={{ backgroundColor: "#ffcc00", color: "black" }}>
+                      Edit
+                    </button>
+                    {/* <button onClick={() => handleDelete(product.sku)} className="Delete">Delete</button> */}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };

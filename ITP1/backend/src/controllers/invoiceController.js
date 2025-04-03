@@ -1,8 +1,7 @@
-import Invoice from '../models/invoice.js';
+import Invoice from '../models/Invoice.js';
 import Product from '../models/Product.js';
 
-// Improved error handling with better logs
-// Add a new invoice
+// Create a new invoice
 export const addInvoice = async (req, res) => {
   try {
     const { customerName, invoiceDate, items, discount = 0 } = req.body;
@@ -14,6 +13,7 @@ export const addInvoice = async (req, res) => {
     const invoiceNumber = `INV-${Date.now()}`;
     let totalAmount = 0;
 
+    // Process each invoice item
     for (let item of items) {
       const product = await Product.findById(item.productId);
 
@@ -24,11 +24,14 @@ export const addInvoice = async (req, res) => {
         return res.status(400).json({ message: `Not enough stock for ${product.name}` });
       }
 
+      // Deduct the sold quantity from the product stock
       product.quantity -= item.quantity;
       await product.save();
 
+      // Set additional properties for the invoice item, including costPrice
       item.productName = product.name;
       item.rate = product.sellingPrice;
+      item.costPrice = product.costPrice;
       item.amount = item.quantity * product.sellingPrice;
       totalAmount += item.amount;
     }
@@ -53,24 +56,21 @@ export const addInvoice = async (req, res) => {
   }
 };
 
-
-
 // Delete an invoice and restore product inventory
 export const deleteInvoice = async (req, res) => {
   try {
     const { invoiceNumber } = req.params;
-
     const invoice = await Invoice.findOne({ invoiceNumber });
 
     if (!invoice) {
       return res.status(404).json({ message: `Invoice with number ${invoiceNumber} not found.` });
     }
 
+    // Restore the product quantity for each item
     for (const item of invoice.items) {
       const product = await Product.findById(item.productId);
-
       if (product) {
-        product.quantity += item.quantity; // Restore stock
+        product.quantity += item.quantity;
         await product.save();
       }
     }
@@ -78,7 +78,6 @@ export const deleteInvoice = async (req, res) => {
     await invoice.deleteOne();
     res.status(200).json({ message: 'Invoice deleted and inventory restored successfully.' });
   } catch (error) {
-    console.error('Error deleting invoice:', error);
     res.status(500).json({ message: 'Error deleting invoice', error: error.message });
   }
 };
@@ -88,7 +87,7 @@ export const getAllInvoices = async (req, res) => {
   try {
     const invoices = await Invoice.find().populate({
       path: 'items.productId',
-      select: 'name unit sellingPrice',
+      select: 'name unit sellingPrice quantity costPrice',
     });
 
     if (invoices.length === 0) {
@@ -97,8 +96,6 @@ export const getAllInvoices = async (req, res) => {
 
     res.status(200).json({ invoices });
   } catch (error) {
-    console.error('Error fetching invoices:', error);
     res.status(500).json({ message: 'Error fetching invoices', error: error.message });
   }
 };
-//C:\Destop\Linga\ITP1\ITP1\backend\src\controllers\invoiceController.js
