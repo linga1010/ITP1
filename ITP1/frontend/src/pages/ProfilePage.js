@@ -274,13 +274,21 @@ const ProfilePage = () => {
         </p>
         {isEditing.phone ? (
           <div>
-            <input
-              type="number"
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, phone: e.target.value }))
-              }
-            />
+           <input
+  type="tel"
+  value={formData.phone}
+  onChange={(e) =>
+    setFormData((prev) => ({ ...prev, phone: e.target.value }))
+  }
+  pattern="\d*"
+  inputMode="numeric"
+  onKeyDown={(e) => {
+    if (!/^\d$/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+      e.preventDefault();
+    }
+  }}
+/>
+
             {formData.phone.trim() !== '' && formData.phone !== user.phone && (
               <button onClick={() => handleUpdate('phone')}>Confirm</button>
             )}

@@ -221,12 +221,18 @@ const Signup = () => {
               />
               <input
                 className="input-field"
-                type="number"
+                type="tel"
                 name="phone"
                 placeholder="Phone Number"
                 value={formData.phone}
                 onChange={handleChange}
                 required
+                inputMode="numeric"
+                onKeyDown={(e) => {
+                  if (!/^\d$/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
               />
               <input
                 className="input-field"
