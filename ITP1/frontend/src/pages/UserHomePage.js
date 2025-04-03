@@ -203,7 +203,7 @@ const UserDashboard = () => {
                   <div
                     key={priest?._id || idx}
                     className="priest-card"
-                    onClick={() => navigate("/user-book-priest")}
+                    onClick={() => navigate("/user/book-priest")}
                   >
                     <img
                       src={priest?.photo ? `${BASE_URL}${priest.photo}` : "#"}
