@@ -207,7 +207,7 @@ const ForgotPassword = () => {
           {step === 2 && (
             <>
               <input
-                type="text"
+                type="number"
                 name="otp"
                 className="input-field"
                 placeholder="Enter OTP"

@@ -84,7 +84,7 @@ const UserDashboard = () => {
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <nav className="navbar" >
+        <nav className="navbar">
           <div className="nav-center">
             <ul className="nav-links">
               <li>
@@ -105,33 +105,20 @@ const UserDashboard = () => {
               <li>
                 <Link to="/user/book-priest">Book Priest</Link>
               </li>
-              
-                <div className="profile-wrapper" onClick={handleProfileClick}>
-                  <img
-                    src={
-                      user?.profilePic
-                        ? `${BASE_URL}${user.profilePic}`
-                        : "https://via.placeholder.com/50"
-                    }
-                    alt="Profile"
-                    className="profile-photo"
-                  />
-                </div>
-              
+              <div className="profile-wrapper" onClick={handleProfileClick}>
+                <img
+                  src={
+                    user?.profilePic
+                      ? user.profilePic
+                      : "https://via.placeholder.com/50"
+                  }
+                  alt="Profile"
+                  className="profile-photo"
+                />
+              </div>
             </ul>
           </div>
           <div className="nav-right">
-            <div className="profile-wrapper" onClick={handleProfileClick}>
-              <img
-                src={
-                  user?.profilePic
-                    ? `${BASE_URL}${user.profilePic}`
-                    : "https://via.placeholder.com/50"
-                }
-                alt="Profile"
-                className="profile-photo"
-              />
-            </div>
             <button className="nav-btn logout-btn" onClick={handleLogout}>
               Logout
             </button>
@@ -249,16 +236,32 @@ const UserDashboard = () => {
         <div className="footer-content">
           <p>&copy; 2025 VK Aura. All rights reserved.</p>
           <div className="social-media">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://facebook.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FaFacebook />
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://twitter.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FaTwitter />
             </a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://instagram.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FaInstagram />
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://linkedin.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FaLinkedin />
             </a>
           </div>
