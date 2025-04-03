@@ -148,10 +148,11 @@ const Adminnaviagtion = () => {
   return (
     <div className="admin-dashboard-container">
       <header className="navbar">
+      <div className="navbar-right">
         <button className="hamburger-icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
           <FaBars />
         </button>
-        <div className="navbar-right">
+        
           <BackButton />
           <p>Welcome back, <strong>{user?.name || 'Admin'}</strong></p>
           <button className="logout-btn" onClick={handleLogout}>

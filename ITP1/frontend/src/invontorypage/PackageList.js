@@ -99,7 +99,9 @@ const PackageList = () => {
                 <td>{pkg.discount}%</td>
                 <td>Rs. {pkg.finalPrice}</td>
                 <td>
-                  <button onClick={() => handleEdit(pkg._id)} className="edit">Edit</button>
+                  <button onClick={() => handleEdit(pkg._id)} className="edit"
+                    style={{ backgroundColor: "#ffcc00", color: "black" }}
+                    >Edit</button>
                   <button onClick={() => handleDelete(pkg._id)} className="Delete">Delete</button>
                 </td>
               </tr>

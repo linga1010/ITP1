@@ -178,7 +178,7 @@ const EditPackage = () => {
           <Input />
         </Form.Item>
 
-        <Button type="dashed" onClick={addProductRow} style={{ marginBottom: 20 }}>
+        <Button type="dashed" onClick={addProductRow} style={{ marginBottom: 20, backgroundColor: "#ffcc00", color: "black" }}>
           + Add Product
         </Button>
 
@@ -253,7 +253,7 @@ const EditPackage = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button style={{ backgroundColor: "#ffcc00", color: "black" }} type="primary" htmlType="submit">
             Update Package
           </Button>
         </Form.Item>

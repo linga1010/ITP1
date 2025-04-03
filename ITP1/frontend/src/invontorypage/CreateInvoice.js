@@ -129,7 +129,7 @@ const CreateInvoice = () => {
           <Input type="date" disabled />
         </Form.Item>
 
-        <Button type="dashed" onClick={addProductRow}>
+        <Button style={{ backgroundColor: "#ffcc00", color: "black" }} type="dashed" onClick={addProductRow}>
           + Add Product
         </Button>
 
@@ -183,7 +183,7 @@ const CreateInvoice = () => {
 
 
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button  style={{ backgroundColor: "#ffcc00", color: "black" }} type="primary" htmlType="submit">
             Create Invoice
           </Button>
         </Form.Item>

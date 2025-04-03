@@ -170,7 +170,7 @@ const EditProduct = () => {
             </select>
           </div>
 
-          <button type="submit" className="submit-button">
+          <button style={{ backgroundColor: "#ffcc00", color: "black" }} type="submit" className="submit-button">
             Update Product
           </button>
         </form>
