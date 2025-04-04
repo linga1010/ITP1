@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Input } from "antd";
+import { message } from "antd"; 
 import "./AddProduct.css";
 import "../styles/Body.css";
 import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component
@@ -27,13 +28,6 @@ const AddProduct = () => {
     }
   };
 
-  const doublevalue = (setter) => (e) => {
-    const value = e.target.value;
-    if (/^\d*\.?\d{0,2}$/.test(value) || value === "") {
-      setter(value);
-    }
-  };
-
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,7 +36,10 @@ const AddProduct = () => {
     if (parseFloat(sellingPrice) <= parseFloat(costPrice)) {
       setErrorMessage("Selling price must be greater than cost price.");
       return;
+    } else {
+      setErrorMessage(""); // Ensure error message is cleared
     }
+    
   
     const formData = new FormData();
     formData.append("name", name);
@@ -62,7 +59,7 @@ const AddProduct = () => {
       });
   
       // If the product is added successfully
-      alert("Product added successfully");
+      message.success("Product added successfully");
       navigate("/product-list");
     } catch (error) {
       // Capture specific error from the backend
@@ -72,7 +69,7 @@ const AddProduct = () => {
         setErrorMessage("An error occurred. Please try again."); // Fallback for unknown errors
       }
   
-      console.error("Error saving product:", error.response ? error.response.data : error);
+      message.error("Error saving product. Check the input or try again.");
     }
   };
 
@@ -95,6 +92,40 @@ const AddProduct = () => {
       setErrorMessage(""); // Clear error message if valid
     }
   };
+
+  const doublevalue123 = (setter) => (e) => {
+    const value = e.target.value;
+    if (/^\d*\.?\d{0,2}$/.test(value) || value === "") {
+      setter(value);
+    }
+  };
+
+  const doublevalue = (setter) => (e) => {
+    const value = e.target.value;
+  
+    if (unit === "kg") {
+      if (/^\d*\.?\d{0,2}$/.test(value) || value === "") {
+        if (parseFloat(value) <= 1000 || value === "") {
+          setter(value);
+        }
+      }
+    } else if (unit === "pcs") {
+      if (/^\d*$/.test(value) || value === "") {
+        if (parseInt(value) <= 1000 || value === "") {
+          setter(value);
+        }
+      }
+    }
+  };
+
+  const handleUnitChange = (e) => {
+    setUnit(e.target.value);
+    setQuantity(""); // Reset quantity when unit changes
+  };
+
+
+
+
   
 
   return (
@@ -151,7 +182,7 @@ const AddProduct = () => {
             <input
               type="text"
               value={sellingPrice}
-              onChange={doublevalue(setSellingPrice)}
+              onChange={doublevalue123(setSellingPrice)}
               placeholder="Selling Price"
               required
             />
@@ -162,7 +193,7 @@ const AddProduct = () => {
             <input
               type="text"
               value={costPrice}
-              onChange={doublevalue(setCostPrice)}
+              onChange={doublevalue123(setCostPrice)}
               placeholder="Cost Price"
               required
             />
@@ -180,7 +211,7 @@ const AddProduct = () => {
 
           <div className="form-group">
             <label>Unit</label>
-            <select value={unit} onChange={(e) => setUnit(e.target.value)}>
+            <select value={unit} onChange={handleUnitChange}>
               <option value="kg">kg</option>
               <option value="pcs">pcs</option>
             </select>

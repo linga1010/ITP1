@@ -87,17 +87,44 @@ const AddPackage = () => {
     });
   };
 
-  // Handle quantity change (Allow decimals)
   const handleQuantityChange = (index, quantity) => {
-    if (quantity === "" || /^[0-9]*\.?[0-9]{0,2}$/.test(quantity)) {
-      setSelectedProducts((prev) => {
-        const updatedProducts = [...prev];
-        updatedProducts[index].quantity = quantity;
-        calculatePrices(updatedProducts, discount);
-        return updatedProducts;
-      });
+    const currentProduct = selectedProducts[index];
+    const unit = currentProduct?.unit;
+  
+    // Trim spaces and validate for empty
+    if (quantity === "") {
+      updateQuantity(index, quantity);
+      return;
+    }
+  
+    // Validate based on unit
+    if (unit === "kg") {
+      // Allow decimal up to 2 digits
+      if (/^\d*\.?\d{0,2}$/.test(quantity)) {
+        if (parseFloat(quantity) <= 1000) {
+          updateQuantity(index, quantity);
+        }
+      }
+    } else if (unit === "pcs") {
+      // Only allow whole numbers
+      if (/^\d+$/.test(quantity)) {
+        if (parseInt(quantity) <= 1000) {
+          updateQuantity(index, quantity);
+        }
+      }
     }
   };
+  
+  // Helper function to set quantity and recalculate prices
+  const updateQuantity = (index, quantity) => {
+    setSelectedProducts((prev) => {
+      const updated = [...prev];
+      updated[index].quantity = quantity;
+      calculatePrices(updated, discount);
+      return updated;
+    });
+  };
+  
 
   // Remove product row
   const removeProductRow = (index) => {
