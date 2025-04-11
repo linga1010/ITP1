@@ -86,18 +86,15 @@ const AdminManageUsers = () => {
 
   const viewUserDetails = async (user) => {
     try {
-      const bookingHistory = [
-        { id: 'B123', date: '2025-03-15', amount: '$100' },
-        { id: 'B124', date: '2025-03-20', amount: '$50' },
-      ];
-      const purchaseHistory = [
-        { id: 'P987', date: '2025-03-10', item: 'Premium Plan', price: '$20' },
-        { id: 'P988', date: '2025-03-18', item: 'Gift Card', price: '$10' },
-      ];
-      setSelectedUser({ ...user, bookingHistory, purchaseHistory });
+      // Fetch all orders from the API
+      const res = await axios.get(`http://localhost:5000/api/orders`);
+      // Filter orders for the selected user using the username (order.user)
+      const orderHistory = res.data.filter(order => order.user === user.name);
+      // Set selectedUser along with filtered orderHistory
+      setSelectedUser({ ...user, orderHistory });
       setShowUserModal(true);
     } catch (err) {
-      alert('❌ Error fetching user details');
+      alert('❌ Error fetching user order details');
     }
   };
 
@@ -169,7 +166,7 @@ const AdminManageUsers = () => {
                 <td>{user.address || 'No address available'}</td>
                 <td>
                   <button className="admin-user-btn" onClick={() => viewUserDetails(user)}>View</button>
-                  <button  className="admin-user-btn cancel" onClick={() => handleDeleteUser(user._id)}>Delete</button>
+                  <button className="admin-user-btn cancel" onClick={() => handleDeleteUser(user._id)}>Delete</button>
                 </td>
               </tr>
             ))}
@@ -202,18 +199,39 @@ const AdminManageUsers = () => {
               <p><strong>Email:</strong> {selectedUser.email}</p>
               <p><strong>Phone:</strong> {selectedUser.phone}</p>
               <p><strong>Address:</strong> {selectedUser.address || 'No address available'}</p>
-              <h4>Booking History</h4>
-              <ul>
-                {selectedUser.bookingHistory.map((booking) => (
-                  <li key={booking.id}>{booking.date} - {booking.amount}</li>
-                ))}
-              </ul>
-              <h4>Purchase History</h4>
-              <ul>
-                {selectedUser.purchaseHistory.map((purchase) => (
-                  <li key={purchase.id}>{purchase.date} - {purchase.item} ({purchase.price})</li>
-                ))}
-              </ul>
+
+              {/* Order History Section */}
+              <h4>Order History</h4>
+              {selectedUser.orderHistory && selectedUser.orderHistory.length > 0 ? (
+                <ul>
+                  {selectedUser.orderHistory.map((order) => (
+  <li key={order._id}>
+    <p><strong>Order ID:</strong> {order._id}</p>
+    <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
+    <p><strong>Total:</strong> ${order.total}</p>
+    <p><strong>Status:</strong> {order.status}</p>
+    <h5>Items:</h5>
+    {order.items && order.items.length > 0 ? (
+      <ul>
+        {order.items.map((item, index) => (
+          <li key={index}>
+            <p><strong>Item Name:</strong> {item.name}</p>
+            <p><strong>Price:</strong> ${item.price}</p>
+            <p><strong>Quantity:</strong> {item.quantity}</p>
+            <p><strong>Final Price:</strong> ${item.finalPrice}</p>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p>No items found.</p>
+    )}
+  </li>
+))}
+
+                </ul>
+              ) : (
+                <p>No orders found.</p>
+              )}
             </div>
           </div>
         )}

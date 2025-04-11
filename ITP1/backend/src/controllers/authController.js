@@ -4,14 +4,44 @@ import User from "../models/user.model.js";
 import sendOTPEmail from "../utils/emailService.js";
 import TempUser from "../models/tempUser.model.js";
 import sendSurveyEmail from '../utils/sendSurveyEmail.js'; // Import the new function
+import DeletedUser from "../models/deletedUser.model.js";
+
 
 
 // Check Email
 export const checkEmail = async (req, res) => {
   try {
     const { email } = req.body;
+
+    // Validate email format using a regex
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ 
+        exists: true, 
+        message: "Invalid email format." 
+      });
+    }
+
+    // Check if email exists in the deleted users collection
+    const deletedUser = await DeletedUser.findOne({ email });
+    if (deletedUser) {
+      return res.status(400).json({ 
+        exists: true, 
+        message: "Account removed. Email can't be reused." 
+      });
+    }
+
+    // Check if email exists in the active users collection
     const user = await User.findOne({ email });
-    res.json({ exists: !!user });
+    if (user) {
+      return res.status(400).json({
+        exists: true,
+        message: "Email already registered. Please login."
+      });
+    }
+
+    // If email does not exist anywhere, you can move to sending OTP
+    res.json({ exists: false, message: "Email is available." });
   } catch (error) {
     console.error("❌ Error in checkEmail:", error);
     res.status(500).json({ message: "Server error." });
@@ -187,10 +217,17 @@ export const changePassword = async (req, res) => {
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
+    
     if (!email) {
       return res.status(400).json({ message: "Email is required." });
     }
-
+    
+    // Validate email format using a regex
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format." });
+    }
+    
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "User with this email does not exist." });
@@ -224,8 +261,18 @@ export const forgotPassword = async (req, res) => {
 export const checkForgotPasswordEmail = async (req, res) => {
   try {
     const { email } = req.body;
+    
+    if (!email) {
+      return res.status(400).json({ exists: false, message: "Email is required." });
+    }
+    
+    // Validate email format using a regex
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ exists: false, message: "Invalid email format." });
+    }
+    
     const user = await User.findOne({ email });
-
     if (!user) {
       return res.status(400).json({ exists: false, message: "Email not registered." });
     }
@@ -235,6 +282,7 @@ export const checkForgotPasswordEmail = async (req, res) => {
     res.status(500).json({ message: "Server error." });
   }
 };
+
 
 // Forgot Password - Step 2: Send OTP
 export const sendForgotPasswordOTP = async (req, res) => {
