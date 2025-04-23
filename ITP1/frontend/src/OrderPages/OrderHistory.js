@@ -49,10 +49,38 @@ const OrderHistory = () => {
     }
   };
 
-  const filteredOrders = orders.filter(order =>
-    order.status.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    new Date(order.createdAt).toLocaleDateString().includes(searchQuery)
-  );
+  const monthMap = {
+    january: 0,
+    february: 1,
+    march: 2,
+    april: 3,
+    may: 4,
+    june: 5,
+    july: 6,
+    august: 7,
+    september: 8,
+    october: 9,
+    november: 10,
+    december: 11,
+  };
+  
+  const filteredOrders = orders.filter(order => {
+    const createdAt = new Date(order.createdAt);
+    const monthIndex = createdAt.getMonth(); // 0–11
+    const monthName = createdAt.toLocaleString("default", { month: "long" }); // e.g., "April"
+    const search = searchQuery.toLowerCase();
+  
+    const matchesMonthName = monthName.toLowerCase().includes(search);
+    const matchesMonthNumber = !isNaN(search) && parseInt(search) === monthIndex + 1;
+    const matchesMappedMonth = monthMap[search] !== undefined && monthMap[search] === monthIndex;
+  
+    return (
+      order.status.toLowerCase().includes(search) ||
+      createdAt.toLocaleDateString().includes(search) ||
+      matchesMonthName || matchesMonthNumber || matchesMappedMonth
+    );
+  });
+  
 
   return (
     <div className="order-history-container">
