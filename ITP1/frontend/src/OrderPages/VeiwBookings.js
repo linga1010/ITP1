@@ -78,11 +78,42 @@ const ViewBookings = () => {
     });
   };
 
-  const filteredBookings = bookings.filter(order =>
-    order.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.status.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    new Date(order.createdAt).toLocaleDateString().includes(searchTerm)
-  );
+  const monthMap = {
+    january: 0,
+    february: 1,
+    march: 2,
+    april: 3,
+    may: 4,
+    june: 5,
+    july: 6,
+    august: 7,
+    september: 8,
+    october: 9,
+    november: 10,
+    december: 11,
+  };
+  
+  const filteredBookings = bookings.filter(order => {
+    const createdAt = new Date(order.createdAt);
+    const monthIndex = createdAt.getMonth(); // 0 (Jan) to 11 (Dec)
+    const monthName = createdAt.toLocaleString("default", { month: "long" }); // "April"
+    const search = searchTerm.toLowerCase();
+  
+    const matchesMonthName = monthName.toLowerCase().includes(search);
+    const matchesMonthNumber = !isNaN(search) && parseInt(search) === monthIndex + 1;
+    const matchesMappedMonth = monthMap[search] !== undefined && monthMap[search] === monthIndex;
+  
+    return (
+      (order.user && order.user.toLowerCase().includes(search)) ||
+      (order.userName && order.userName.toLowerCase().includes(search)) ||
+      (order.status && order.status.toLowerCase().includes(search)) ||
+      createdAt.toLocaleDateString().includes(search) ||
+      matchesMonthName || matchesMonthNumber || matchesMappedMonth
+    );
+  });
+  
+  
+  
 
   const updateOrderStatus = async (orderId, status) => {
     const token = localStorage.getItem("token");
@@ -123,7 +154,7 @@ const ViewBookings = () => {
 
           <input
             type="text"
-            placeholder="Search by User, Status, or Date     🔍︎"
+            placeholder="Search by User, Name, Status, or Date     🔍︎"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-bar"
