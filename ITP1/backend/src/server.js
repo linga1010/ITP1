@@ -23,7 +23,6 @@ import purchaseRoutes from './routers/purchaseRoutes.js';  // ✅ Added Purchase
 import paymentRoutes from './routers/PaymentRoutes.js';
 import viewPaymentRoutes from './routers/ViewPaymentRoutes.js';
 
-import purchaseRoutes from './routers/purchaseRoutes.js';
 
 
 dotenv.config(); // Load environment variables

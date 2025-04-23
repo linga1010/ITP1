@@ -147,6 +147,7 @@ const ViewBookings = () => {
                 <thead>
                   <tr>
                     <th>User</th>
+                    <th>userName</th>
                     <th>Items</th>
                     <th>Total</th>
                     <th>Status</th>
@@ -158,6 +159,7 @@ const ViewBookings = () => {
                   {filteredBookings.map((order) => (
                     <tr key={order._id}>
                       <td>{order.user}</td>
+                      <td>{order.userName}</td>
                       <td>
                         <ul>
                           {order.items.map((item, index) => (

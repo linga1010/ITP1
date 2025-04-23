@@ -18,6 +18,7 @@ const OrderPage = () => {
     const storedCart = JSON.parse(localStorage.getItem(`cart_user_${user._id}`)) || [];
     setCart(storedCart);
   }, [user]);
+  console.log(user)
 
   const getTotalPrice = () => {
     return cart
@@ -66,28 +67,35 @@ const OrderPage = () => {
       message.error("Please enter your location");
       return;
     }
-
+    if (!/^[a-zA-Z\s]{5,}$/.test(location.trim())) {
+      message.error("Location must be at least 5 characters long and contain only letters.");
+      return;
+    }
+  
     const orderData = {
-      user: user.name,
+      user: user.email,
+      userName: user.name,
       location: location,
       items: cart,
       total: parseFloat(getTotalPrice()),
     };
-
+  
     try {
       const response = await axios.post("http://localhost:5000/api/orders", orderData);
       message.success(response.data.message);
-
-      // ✅ Store cart & total price in localStorage (DON'T REMOVE CART HERE)
+  
       localStorage.setItem(`total_price_user_${user._id}`, getTotalPrice());
-
+  
       setModalVisible(false);
-      navigate("/PaymentDetails"); // Go to Payment page
+      navigate("/PaymentDetails");
     } catch (error) {
       console.error("❌ Order Error:", error.response?.data || error.message);
       message.error("❌ Order Failed! Check console for details.");
     }
   };
+  
+    
+ 
 
   return (
     <div className="container">
@@ -144,7 +152,7 @@ const OrderPage = () => {
         Order History
       </Button>
 
-      {/* Modal to ask for location */}
+      
       <Modal title="Enter Your Location" open={modalVisible} onOk={handleConfirmLocation} onCancel={() => setModalVisible(false)} okText="Pay">
         <Input placeholder="Enter your location" value={location} onChange={(e) => setLocation(e.target.value)} />
       </Modal>
