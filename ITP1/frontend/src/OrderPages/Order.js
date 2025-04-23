@@ -18,6 +18,7 @@ const OrderPage = () => {
     const storedCart = JSON.parse(localStorage.getItem(`cart_user_${user._id}`)) || [];
     setCart(storedCart);
   }, [user]);
+  console.log(user)
 
   const getTotalPrice = () => {
     return cart
@@ -72,7 +73,8 @@ const OrderPage = () => {
     }
   
     const orderData = {
-      user: user.name,
+      user: user.email,
+      userName: user.name,
       location: location,
       items: cart,
       total: parseFloat(getTotalPrice()),

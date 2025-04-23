@@ -6,7 +6,7 @@ const router = express.Router();
 //  Place an order
 router.post("/", async (req, res) => {
   try {
-    const { user, items, total } = req.body;
+    const { user, userName, items, total } = req.body;
 
     if (!user || !items || items.length === 0 || !total) {
       return res.status(400).json({ message: "Invalid order data!" });
@@ -14,6 +14,7 @@ router.post("/", async (req, res) => {
 
     const newOrder = new Order({
       user,
+      userName,
       items,
       total,
       status: "pending", // Default status

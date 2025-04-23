@@ -21,7 +21,7 @@ const OrderHistory = () => {
 
     const fetchOrders = async () => {
       try {
-        const encodedUserName = encodeURIComponent(user.name);
+        const encodedUserName = encodeURIComponent(user.email);
         const response = await axios.get(`http://localhost:5000/api/orders/${encodedUserName}`);
         setOrders(response.data);
       } catch (err) {
