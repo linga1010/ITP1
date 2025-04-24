@@ -201,10 +201,12 @@ const ViewBookings = () => {
       calculateSalesAndProfit(updatedBookings, products, packages);
 
       alert(`✅ Order marked as ${status} successfully!`);
-    } catch (err) {
+    }  catch (err) {
       console.error(`❌ Failed to update order to ${status}:`, err);
-      alert("❌ Failed to update order.");
+      console.log("💬 Backend response:", err.response?.data);
+      alert(err.response?.data?.message || "❌ Failed to update order.");
     }
+    
   };
 
   const monthMap = {
@@ -240,6 +242,7 @@ const ViewBookings = () => {
       matchesMonthName || matchesMonthNumber || matchesMappedMonth
     );
   });
+  
 
   if (loading) return <p>Loading bookings...</p>;
   if (error) return <p>{error}</p>;
