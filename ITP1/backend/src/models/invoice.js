@@ -10,15 +10,13 @@ const InvoiceSchema = new mongoose.Schema({
       productName: { type: String, required: true },
       quantity: { type: Number, required: true },
       rate: { type: Number, required: true },
+      costPrice: { type: Number, required: true },
       amount: { type: Number, required: true },
     },
   ],
   totalAmount: { type: Number, required: true },
-  discount: { type: Number, default: 0 }, // Discount percentage (e.g., 10 for 10%)
-  amountAfterDiscount: { type: Number }, // Final amount after discount is applied
+  discount: { type: Number, default: 0 },
+  amountAfterDiscount: { type: Number },
 });
 
-
 export default mongoose.model('Invoice', InvoiceSchema);
-
-//C:\Destop\Linga\ITP1\ITP1\backend\src\models\invoice.js

@@ -135,16 +135,45 @@ const EditPackage = () => {
   };
 
   const handleQuantityChange = (index, quantity) => {
-    // Allow decimal input while typing (no immediate parsing, allow the user to type normally)
-    if (quantity === "" || /^[0-9]*\.?[0-9]{0,2}$/.test(quantity)) {
-      setSelectedProducts((prev) => {
-        const updatedProducts = [...prev];
-        updatedProducts[index].quantity = quantity; // Keep as string temporarily
-        calculatePrices(updatedProducts, discount); // Recalculate prices
-        return updatedProducts;
-      });
+    const currentProduct = selectedProducts[index];
+    const unit = currentProduct?.unit;
+  
+    // Trim spaces and validate for empty
+    if (quantity === "") {
+      updateQuantity(index, quantity);
+      return;
+    }
+  
+    // Validate based on unit
+    if (unit === "kg") {
+      // Allow decimal up to 2 digits
+      if (/^\d*\.?\d{0,2}$/.test(quantity)) {
+        if (parseFloat(quantity) <= 1000) {
+          updateQuantity(index, quantity);
+        }
+      }
+    } else if (unit === "pcs") {
+      // Only allow whole numbers
+      if (/^\d+$/.test(quantity)) {
+        if (parseInt(quantity) <= 1000) {
+          updateQuantity(index, quantity);
+        }
+      }
     }
   };
+  
+  // Helper function to set quantity and recalculate prices
+  const updateQuantity = (index, quantity) => {
+    setSelectedProducts((prev) => {
+      const updated = [...prev];
+      updated[index].quantity = quantity;
+      calculatePrices(updated, discount);
+      return updated;
+    });
+  };
+
+  
+  
 
   const removeProductRow = (index) => {
     const updatedProducts = selectedProducts.filter((_, i) => i !== index);
@@ -178,7 +207,7 @@ const EditPackage = () => {
           <Input />
         </Form.Item>
 
-        <Button type="dashed" onClick={addProductRow} style={{ marginBottom: 20 }}>
+        <Button type="dashed" onClick={addProductRow} style={{ marginBottom: 20, backgroundColor: "#ffcc00", color: "black" }}>
           + Add Product
         </Button>
 
@@ -253,7 +282,7 @@ const EditPackage = () => {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button style={{ backgroundColor: "#ffcc00", color: "black" }} type="primary" htmlType="submit">
             Update Package
           </Button>
         </Form.Item>

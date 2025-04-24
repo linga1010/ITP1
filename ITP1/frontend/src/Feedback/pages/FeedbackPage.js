@@ -1,83 +1,139 @@
 import { useState, useEffect } from "react";
 import { getFeedbacks, addFeedback, updateFeedback, deleteFeedback } from "../api";
-import FeedbackItem from "../components/FeedbackItem";
 import FeedbackForm from "../components/FeedbackForm";
-import "./FeedbackPage.css"; // Import the updated CSS file
+import FeedbackItem from "../components/FeedbackItem";
+import { useNavigate } from "react-router-dom";
 
 const FeedbackPage = () => {
+  const navigate = useNavigate();
   const [feedbacks, setFeedbacks] = useState([]);
-  const [editing, setEditing] = useState(null); // To store feedback being edited
-  const [isAdmin, setIsAdmin] = useState(false); // Set this based on the user's role
+  const [editing, setEditing] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isFeedbackVisible, setIsFeedbackVisible] = useState(false);
 
   useEffect(() => {
-    document.title = "Feedback Page";
     const fetchFeedbacks = async () => {
-      try {
-        const data = await getFeedbacks();
-        setFeedbacks(data); // Set the fetched feedback data into state
-      } catch (error) {
-        console.error("Error fetching feedbacks:", error);
-      }
+      const data = await getFeedbacks();
+      setFeedbacks(data);
     };
-
-    fetchFeedbacks(); // Fetch feedback data on page load
+    fetchFeedbacks();
+    setIsAdmin(false);
   }, []);
 
-  const handleAddFeedback = async (feedback) => {
-    try {
-      const newFeedback = await addFeedback(feedback);
-      setFeedbacks((prevFeedbacks) => [...prevFeedbacks, newFeedback]);
-    } catch (error) {
-      console.error("Error adding feedback:", error);
+  const handleAddFeedback = async (formData) => {
+    const newFeedback = await addFeedback(formData);
+    if (newFeedback) {
+      setFeedbacks([...feedbacks, newFeedback]);
     }
   };
 
-  const handleEditFeedback = async (id, updatedFeedback) => {
-    try {
-      const updatedData = await updateFeedback(id, updatedFeedback);
-      setFeedbacks((prevFeedbacks) =>
-        prevFeedbacks.map((feedback) => (feedback._id === id ? updatedData : feedback))
+  const handleEditFeedback = async (id, formData) => {
+    const updatedFeedback = await updateFeedback(id, formData);
+    if (updatedFeedback) {
+      setFeedbacks(
+        feedbacks.map((feedback) =>
+          feedback._id === id ? updatedFeedback : feedback
+        )
       );
-      setEditing(null);
-    } catch (error) {
-      console.error("Error updating feedback:", error);
+    }
+    setEditing(null);
+  };
+
+  const handleDeleteFeedback = async (id) => {
+    const result = await deleteFeedback(id);
+    if (result) {
+      setFeedbacks(feedbacks.filter((feedback) => feedback._id !== id));
     }
   };
 
-  const handleDelete = async (id) => {
-    try {
-      const result = await deleteFeedback(id);
-      if (result) {
-        setFeedbacks((prevFeedbacks) => prevFeedbacks.filter((feedback) => feedback._id !== id));
-      }
-    } catch (error) {
-      console.error("Error deleting feedback:", error);
-    }
+  const toggleFeedbackVisibility = () => {
+    setIsFeedbackVisible(!isFeedbackVisible);
   };
 
   return (
-    <div className="feedback-page">
-      <h2>Give Your Feedback</h2>
-      <FeedbackForm
-        editFeedback={editing}
-        setEditing={setEditing}
-        onAdd={handleAddFeedback}
-        onEdit={handleEditFeedback}
-      />
-      <h3>Your Feedbacks</h3>
-      {feedbacks.length === 0 ? (
-        <p>No feedback available.</p>
-      ) : (
-        feedbacks.map((feedback) => (
-          <FeedbackItem
-            key={feedback._id}
-            feedback={feedback}
-            onEdit={setEditing}
-            onDelete={handleDelete}
-            isAdmin={isAdmin}
-          />
-        ))
-      )}
+    <div style={{
+      fontFamily: 'Arial, sans-serif',
+      backgroundColor: '#f4f4f4',
+      margin: 0,
+      padding: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'flex-start',
+      minHeight: '100vh',
+      textAlign: 'center',
+    }}>
+      <div style={{
+        width: '80%',
+        maxWidth: '800px',
+        backgroundColor: '#fff',
+        padding: '20px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        margin: '20px auto',
+      }}>
+        <h2 style={{
+          fontSize: '24px',
+          marginBottom: '20px',
+          color: '#333',
+        }}>Give Your Feedback</h2>
+        <FeedbackForm
+          editFeedback={editing}
+          setEditing={setEditing}
+          onAdd={handleAddFeedback}
+          onEdit={handleEditFeedback}
+        />
+        <button
+          onClick={toggleFeedbackVisibility}
+          style={{
+            padding: '10px 20px',
+            fontSize: '16px',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease',
+            marginTop: '10px',
+          }}
+        >
+          {isFeedbackVisible ? "Hide Feedbacks" : "View Feedbacks"}
+        </button>
+
+        {isFeedbackVisible && (
+          <>
+            <h3 style={{
+              fontSize: '24px',
+              marginBottom: '20px',
+              color: '#333',
+            }}>Your Feedbacks</h3>
+            {feedbacks.length === 0 ? (
+              <p>No feedback available.</p>
+            ) : (
+              feedbacks.map((feedback) => (
+                <div
+                  key={feedback._id}
+                  style={{
+                    marginBottom: '15px',
+                    padding: '15px',
+                    backgroundColor: '#f9f9f9',
+                    borderRadius: '8px',
+                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                  }}
+                >
+                  <FeedbackItem
+                    feedback={feedback}
+                    onEdit={setEditing}
+                    onDelete={handleDeleteFeedback}
+                    isAdmin={isAdmin}
+                  />
+                </div>
+              ))
+            )}
+          </>
+        )}
+      </div>
+      <button className="back-button" onClick={() => navigate("/user-home")}>⬅ Back to Home</button>
     </div>
   );
 };

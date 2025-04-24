@@ -30,7 +30,7 @@ th {
 button {
   padding: 6px 12px;
   margin-right: 10px;
-  background-color: #424dc2;
+  background-color: #ffcc00;
   color: white;
   border: none;
   cursor: pointer;
@@ -121,7 +121,9 @@ button.add:hover {
   gap: 20px;
   width: 100%;
 }
-
+.tablelist {
+  background-color:  rgba(250, 250, 250,0.1);
+}
 .create-invoice-container {
   display: flex;
   justify-content: flex-start;
@@ -143,6 +145,7 @@ button.add:hover {
   gap: 100px;
   align-items: center;
   width: 100%;
+  
 }
 
 .create-invoice-container {
@@ -158,7 +161,7 @@ button.add:hover {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 400px; /* Increase this value to make the input field wider */
+  width: 100%; /* Increase this value to make the input field wider */
 }
 
 

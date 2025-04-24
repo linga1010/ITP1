@@ -1,5 +1,5 @@
-/* Feedback Page Styles */
-.feedback-page {
+/* Overall page styles */
+body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     margin: 0;
@@ -8,24 +8,31 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start; /* Ensure top alignment */
-    min-height: 100vh;
+    min-height: 100vh; /* Ensure content fills full screen */
     text-align: center;
 }
 
-
+/* Centered content box */
+.feedback-page, .star-rating ,.pic{
+    width: 80%;
+    max-width: 800px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px auto; /* Center content */
+}
 
 /* Title styles */
-.feedback-page h2,
-.feedback-page h3 {
+h2, h3 {
     font-size: 24px;
     margin-bottom: 20px;
     color: #333;
 }
 
-/* Feedback Form Styles */
-.feedback-page textarea {
+/* Feedback form styles */
+textarea {
     width: 90%;
-    max-width: 500px;
     padding: 10px;
     font-size: 16px;
     border: 1px solid #ccc;
@@ -33,19 +40,14 @@
     margin-bottom: 15px;
     resize: none;
 }
-
-/* Star Rating */
-.feedback-page .star-rating {
-    width: 100%;
-    background-color: #ffffff;
-    border: 1px solid #e9e9e9;
+.star-rating {
+    width: 50%;
     display: inline-block;
-    font-size: 30px;
+    font-size: 24px;
     margin-bottom: 10px;
-}
+  }
 
-/* Buttons */
-.feedback-page button {
+button {
     padding: 10px 20px;
     font-size: 16px;
     background-color: #4CAF50;
@@ -57,54 +59,63 @@
     margin-top: 10px;
 }
 
-.feedback-page button:hover {
+button:hover {
     background-color: #45a049;
 }
 
-/* Feedback Items */
-.feedback-page .feedback-list {
-    width: 100%;
-    max-width: 800px;
+/* Feedback items list */
+.feedback-item {
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.feedback-page .feedback-item {
-    width: 80%;
+.feedback-item p {
+    margin: 10px 0;
+}
+
+button {
+    margin: 5px;
+}
+
+.feedback-item button {
+    background-color: #e74c3c;
+}
+
+.feedback-item button:hover {
+    background-color: #c0392b;
+}
+
+/* Aligning form and feedback items in the center of the page */
+.feedback-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Align to top */
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Additional styles for the feedback form and list */
+.feedback-list {
+    width: 100%;
+}
+
+.feedback-item {
+    width: 100%;
     max-width: 600px;
     margin: 10px auto;
     padding: 15px;
     background-color: #fafafa;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
 }
 
-/* Feedback Item Text */
-.feedback-page .feedback-item p {
-    margin: 10px 0;
-}
-
-/* Delete Button */
-.feedback-page .feedback-item > button {
-    background-color: #e74c3c;
-}
-
-.feedback-page .feedback-item > button:hover {
-    background-color: #c0392b;
-}
-
-/* Container Layout */
-.feedback-page .feedback-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-/* Feedback Form Container */
-.feedback-page .feedback-form-container {
+/* Feedback form layout */
+.feedback-form-container {
     width: 100%;
     max-width: 600px;
     margin: 20px auto;

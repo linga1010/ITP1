@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
-import ProfilePage from './pages/ProfilePage';
+import ProfilePage from './pages/EditProfilePage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminManageUsers from './pages/AdminManageUsers';
 import UserHomePage from './pages/UserHomePage';
@@ -39,7 +39,7 @@ import AdminBookingList from './Bookkingpages/AdminBookingList';
 import UserBookPriest from './Bookkingpages/UserBookPriest';
 import UserBookingList from './Bookkingpages/UserBookingList';
 
-
+import TermsAndConditions from './OrderPages/Term&condition'
 
 
 
@@ -48,7 +48,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<HomePage/>} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -87,7 +87,8 @@ function App() {
         <Route path="/admin/booking-list" element={<AdminBookingList />} />
         <Route path="/user/book-priest" element={<UserBookPriest />} />
         <Route path="/user/booking-list" element={<UserBookingList />} />
-
+        
+      <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 
       </Routes>
     </Router>

@@ -30,6 +30,7 @@ body, html {
   align-items: center;
   width: 100%;
   justify-content: space-between; /* Space between buttons and message */
+  display: 'flex', 
 }
 
 /* Back and Logout button styling */
@@ -54,6 +55,8 @@ body, html {
 .back-btn:hover {
   background-color: #45a049; /* Darker green on hover */
 }
+
+
 
 /* Welcome message - Center aligned */
 .navbar-right p {

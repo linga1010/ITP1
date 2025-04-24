@@ -1,189 +1,207 @@
-h2 {
-  text-align: center;
-  font-size: 2rem;
-  margin-bottom: 20px;
+/* Modal backdrop & centering */
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #fff;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 20px;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.close {
+  position: absolute;
+  top: 12px; right: 16px;
+  font-size: 24px;
+  cursor: pointer;
 }
 
-h3 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-}
-
-table {
+/* Standard tables */
+.standard-table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
+  margin-bottom: 1.5rem;
 }
-
-table, th, td {
+.standard-table th,
+.standard-table td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
 }
-
-th {
-  background-color: #f4f4f4;
-  font-weight: bold;
+.standard-table th {
+  background: #f0f0f0;
 }
 
-td {
-  font-size: 1rem;
+/* Buttons */
+.admin-user-btn {
+  margin: 0 4px;
+  padding: 6px 12px;
+  border: none; border-radius: 4px;
+  background: #007bff; color: #fff;
+  cursor: pointer; transition: background .2s;
 }
-
-button {
-  padding: 5px 10px;
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  border-radius: 5px;
+.admin-user-btn.cancel {
+  background: #dc3545;
 }
-
-button:hover {
-  background-color: #ff3333;
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.4);
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 300px;
-  text-align: center;
-}
-
-.modal-header {
-  font-size: 1.2rem;
-  margin-bottom: 20px;
-}
-
-.modal-footer button {
-  margin: 5px;
-  padding: 8px 15px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-.modal-footer button.confirm {
-  background-color: #ff4d4d;
-  color: white;
-}
-
-.modal-footer button.cancel {
-  background-color: #4CAF50;
-  color: white;
-}
-
-.modal-footer button:hover {
+.admin-user-btn:hover {
   opacity: 0.9;
 }
-
 .go-back-btn {
-  padding: 10px 15px;
-  margin: 8px;
-  font-size: 14px;
-  font-weight: bold;
-  color: #1e1e2f;
-  background-color: #ffcc00; 
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: 0.3s ease-in-out;
+  margin-top: 1rem;
+  padding: 10px 16px;
+  background: #28a745;
+  color: #fff;
+  border: none; border-radius: 4px;
+  cursor: pointer; transition: background .2s;
+}
+.go-back-btn:hover { background: #218838; }
+
+/* User info inside modal */
+.user-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.user-profile-pic-large {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  margin-right: 16px;
+}
+.user-fields p {
+  margin: 4px 0;
 }
 
-.go-back-btn:hover {
-  background-color: #45a049;
+/* Order history */
+.order-history {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
-
-.address-details {
-  font-size: 1rem;
-  background-color: #f4f4f4;
-  padding: 10px;
-  border-radius: 5px;
-  margin-top: 15px;
+.order-card {
+  background: #fafafa;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
-
-table th, table td {
-  padding: 10px;
-  text-align: left;
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
+.order-id { font-weight: 600; }
+.order-date { color: #666; font-size: 0.9rem; }
 
-table {
+.items-table {
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 12px;
+}
+.items-table th,
+.items-table td {
+  border: 1px solid #ddd;
+  padding: 6px 10px;
+  text-align: center;
+}
+.items-table th {
+  background: #f2f2f2;
+  font-weight: 500;
 }
 
-table tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+.order-footer {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 }
+.order-status { font-style: italic; }
+.order-final-total {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #222;
+}
 
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  width: 400px;
+/* No orders message */
+.no-orders {
+  padding: 12px;
   text-align: center;
-  position: relative;
+  color: #777;
+}
+ td {
+  font-weight: bold;
 }
 
-.close {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 20px;
-  cursor: pointer;
+.status-pending {
+  color: #f4a261; /* Soft orange */
+  font-weight: 600;
 }
 
-.user-profile-pic-large {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-}
-.admin-user-btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s ease;
+.status-shipped {
+  color: #4a90e2; /* Medium calm blue */
+  font-weight: 600;
 }
 
-.admin-user-btn:hover {
-  background-color: #0056b3;
+.status-delivered {
+  color: #2a9d8f; /* Gentle teal green */
+  font-weight: 600;
 }
 
-.admin-user-btn.cancel {
-  background-color: #dc3545;
+.status-removed {
+  color: #e76f51; /* Muted coral red */
+  font-weight: bold;
 }
 
-.admin-user-btn.cancel:hover {
-  background-color: #c82333;
+.status-canceled {
+  color: #b00020; /* Softer deep red, less intense than pure red */
+  font-weight: 600;
+}
+
+.status-success {
+  color: #70e000; /* Soft lime green */
+  font-weight: 600;
+}
+/* Scope to the admin manage users page */
+
+
+/* Summary counts */
+.admin-dashboard-container .main-content .summary {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+.admin-dashboard-container .main-content .summary p {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0;
+}
+
+/* Search box wrapper */
+.admin-dashboard-container .main-content .search-box {
+  margin-bottom: 1.5rem;
+}
+
+/* Search input */
+.admin-dashboard-container .main-content .search-input {
+  width: 100%;
+  max-width: 360px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 0.375rem; /* 6px */
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+.admin-dashboard-container .main-content .search-input:focus {
+  outline: none;
+  border-color: #007bff; /* or your primary accent */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
 }

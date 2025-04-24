@@ -192,7 +192,7 @@ const Signup = () => {
             <div className="step-container">
               <input
                 className="input-field"
-                type="text"
+                type="number"
                 name="otp"
                 placeholder="Enter OTP"
                 value={formData.otp}
@@ -221,12 +221,18 @@ const Signup = () => {
               />
               <input
                 className="input-field"
-                type="number"
+                type="tel"
                 name="phone"
                 placeholder="Phone Number"
                 value={formData.phone}
                 onChange={handleChange}
                 required
+                inputMode="numeric"
+                onKeyDown={(e) => {
+                  if (!/^\d$/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
               />
               <input
                 className="input-field"

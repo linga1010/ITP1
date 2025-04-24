@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';  // Import useNavigate
 
 const UserBookingList = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();  // Initialize useNavigate
 
   const fetchBookings = async () => {
     if (!user) {
@@ -15,11 +17,7 @@ const UserBookingList = () => {
     }
     setLoading(true);
     try {
-      // Ensure your backend route is set to serve only the user’s bookings
-      const res = await axios.get('http://localhost:5000/api/bookings/user', {
-        // Optionally, send auth token if needed:
-        // headers: { Authorization: `Bearer ${user.token}` },
-      });
+      const res = await axios.get('http://localhost:5000/api/bookings/user');
       setBookings(res.data);
     } catch (error) {
       console.error(error);
@@ -50,12 +48,36 @@ const UserBookingList = () => {
   if (!user) return <p>Please log in to view your bookings.</p>;
 
   return (
-    <div>
+    <div style={{ backgroundColor: 'rgba(250, 243, 243, 0.5)', padding: '20px' }}>
       <h2>Your Bookings</h2>
+      <button 
+        className="back-button" 
+        onClick={() => navigate("/user-home")}  // Corrected navigation to the user-home page
+        style={{
+          padding: '10px', 
+          backgroundColor: '#007bff', 
+          color: 'white', 
+          border: 'none', 
+          borderRadius: '4px', 
+          cursor: 'pointer',
+          marginBottom: '20px'  // Space between the button and bookings list
+        }}
+      >
+        ⬅ Back to Home
+      </button>
       {loading && <p>Loading bookings...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {bookings.map(booking => (
-        <div key={booking._id} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
+        <div
+          key={booking._id}
+          style={{
+            border: '1px solid #ccc',
+            padding: '10px',
+            marginBottom: '10px',
+            backgroundColor: 'rgba(255, 253, 253, 0.7)', // Background color for each booking card
+            borderRadius: '8px'
+          }}
+        >
           <h3>{booking.event}</h3>
           <p>Date: {new Date(booking.date).toLocaleDateString()}</p>
           <p>Priest: {booking.priest?.name}</p>

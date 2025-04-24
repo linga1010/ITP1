@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom"; // Make sure useLocation is imported
 import axios from "axios";
 import { Input } from "antd";
+import { message } from "antd";
 import "./AddProduct.css";
 import "../styles/Body.css";
 import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component
@@ -43,9 +44,33 @@ const EditProduct = () => {
 
   const doublevalue = (setter) => (e) => {
     const value = e.target.value;
+  
+    if (unit === "kg") {
+      if (/^\d*\.?\d{0,2}$/.test(value) || value === "") {
+        if (parseFloat(value) <= 1000 || value === "") {
+          setter(value);
+        }
+      }
+    } else if (unit === "pcs") {
+      if (/^\d*$/.test(value) || value === "") {
+        if (parseInt(value) <= 1000 || value === "") {
+          setter(value);
+        }
+      }
+    }
+  };
+
+
+  const doublevalue123 = (setter) => (e) => {
+    const value = e.target.value;
     if (/^\d*\.?\d{0,2}$/.test(value) || value === "") {
       setter(value);
     }
+  };
+
+  const handleUnitChange = (e) => {
+    setUnit(e.target.value);
+    setQuantity(""); // Reset quantity when unit changes
   };
 
   const handleSubmit = async (e) => {
@@ -73,10 +98,10 @@ const EditProduct = () => {
       await axios.put(`http://localhost:5000/api/products/${sku}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      alert("Product updated successfully");
+      message.success("Product updated successfully");
       navigate("/product-list");
     } catch (error) {
-      console.error("Error updating product", error);
+      message.error("Error saving product. Check the input or try again.");
       setErrorMessage("An error occurred. Please try again.");
     }
   };
@@ -135,7 +160,7 @@ const EditProduct = () => {
             <input
               type="text"
               value={sellingPrice}
-              onChange={doublevalue(setSellingPrice)}
+              onChange={doublevalue123(setSellingPrice)}
               placeholder="Selling Price"
               required
             />
@@ -146,7 +171,7 @@ const EditProduct = () => {
             <input
               type="text"
               value={costPrice}
-              onChange={doublevalue(setCostPrice)}
+              onChange={doublevalue123(setCostPrice)}
               placeholder="Cost Price"
               required
             />
@@ -164,13 +189,13 @@ const EditProduct = () => {
 
           <div className="form-group">
             <label>Unit</label>
-            <select value={unit} onChange={(e) => setUnit(e.target.value)}>
+            <select value={unit} onChange={handleUnitChange}>
               <option value="kg">kg</option>
               <option value="pcs">pcs</option>
             </select>
           </div>
 
-          <button type="submit" className="submit-button">
+          <button style={{ backgroundColor: "#ffcc00", color: "black" }} type="submit" className="submit-button">
             Update Product
           </button>
         </form>

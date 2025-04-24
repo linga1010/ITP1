@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/AdminUser.css';
@@ -6,6 +6,16 @@ import "../styles/Body.css";
 import Adminnaviagtion from "../Component/Adminnavigation"; 
 
 const defaultProfilePicUrl = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+
+// map statuses to CSS class names
+const statusClassMap = {
+  pending: 'status-pending',
+  shipped: 'status-shipped',
+  delivered: 'status-delivered',
+  removed: 'status-removed',
+  canceled: 'status-canceled',
+  success: 'status-success',
+};
 
 const AdminManageUsers = () => {
   const navigate = useNavigate();
@@ -18,10 +28,44 @@ const AdminManageUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
   const [deletionReason, setDeletionReason] = useState('');
+  const [searchTerm, setSearchTerm] = useState(''); // search query state
+  const modalRef = useRef();
 
   useEffect(() => {
     verifyAdminAndFetchUsers();
+
+    const handleClickOutside = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        setShowUserModal(false);
+        setShowDeleteModal(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
+
+  // filtered lists based on search query (ignore case)
+  const filteredAdmins = admins.filter(a => {
+    const term = searchTerm.toLowerCase();
+    return (
+      a.name.toLowerCase().includes(term) ||
+      a.email.toLowerCase().includes(term) ||
+      a.phone.toLowerCase().includes(term) ||
+      (a.address && a.address.toLowerCase().includes(term))
+    );
+  });
+  const filteredUsers = users.filter(u => {
+    const term = searchTerm.toLowerCase();
+    return (
+      u.name.toLowerCase().includes(term) ||
+      u.email.toLowerCase().includes(term) ||
+      u.phone.toLowerCase().includes(term) ||
+      (u.address && u.address.toLowerCase().includes(term))
+    );
+  });
 
   const verifyAdminAndFetchUsers = async () => {
     const token = localStorage.getItem('token');
@@ -52,8 +96,8 @@ const AdminManageUsers = () => {
       });
       const fetchedUsers = res.data;
       setLoggedInUser(JSON.parse(localStorage.getItem('user')));
-      setUsers(fetchedUsers.filter((user) => !user.isAdmin));
-      setAdmins(fetchedUsers.filter((user) => user.isAdmin));
+      setUsers(fetchedUsers.filter((u) => !u.isAdmin));
+      setAdmins(fetchedUsers.filter((u) => u.isAdmin));
     } catch (err) {
       setError('❌ Failed to fetch users.');
     }
@@ -75,7 +119,7 @@ const AdminManageUsers = () => {
         data: { reason: deletionReason },
       });
       alert('User successfully deleted');
-      setUsers(users.filter((user) => user._id !== userToDelete));
+      setUsers(users.filter((u) => u._id !== userToDelete));
       setShowDeleteModal(false);
       setDeletionReason('');
     } catch (err) {
@@ -86,18 +130,12 @@ const AdminManageUsers = () => {
 
   const viewUserDetails = async (user) => {
     try {
-      const bookingHistory = [
-        { id: 'B123', date: '2025-03-15', amount: '$100' },
-        { id: 'B124', date: '2025-03-20', amount: '$50' },
-      ];
-      const purchaseHistory = [
-        { id: 'P987', date: '2025-03-10', item: 'Premium Plan', price: '$20' },
-        { id: 'P988', date: '2025-03-18', item: 'Gift Card', price: '$10' },
-      ];
-      setSelectedUser({ ...user, bookingHistory, purchaseHistory });
+      const res = await axios.get(`http://localhost:5000/api/orders`);
+      const orderHistory = res.data.filter(o => o.user === user.email);
+      setSelectedUser({ ...user, orderHistory });
       setShowUserModal(true);
     } catch (err) {
-      alert('❌ Error fetching user details');
+      alert('❌ Error fetching user order details');
     }
   };
 
@@ -107,69 +145,59 @@ const AdminManageUsers = () => {
 
       <div className="main-content">
         <h2>Manage Users</h2>
-        {error && <p>{error}</p>}
+        {/* summary counts */}
+        <div className="summary">
+          <p>Total Admins: {admins.length}</p>
+          <p>Total Users: {users.length}</p>
+        </div>
+        {/* search box */}
+        <div className="search-box">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search by name, email, phone, address"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+        {error && <p className="error-text">{error}</p>}
 
-        {/* Admins Table */}
+        {/* Admins */}
         <h3>Admins</h3>
-        <table>
+        <table className="standard-table">
           <thead>
             <tr>
-              <th>Profile</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Address</th>
+              <th>Profile</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th>
             </tr>
           </thead>
           <tbody>
-            {admins.map((admin) => (
-              <tr key={admin._id}>
-                <td>
-                  <img
-                    src={admin.profilePic || defaultProfilePicUrl}
-                    alt={admin.name}
-                    className="user-profile-pic"
-                  />
-                </td>
-                <td>{admin.name}</td>
-                <td>{admin.email}</td>
-                <td>{admin.phone}</td>
-                <td>{admin.address || 'No address available'}</td>
+            {filteredAdmins.map(a => (
+              <tr key={a._id}>
+                <td><img src={a.profilePic || defaultProfilePicUrl} alt={a.name} className="user-profile-pic" /></td>
+                <td>{a.name}</td><td>{a.email}</td><td>{a.phone}</td>
+                <td>{a.address || '—'}</td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        {/* Users Table */}
+        {/* Users */}
         <h3>Users</h3>
-        <table>
+        <table className="standard-table">
           <thead>
             <tr>
-              <th>Profile</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Address</th>
-              <th>Actions</th>
+              <th>Profile</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user._id}>
+            {filteredUsers.map(u => (
+              <tr key={u._id}>
+                <td><img src={u.profilePic || defaultProfilePicUrl} alt={u.name} className="user-profile-pic" /></td>
+                <td>{u.name}</td><td>{u.email}</td><td>{u.phone}</td>
+                <td>{u.address || '—'}</td>
                 <td>
-                  <img
-                    src={user.profilePic || defaultProfilePicUrl}
-                    alt={user.name}
-                    className="user-profile-pic"
-                  />
-                </td>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.phone}</td>
-                <td>{user.address || 'No address available'}</td>
-                <td>
-                  <button className="admin-user-btn" onClick={() => viewUserDetails(user)}>View</button>
-                  <button  className="admin-user-btn cancel" onClick={() => handleDeleteUser(user._id)}>Delete</button>
+                  <button className="admin-user-btn" onClick={() => viewUserDetails(u)}>View</button>
+                  <button className="admin-user-btn cancel" onClick={() => handleDeleteUser(u._id)}>Delete</button>
                 </td>
               </tr>
             ))}
@@ -178,63 +206,72 @@ const AdminManageUsers = () => {
 
         {/* User Details Modal */}
         {showUserModal && selectedUser && (
-          <div 
-            className="modal" 
-            style={{ 
-              position: 'fixed', 
-              zIndex: '9999', 
-              left: 0, top: 0, 
-              width: '100%', 
-              height: '100%', 
-              overflow: 'auto', 
-              backgroundColor: 'rgba(0,0,0,0.5)' 
-            }}
-          >
-            <div className="modal-content" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+          <div className="modal">
+            <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => setShowUserModal(false)}>×</span>
               <h3>User Details</h3>
-              <img
-                src={selectedUser.profilePic || defaultProfilePicUrl}
-                alt={selectedUser.name}
-                className="user-profile-pic-large"
-              />
-              <p><strong>Name:</strong> {selectedUser.name}</p>
-              <p><strong>Email:</strong> {selectedUser.email}</p>
-              <p><strong>Phone:</strong> {selectedUser.phone}</p>
-              <p><strong>Address:</strong> {selectedUser.address || 'No address available'}</p>
-              <h4>Booking History</h4>
-              <ul>
-                {selectedUser.bookingHistory.map((booking) => (
-                  <li key={booking.id}>{booking.date} - {booking.amount}</li>
-                ))}
-              </ul>
-              <h4>Purchase History</h4>
-              <ul>
-                {selectedUser.purchaseHistory.map((purchase) => (
-                  <li key={purchase.id}>{purchase.date} - {purchase.item} ({purchase.price})</li>
-                ))}
-              </ul>
+              <div className="user-info">
+                <img src={selectedUser.profilePic || defaultProfilePicUrl}
+                     alt={selectedUser.name}
+                     className="user-profile-pic-large" />
+                <div className="user-fields">
+                  <p><strong>Name:</strong> {selectedUser.name}</p>
+                  <p><strong>Email:</strong> {selectedUser.email}</p>
+                  <p><strong>Phone:</strong> {selectedUser.phone}</p>
+                  <p><strong>Address:</strong> {selectedUser.address || '—'}</p>
+                </div>
+              </div>
+
+              <h3>Order History</h3>
+              <div className="order-history">
+                {selectedUser.orderHistory.length > 0 ? selectedUser.orderHistory.map(order => {
+                  const computedTotal = order.items.reduce(
+                    (sum, it) => sum + it.finalPrice * it.quantity, 0
+                  );
+                  const statusClass = statusClassMap[order.status.toLowerCase()] || '';
+                  return (
+                    <div className="order-card" key={order._id}>
+                      <div className="order-header">
+                        <span className="order-id">Order #{order._id}</span>
+                        <span className="order-date">{new Date(order.createdAt).toLocaleDateString()}</span>
+                      </div>
+                      <table className="items-table">
+                        <thead>
+                          <tr>
+                            <th>Name</th><th>Price</th><th>Qty</th><th>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {order.items.map((item, i) => (
+                            <tr key={i}>
+                              <td>{item.name}</td>
+                              <td>Rs.{item.finalPrice}</td>
+                              <td>{item.quantity}</td>
+                              <td>Rs.{item.finalPrice * item.quantity}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <div className="order-footer">
+                        <span className={`order-status ${statusClass}`}>Status: {order.status}</span>
+                        <span className="order-final-total">Final Total: Rs.{computedTotal}</span>
+                      </div>
+                    </div>
+                  );
+                }) : (
+                  <p className="no-orders">No orders found.</p>
+                )}
+              </div>
             </div>
           </div>
         )}
 
         {/* Delete Confirmation Modal */}
         {showDeleteModal && (
-          <div 
-            className="modal" 
-            style={{ 
-              position: 'fixed', 
-              zIndex: '9999', 
-              left: 0, top: 0, 
-              width: '100%', 
-              height: '100%', 
-              overflow: 'auto', 
-              backgroundColor: 'rgba(0,0,0,0.5)' 
-            }}
-          >
-            <div className="modal-content" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+          <div className="modal">
+            <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => setShowDeleteModal(false)}>×</span>
-              <h3>Are you sure you want to delete this user?</h3>
+              <h3>Confirm Delete</h3>
               <textarea
                 placeholder="Reason for deletion"
                 value={deletionReason}

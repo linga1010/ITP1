@@ -32,7 +32,7 @@ const PackageList = () => {
     if (window.confirm("Are you sure you want to delete this package?")) {
       try {
         await axios.delete(`http://localhost:5000/api/packages/${id}`);
-        fetchPackages();
+        setPackages((prevPackages) => prevPackages.filter((pkg) => pkg._id !== id));
       } catch (error) {
         console.error("Error deleting package:", error);
       }
@@ -66,7 +66,7 @@ const PackageList = () => {
           onChange={handleSearch}
           style={{ width: "300px", marginBottom: "20px" }}
         />
-
+        <div className="tablelist">
         <table>
           <thead>
             <tr>
@@ -80,6 +80,7 @@ const PackageList = () => {
             </tr>
           </thead>
           <tbody>
+
             {filteredPackages.map((pkg) => (
               <tr key={pkg._id}>
                 <td>
@@ -99,13 +100,16 @@ const PackageList = () => {
                 <td>{pkg.discount}%</td>
                 <td>Rs. {pkg.finalPrice}</td>
                 <td>
-                  <button onClick={() => handleEdit(pkg._id)} className="edit">Edit</button>
+                  <button onClick={() => handleEdit(pkg._id)} className="edit"
+                    style={{ backgroundColor: "#ffcc00", color: "black" }}
+                    >Edit</button>
                   <button onClick={() => handleDelete(pkg._id)} className="Delete">Delete</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
