@@ -139,3 +139,32 @@
   font-weight: bold;
 }
 
+.status-pending {
+  color: #f4a261; /* Soft orange */
+  font-weight: 600;
+}
+
+.status-shipped {
+  color: #4a90e2; /* Medium calm blue */
+  font-weight: 600;
+}
+
+.status-delivered {
+  color: #2a9d8f; /* Gentle teal green */
+  font-weight: 600;
+}
+
+.status-removed {
+  color: #e76f51; /* Muted coral red */
+  font-weight: bold;
+}
+
+.status-canceled {
+  color: #b00020; /* Softer deep red, less intense than pure red */
+  font-weight: 600;
+}
+
+.status-success {
+  color: #70e000; /* Soft lime green */
+  font-weight: 600;
+}

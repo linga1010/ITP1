@@ -1,4 +1,3 @@
-// src/components/AdminManageUsers.jsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -7,6 +6,15 @@ import "../styles/Body.css";
 import Adminnaviagtion from "../Component/Adminnavigation"; 
 
 const defaultProfilePicUrl = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
+
+// map statuses to CSS class names
+const statusClassMap = {
+  pending: 'status-pending',
+  shipped: 'status-shipped',
+  delivered: 'status-delivered',
+  removed: 'status-removed',
+  canceled: 'status-canceled',
+};
 
 const AdminManageUsers = () => {
   const navigate = useNavigate();
@@ -183,6 +191,7 @@ const AdminManageUsers = () => {
                   const computedTotal = order.items.reduce(
                     (sum, it) => sum + it.finalPrice * it.quantity, 0
                   );
+                  const statusClass = statusClassMap[order.status.toLowerCase()] || '';
                   return (
                     <div className="order-card" key={order._id}>
                       <div className="order-header">
@@ -207,7 +216,7 @@ const AdminManageUsers = () => {
                         </tbody>
                       </table>
                       <div className="order-footer">
-                        <span className="order-status">Status: {order.status}</span>
+                        <span className={`order-status ${statusClass}`}>Status: {order.status}</span>
                         <span className="order-final-total">Final Total: Rs.{computedTotal}</span>
                       </div>
                     </div>
