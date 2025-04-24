@@ -15,7 +15,6 @@ const statusClassMap = {
   removed: 'status-removed',
   canceled: 'status-canceled',
   success: 'status-success',
-
 };
 
 const AdminManageUsers = () => {
@@ -29,6 +28,7 @@ const AdminManageUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
   const [deletionReason, setDeletionReason] = useState('');
+  const [searchTerm, setSearchTerm] = useState(''); // search query state
   const modalRef = useRef();
 
   useEffect(() => {
@@ -46,6 +46,26 @@ const AdminManageUsers = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  // filtered lists based on search query (ignore case)
+  const filteredAdmins = admins.filter(a => {
+    const term = searchTerm.toLowerCase();
+    return (
+      a.name.toLowerCase().includes(term) ||
+      a.email.toLowerCase().includes(term) ||
+      a.phone.toLowerCase().includes(term) ||
+      (a.address && a.address.toLowerCase().includes(term))
+    );
+  });
+  const filteredUsers = users.filter(u => {
+    const term = searchTerm.toLowerCase();
+    return (
+      u.name.toLowerCase().includes(term) ||
+      u.email.toLowerCase().includes(term) ||
+      u.phone.toLowerCase().includes(term) ||
+      (u.address && u.address.toLowerCase().includes(term))
+    );
+  });
 
   const verifyAdminAndFetchUsers = async () => {
     const token = localStorage.getItem('token');
@@ -125,6 +145,21 @@ const AdminManageUsers = () => {
 
       <div className="main-content">
         <h2>Manage Users</h2>
+        {/* summary counts */}
+        <div className="summary">
+          <p>Total Admins: {admins.length}</p>
+          <p>Total Users: {users.length}</p>
+        </div>
+        {/* search box */}
+        <div className="search-box">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Search by name, email, phone, address"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
         {error && <p className="error-text">{error}</p>}
 
         {/* Admins */}
@@ -136,7 +171,7 @@ const AdminManageUsers = () => {
             </tr>
           </thead>
           <tbody>
-            {admins.map(a => (
+            {filteredAdmins.map(a => (
               <tr key={a._id}>
                 <td><img src={a.profilePic || defaultProfilePicUrl} alt={a.name} className="user-profile-pic" /></td>
                 <td>{a.name}</td><td>{a.email}</td><td>{a.phone}</td>
@@ -155,7 +190,7 @@ const AdminManageUsers = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map(u => (
+            {filteredUsers.map(u => (
               <tr key={u._id}>
                 <td><img src={u.profilePic || defaultProfilePicUrl} alt={u.name} className="user-profile-pic" /></td>
                 <td>{u.name}</td><td>{u.email}</td><td>{u.phone}</td>
