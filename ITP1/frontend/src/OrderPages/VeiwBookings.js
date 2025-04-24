@@ -82,6 +82,38 @@ const ViewBookings = () => {
     });
   };
 
+  const handleStartDateChange = (e) => {
+    const selectedStart = new Date(e.target.value);
+    if (endDate) {
+      const selectedEnd = new Date(endDate);
+      const oneMonthEarlier = new Date(selectedEnd);
+      oneMonthEarlier.setMonth(oneMonthEarlier.getMonth() - 1);
+  
+      if (selectedStart > selectedEnd || selectedStart < oneMonthEarlier) {
+        alert("⚠️ Start date must be before end date and within one month.");
+        return;
+      }
+    }
+    setStartDate(e.target.value);
+  };
+  
+  
+  const handleEndDateChange = (e) => {
+    const selectedEnd = new Date(e.target.value);
+    if (startDate) {
+      const selectedStart = new Date(startDate);
+      const oneMonthLater = new Date(selectedStart);
+      oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
+  
+      if (selectedEnd < selectedStart || selectedEnd > oneMonthLater) {
+        alert("⚠️ End date must be after start date and within one month.");
+        return;
+      }
+    }
+    setEndDate(e.target.value);
+  };
+  
+
   const calculateSalesAndProfit = async (orders, productList, packageList) => {
     let sales = 0;
     let profit = 0;
@@ -96,7 +128,7 @@ const ViewBookings = () => {
             let itemProfit = 0;
 
             for (const { productId, quantity } of pack.products) {
-              const product = productList.find(p => p._id === productId);
+              const product = productList.find(p => p._id === productId._id);
               if (product) {
                 const unitsSold = quantity * item.quantity;
                 const productProfit = (product.sellingPrice - product.costPrice) * unitsSold;
@@ -121,23 +153,30 @@ const ViewBookings = () => {
 
     for (const item of order.items) {
       const pack = packages.find(p => p.name === item.name);
+      console.log(pack);
       if (pack) {
         let itemProfit = 0;
 
         for (const { productId, quantity } of pack.products) {
-          const product = products.find(p => p._id === productId);
+          const product = products.find((p) => p._id === productId._id); // 👈 FIXED here!
+        
           if (product) {
             const unitsSold = quantity * item.quantity;
             const profit = (product.sellingPrice - product.costPrice) * unitsSold;
             itemProfit += profit;
+          } else {
+            console.warn("⚠️ Product not found for ID:", productId._id);
           }
         }
+        
+        
 
         const discount = (pack.totalPrice - pack.finalPrice) * item.quantity;
         itemProfit -= discount;
         totalProfit += itemProfit;
       }
     }
+    
 
     return totalProfit.toFixed(2);
   };
@@ -168,21 +207,38 @@ const ViewBookings = () => {
     }
   };
 
+  const monthMap = {
+    january: 0,
+    february: 1,
+    march: 2,
+    april: 3,
+    may: 4,
+    june: 5,
+    july: 6,
+    august: 7,
+    september: 8,
+    october: 9,
+    november: 10,
+    december: 11,
+  };
+  
   const filteredBookings = bookings.filter(order => {
     const createdAt = new Date(order.createdAt);
+    const monthIndex = createdAt.getMonth(); // 0 (Jan) to 11 (Dec)
+    const monthName = createdAt.toLocaleString("default", { month: "long" }); // "April"
     const search = searchTerm.toLowerCase();
-
-    const matchesSearch =
+  
+    const matchesMonthName = monthName.toLowerCase().includes(search);
+    const matchesMonthNumber = !isNaN(search) && parseInt(search) === monthIndex + 1;
+    const matchesMappedMonth = monthMap[search] !== undefined && monthMap[search] === monthIndex;
+  
+    return (
       (order.user && order.user.toLowerCase().includes(search)) ||
       (order.userName && order.userName.toLowerCase().includes(search)) ||
       (order.status && order.status.toLowerCase().includes(search)) ||
-      createdAt.toLocaleDateString().includes(search);
-
-    const withinDateRange =
-      (!startDate || new Date(startDate) <= createdAt) &&
-      (!endDate || createdAt <= new Date(endDate));
-
-    return matchesSearch && withinDateRange;
+      createdAt.toLocaleDateString().includes(search) ||
+      matchesMonthName || matchesMonthNumber || matchesMappedMonth
+    );
   });
 
   if (loading) return <p>Loading bookings...</p>;
@@ -195,22 +251,8 @@ const ViewBookings = () => {
         <div className="view-bookings-container">
           <h2>All Order Booking Details</h2>
 
-          <input
-            type="text"
-            placeholder="Search by User, Name, Status, or Date 🔍"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-bar"
-          />
+          
 
-          <div className="date-filter">
-            <label>
-              Start Date: <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-            </label>
-            <label style={{ marginLeft: "1rem" }}>
-              End Date: <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-            </label>
-          </div>
 
           <div className="order-summary">
             <h3>Order Summary</h3>
@@ -226,6 +268,25 @@ const ViewBookings = () => {
             <h3>💰 Sales & Profit</h3>
             <p>Total Sales (Delivered): Rs. {totalSales}</p>
             <p>Total Profit (Delivered): Rs. {totalProfit.toFixed(2)}</p>
+          </div>
+
+          <input
+            type="text"
+            placeholder="Search by User, Name, Status, or Date     🔍︎"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-bar"
+          />
+
+          <div className="date-filter">
+            <label>
+              Start Date:{" "}
+                <input type="date" value={startDate} onChange={handleStartDateChange} />
+            </label>
+            <label style={{ marginLeft: "1rem" }}>
+              End Date:{" "}
+                <input type="date" value={endDate} onChange={handleEndDateChange} />
+             </label>
           </div>
 
           <div className="booking-table">

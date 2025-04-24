@@ -9,7 +9,34 @@ const AdminDashboard = () => {
 
   // date filters
   const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+const [endDate, setEndDate] = useState('');
+const [startDateError, setStartDateError] = useState('');
+const [endDateError, setEndDateError] = useState('');
+
+const handleStartDateChange = (value) => {
+  setStartDate(value);
+  if (endDate && new Date(value) > new Date(endDate)) {
+    setStartDateError('Start date cannot be after end date');
+    setEndDateError('');
+  } else {
+    setStartDateError('');
+    setEndDateError('');
+  }
+};
+
+const handleEndDateChange = (value) => {
+  setEndDate(value);
+  if (startDate && new Date(value) < new Date(startDate)) {
+    setEndDateError('End date must be after start date');
+    setStartDateError('');
+  } else {
+    setEndDateError('');
+    setStartDateError('');
+  }
+};
+
+
+
 
   // invoice metrics
   const [invoiceSales, setInvoiceSales] = useState(0);
@@ -21,9 +48,18 @@ const AdminDashboard = () => {
 
   // re-fetch whenever filters change
   useEffect(() => {
+    // If both dates are selected, validate the range
+    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+      return; // Don't fetch if invalid range
+    }
+  
+    // Otherwise (valid or empty), fetch data
     fetchInvoiceData();
     fetchPackageData();
   }, [startDate, endDate]);
+  
+  
+  
 
   // === INVOICE DATA ===
   const fetchInvoiceData = async () => {
@@ -97,7 +133,7 @@ const AdminDashboard = () => {
         // compute profit on each underlying product
         let itemProfit = 0;
         (pack.products || []).forEach(({ productId, quantity }) => {
-          const prod = products.find(p => p._id === productId);
+          const prod = products.find(p => p._id === productId._id);
           if (prod) {
             // units sold = quantity per pack * how many packs in this order
             const unitsSold = (quantity || 0) * (item.quantity || 0);
@@ -158,32 +194,40 @@ const AdminDashboard = () => {
           </div>
 
           <div className="filter-container">
-            <label>
-              Start Date: 
-              <input
-                type="date"
-                value={startDate}
-                onChange={e => setStartDate(e.target.value)}
-              />
-            </label>
-            <label style={{ marginLeft: '1rem' }}>
-              End Date: 
-              <input
-                type="date"
-                value={endDate}
-                onChange={e => setEndDate(e.target.value)}
-              />
-            </label>
-          </div>
+  <label>
+    Start Date: 
+    <input
+      type="date"
+      value={startDate}
+      onChange={e => handleStartDateChange(e.target.value)}
+    />
+    {startDateError && (
+      <p style={{ color: 'red', marginTop: '0.5rem' }}>{startDateError}</p>
+    )}
+  </label>
+
+  <label style={{ marginLeft: '1rem' }}>
+    End Date: 
+    <input
+      type="date"
+      value={endDate}
+      onChange={e => handleEndDateChange(e.target.value)}
+    />
+    {endDateError && (
+      <p style={{ color: 'red', marginTop: '0.5rem' }}>{endDateError}</p>
+    )}
+  </label>
+</div>
+
 
           <div className="totals-section">
-            <h3>Total Invoice Sales: ₹{invoiceSales.toFixed(2)}</h3>
-            <h3>Total Package Sales: ₹{packageSales.toFixed(2)}</h3>
-            <h3>Total Sales: ₹{(invoiceSales + packageSales).toFixed(2)}</h3>
+            <h3>Total Invoice Sales: Rs {invoiceSales.toFixed(2)}</h3>
+            <h3>Total Package Sales: Rs {packageSales.toFixed(2)}</h3>
+            <h3>Total Sales: Rs {(invoiceSales + packageSales).toFixed(2)}</h3>
 
-            <h3>Total Invoice Profit: ₹{invoiceProfit.toFixed(2)}</h3>
-            <h3>Total Package Profit: ₹{packageProfit.toFixed(2)}</h3>
-            <h3>Total Profit: ₹{(invoiceProfit + packageProfit).toFixed(2)}</h3>
+            <h3>Total Invoice Profit: Rs {invoiceProfit.toFixed(2)}</h3>
+            <h3>Total Package Profit: Rs {packageProfit.toFixed(2)}</h3>
+            <h3>Total Profit: Rs {(invoiceProfit + packageProfit).toFixed(2)}</h3>
           </div>
 
           <div className="chart-section" style={{ maxWidth: '600px', marginTop: '2rem' }}>

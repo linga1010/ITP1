@@ -1,5 +1,9 @@
-/* AdminDashboard.css */
 
+.dashboard-info{
+  background-color: rgba(255, 255, 255, 0.6) ;
+  padding: 10px 100px;
+  margin-left: 100px;
+}
 
 /* Header Styling */
 .header {
