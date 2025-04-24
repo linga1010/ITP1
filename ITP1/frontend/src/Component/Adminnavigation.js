@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';  // Added useLocation
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { FaArrowLeft, FaSignOutAlt, FaBars } from 'react-icons/fa';
+import { FaRegSadTear } from 'react-icons/fa';
 import axios from 'axios';
 import '../styles/Adminnaviagation.css';
 import '../styles/AdminDashboard.css';
 
+
 const Adminnaviagtion = () => {
   const navigate = useNavigate();
-  const location = useLocation();  // Added useLocation
+  const location = useLocation();
   const { user } = useAuth();
 
   const [openSections, setOpenSections] = useState({
@@ -23,6 +25,7 @@ const Adminnaviagtion = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     const verifyAdminAccess = async () => {
@@ -61,18 +64,20 @@ const Adminnaviagtion = () => {
     }));
   };
 
-  const handleLogout = () => {
+  const confirmLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     navigate('/login');
   };
 
+  const cancelLogout = () => {
+    setShowLogoutModal(false);
+  };
+
   const sidebarItems = [
     {
       title: 'Home',
-      links: [
-        { to: '/admin-dashboard', label: 'Admin Dashboard' },
-      ],
+      links: [{ to: '/admin-dashboard', label: 'Admin Dashboard' }],
     },
     {
       title: 'User Management',
@@ -80,8 +85,6 @@ const Adminnaviagtion = () => {
         { to: '/admin/manage-users', label: 'Manage Users' },
         { to: '/admin/deleted-users', label: 'Deleted User' },
         { to: '/admin/view-profile', label: 'Admin Profile' },
-
-
       ],
     },
     {
@@ -95,8 +98,6 @@ const Adminnaviagtion = () => {
         { to: '/invoices', label: 'View All Invoices' },
         { to: '/purchases/create', label: 'Create the bill' },
         { to: '/purchases', label: 'View all bill' },
-        
-
       ],
     },
     {
@@ -109,30 +110,20 @@ const Adminnaviagtion = () => {
     {
       title: 'Booking Management',
       links: [
-  
         { to: '/admin/add-priest', label: 'Add Priest' },
         { to: '/admin/priest-list', label: 'View All Priests' },
         { to: '/admin/booking-list', label: 'View Bookings' },
-      
       ],
     },
     {
       title: 'Feedback Management',
-      links: [
-        { to: '/adminFeedback', label: 'View Feedback' },
-        
-      ],
+      links: [{ to: '/adminFeedback', label: 'View Feedback' }],
     },
   ];
 
-  // Back button component with check for /login
   const BackButton = () => {
     const handleBack = () => {
-      // If the current location is '/login', don't allow going back
-      if (location.pathname === '/admin-dashboard') {
-        return;
-      }
-      // Otherwise, navigate back to the previous page
+      if (location.pathname === '/admin-dashboard') return;
       navigate(-1);
     };
 
@@ -149,21 +140,20 @@ const Adminnaviagtion = () => {
   return (
     <div className="admin-dashboard-container">
       <header className="navbar">
-      <div className="navbar-right">
-        <button className="hamburger-icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-          <FaBars />
-        </button>
-        
+        <div className="navbar-right">
+          <button className="hamburger-icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+            <FaBars />
+          </button>
           <BackButton />
           <p>Welcome back, <strong>{user?.name || 'Admin'}</strong></p>
-          <button className="logout-btn" onClick={handleLogout}>
+          <button className="logout-btn" onClick={() => setShowLogoutModal(true)}>
             <FaSignOutAlt /> Logout
           </button>
         </div>
       </header>
 
       <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
-      <h2 className="Admin" >Admin</h2>
+        <h2 className="Admin">Admin</h2>
         <ul className="sidebar-menu">
           {sidebarItems.map((item, index) => (
             <li key={index}>
@@ -183,6 +173,30 @@ const Adminnaviagtion = () => {
           ))}
         </ul>
       </aside>
+
+      {/* Logout confirmation modal */}
+      {showLogoutModal && (
+  <div className="modal-overlay" onClick={cancelLogout}>
+    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+      {/* 👇 Insert animated emoji here */}
+      <div className="emoji-animation">
+        <img 
+          src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif" 
+          alt="Sad Emoji Animation" 
+          className="animated-emoji" 
+        />
+      </div>
+
+      <p>Are you sure you want to logout?</p>
+
+      <div className="modal-buttons">
+        <button className="yes-btn" onClick={confirmLogout}>Yes</button>
+        <button className="no-btn" onClick={cancelLogout}>No</button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
