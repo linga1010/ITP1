@@ -144,15 +144,6 @@ router.put("/:id/confirm", async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
 //  Ship Order
 router.put("/:id/ship", async (req, res) => {
   try {
