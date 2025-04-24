@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import "../styles/UserHome.css";
 import { useAuth } from "../hooks/useAuth";
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa"; // Social media icons
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 const BASE_URL = "http://localhost:5000";
 
@@ -14,6 +14,7 @@ const UserDashboard = () => {
   const [priests, setPriests] = useState([]);
   const [packageIndex, setPackageIndex] = useState(0);
   const [priestIndex, setPriestIndex] = useState(0);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     fetchPackages();
@@ -71,10 +72,14 @@ const UserDashboard = () => {
   const displayedPackages = getSlidingWindow(packages, packageIndex);
   const displayedPriests = getSlidingWindow(priests, priestIndex);
 
-  const handleLogout = () => {
+  const confirmLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     navigate("/login");
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutModal(false);
   };
 
   const defaultProfilePicUrl =
@@ -90,24 +95,12 @@ const UserDashboard = () => {
         <nav className="navbar">
           <div className="nav-center">
             <ul className="nav-links">
-              <li className="nav-item123">
-                <Link to="/view-package">Packages</Link>
-              </li>
-              <li className="nav-item123">
-                <Link to="/OrderHistoryDetails">Order History</Link>
-              </li>
-              <li className="nav-item123">
-                <Link to="/Feedback">Feedbacks</Link>
-              </li>
-              <li className="nav-item123">
-                <Link to="/about-us">About Us</Link>
-              </li>
-              <li className="nav-item123">
-                <Link to="/user/booking-list">Booking Details</Link>
-              </li>
-              <li className="nav-item123">
-                <Link to="/user/book-priest">Book Priest</Link>
-              </li>
+              <li className="nav-item123"><Link to="/view-package">Packages</Link></li>
+              <li className="nav-item123"><Link to="/OrderHistoryDetails">Order History</Link></li>
+              <li className="nav-item123"><Link to="/Feedback">Feedbacks</Link></li>
+              <li className="nav-item123"><Link to="/about-us">About Us</Link></li>
+              <li className="nav-item123"><Link to="/user/booking-list">Booking Details</Link></li>
+              <li className="nav-item123"><Link to="/user/book-priest">Book Priest</Link></li>
             </ul>
           </div>
           <div className="nav-right">
@@ -116,19 +109,16 @@ const UserDashboard = () => {
                 src={user?.profilePic ? user.profilePic : defaultProfilePicUrl}
                 alt="Profile"
                 className="profile-photo"
-                onClick={handleProfileClick} // Navigation works regardless of the image
               />
             </div>
-            <button className="nav-btn logout-btn" onClick={handleLogout}>
+            <button className="nav-btn logout-btn" onClick={() => setShowLogoutModal(true)}>
               Logout
             </button>
           </div>
         </nav>
         <div className="welcome-text">
           <h1>Welcome to Vk Aura</h1>
-          <p>
-            Welcome back, <strong>{user?.name || "User"}</strong>
-          </p>
+          <p>Welcome back, <strong>{user?.name || "User"}</strong></p>
         </div>
       </header>
 
@@ -236,37 +226,33 @@ const UserDashboard = () => {
         <div className="footer-content">
           <p>&copy; 2025 VK Aura. All rights reserved.</p>
           <div className="social-media">
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaFacebook />
-            </a>
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaTwitter />
-            </a>
-            <a
-              href="https://instagram.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaInstagram />
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <FaLinkedin />
-            </a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><FaFacebook /></a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"><FaLinkedin /></a>
           </div>
         </div>
       </footer>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="modal-overlay" onClick={cancelLogout}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="emoji-animation">
+              <img
+                src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif"
+                alt="Sad Emoji"
+                className="animated-emoji"
+              />
+            </div>
+            <p>Are you sure you want to logout?</p>
+            <div className="modal-buttons">
+              <button className="yes-btn" onClick={confirmLogout}>Yes</button>
+              <button className="no-btn" onClick={cancelLogout}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
