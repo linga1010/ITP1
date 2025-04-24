@@ -1,5 +1,8 @@
 import express from "express";
+import mongoose from "mongoose";
 import Order from "../models/Order.js";
+import Package from "../models/Package.js";
+import Product from "../models/Product.js";
 
 const router = express.Router();
 
@@ -59,28 +62,97 @@ router.get("/:userId", async (req, res) => {
   }
 });
 
-//  Confirm order (Change status to "success")
-router.put("/:id/confirm", async (req, res) => {
-  try {
-    const order = await Order.findById(req.params.id);
 
+
+
+
+
+
+
+// Confirm order (Change status to "success" and reduce stock)
+router.put("/:id/confirm", async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const order = await Order.findById(req.params.id).session(session);
     if (!order) {
+      await session.abortTransaction();
       return res.status(404).json({ message: "Order not found" });
     }
 
     if (order.status === "success") {
+      await session.abortTransaction();
       return res.status(400).json({ message: "Order is already confirmed" });
     }
 
-    order.status = "success";
-    await order.save();
+    const requiredQuantities = {}; // { productId: totalQty }
 
-    res.json({ message: "✅ Order confirmed successfully!", order });
+    for (const item of order.items) {
+      const pkg = await Package.findOne({ name: item.name }).session(session);
+      if (!pkg) {
+        await session.abortTransaction();
+        return res.status(404).json({ message: `Package '${item.name}' not found` });
+      }
+
+      for (const { productId, quantity } of pkg.products) {
+        const totalRequired = quantity * item.quantity;
+        const key = productId.toString();
+        requiredQuantities[key] = (requiredQuantities[key] || 0) + totalRequired;
+      }
+    }
+
+    const productIds = Object.keys(requiredQuantities);
+    const products = await Product.find({ _id: { $in: productIds } }).session(session);
+
+    for (const product of products) {
+      const requiredQty = requiredQuantities[product._id.toString()];
+      if (product.quantity < requiredQty) {
+        await session.abortTransaction();
+        return res.status(400).json({
+          message: `Insufficient stock for '${product.name}'. Required: ${requiredQty}, Available: ${product.quantity}`
+        });
+      }
+    }
+
+    for (const product of products) {
+      const requiredQty = requiredQuantities[product._id.toString()];
+      product.quantity -= requiredQty;
+      await product.save({ session });
+    }
+
+    order.status = "success";
+    await order.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.json({ message: "✅ Order confirmed and inventory updated successfully!", order });
   } catch (error) {
-    console.error("❌ Order Update Error:", error.message);
+    await session.abortTransaction();
+    session.endSession();
+    console.error("❌ Order Confirm Error:", error);
     res.status(500).json({ message: "❌ Internal Server Error", error: error.message });
   }
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //  Ship Order
 router.put("/:id/ship", async (req, res) => {
   try {

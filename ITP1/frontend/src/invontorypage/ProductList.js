@@ -100,7 +100,7 @@ const ProductList = () => {
                   <td>{product.sku}</td>
                   <td>{product.sellingPrice}</td>
                   <td>{product.costPrice}</td>
-                  <td>{product.quantity}</td>
+                  <td>{Number(product.quantity).toFixed(2)}</td>
                   <td>{product.unit}</td>
                   <td>
                     <button onClick={() => handleEdit(product.sku)} className="edit" 
