@@ -14,6 +14,8 @@ const statusClassMap = {
   delivered: 'status-delivered',
   removed: 'status-removed',
   canceled: 'status-canceled',
+  success: 'status-success',
+
 };
 
 const AdminManageUsers = () => {
