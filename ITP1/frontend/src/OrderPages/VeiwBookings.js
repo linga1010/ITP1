@@ -115,7 +115,57 @@ const ViewBookings = () => {
   
   
 
+
+
+
+
+
+
+
   const updateOrderStatus = async (orderId, status) => {
+    const token = localStorage.getItem("token");
+    if (!token) return alert("❌ Unauthorized! Please log in again.");
+  
+    try {
+      const response = await axios.put(
+        `http://localhost:5000/api/orders/${orderId}/${status}`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      // Update the order status in the local state
+      const updatedBookings = bookings.map((order) =>
+        order._id === orderId ? { ...order, status: response.data.order.status } : order
+      );
+  
+      setBookings(updatedBookings);
+      updateOrderCounts(updatedBookings); // Recalculate counts
+  
+      alert(`✅ Order marked as ${status}!`);
+    } catch (err) {
+      console.error(`❌ Failed to update order to ${status}:`, err);
+  
+      // Check if there are detailed messages from backend
+      if (err.response && err.response.data && err.response.data.details) {
+        alert(
+          `❌ Could not confirm order due to insufficient stock:\n\n${err.response.data.details.join("\n")}`
+        );
+      } else if (err.response && err.response.data && err.response.data.message) {
+        alert(`❌ ${err.response.data.message}`);
+      } else {
+        alert(`❌ Error updating order to ${status}. Please try again.`);
+      }
+    }
+  };
+
+
+
+
+
+
+
+
+  /* const updateOrderStatus = async (orderId, status) => {
     const token = localStorage.getItem("token");
     if (!token) return alert("❌ Unauthorized! Please log in again.");
 
@@ -140,6 +190,8 @@ const ViewBookings = () => {
       alert(`❌ Error updating order to ${status}. Please try again.`);
     }
   };
+
+  */
 
   if (loading) return <p>Loading bookings...</p>;
   if (error) return <p>{error}</p>;
