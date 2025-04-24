@@ -129,7 +129,7 @@ const OrderPage = () => {
             </div>
           ))}
 
-          <h3>Total: Rs.{getTotalPrice()}</h3>
+          <h3>Total Price :  Rs {getTotalPrice()}</h3>
 
           <div className="terms-checkbox">
             <Checkbox onChange={(e) => setIsAgreed(e.target.checked)}>
