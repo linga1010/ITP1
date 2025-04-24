@@ -98,7 +98,7 @@ const OrderPage = () => {
  
 
   return (
-    <div className="container">
+    <div className="containerorder">
       <h2>Package Order Summary</h2>
       <Button className="back-button" onClick={() => navigate("/view-package")} type="default">
         ← Back to Packages
