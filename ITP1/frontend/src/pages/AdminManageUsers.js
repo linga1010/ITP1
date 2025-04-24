@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+// src/components/AdminManageUsers.jsx
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/AdminUser.css';
@@ -18,9 +19,22 @@ const AdminManageUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
   const [deletionReason, setDeletionReason] = useState('');
+  const modalRef = useRef();
 
   useEffect(() => {
     verifyAdminAndFetchUsers();
+
+    const handleClickOutside = (e) => {
+      if (modalRef.current && !modalRef.current.contains(e.target)) {
+        setShowUserModal(false);
+        setShowDeleteModal(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   const verifyAdminAndFetchUsers = async () => {
@@ -52,8 +66,8 @@ const AdminManageUsers = () => {
       });
       const fetchedUsers = res.data;
       setLoggedInUser(JSON.parse(localStorage.getItem('user')));
-      setUsers(fetchedUsers.filter((user) => !user.isAdmin));
-      setAdmins(fetchedUsers.filter((user) => user.isAdmin));
+      setUsers(fetchedUsers.filter((u) => !u.isAdmin));
+      setAdmins(fetchedUsers.filter((u) => u.isAdmin));
     } catch (err) {
       setError('❌ Failed to fetch users.');
     }
@@ -75,7 +89,7 @@ const AdminManageUsers = () => {
         data: { reason: deletionReason },
       });
       alert('User successfully deleted');
-      setUsers(users.filter((user) => user._id !== userToDelete));
+      setUsers(users.filter((u) => u._id !== userToDelete));
       setShowDeleteModal(false);
       setDeletionReason('');
     } catch (err) {
@@ -86,11 +100,8 @@ const AdminManageUsers = () => {
 
   const viewUserDetails = async (user) => {
     try {
-      // Fetch all orders from the API
       const res = await axios.get(`http://localhost:5000/api/orders`);
-      // Filter orders for the selected user using the username (order.user)
-      const orderHistory = res.data.filter(order => order.user === user.name);
-      // Set selectedUser along with filtered orderHistory
+      const orderHistory = res.data.filter(o => o.user === user.email);
       setSelectedUser({ ...user, orderHistory });
       setShowUserModal(true);
     } catch (err) {
@@ -104,69 +115,44 @@ const AdminManageUsers = () => {
 
       <div className="main-content">
         <h2>Manage Users</h2>
-        {error && <p>{error}</p>}
+        {error && <p className="error-text">{error}</p>}
 
-        {/* Admins Table */}
+        {/* Admins */}
         <h3>Admins</h3>
-        <table>
+        <table className="standard-table">
           <thead>
             <tr>
-              <th>Profile</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Address</th>
+              <th>Profile</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th>
             </tr>
           </thead>
           <tbody>
-            {admins.map((admin) => (
-              <tr key={admin._id}>
-                <td>
-                  <img
-                    src={admin.profilePic || defaultProfilePicUrl}
-                    alt={admin.name}
-                    className="user-profile-pic"
-                  />
-                </td>
-                <td>{admin.name}</td>
-                <td>{admin.email}</td>
-                <td>{admin.phone}</td>
-                <td>{admin.address || 'No address available'}</td>
+            {admins.map(a => (
+              <tr key={a._id}>
+                <td><img src={a.profilePic || defaultProfilePicUrl} alt={a.name} className="user-profile-pic" /></td>
+                <td>{a.name}</td><td>{a.email}</td><td>{a.phone}</td>
+                <td>{a.address || '—'}</td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        {/* Users Table */}
+        {/* Users */}
         <h3>Users</h3>
-        <table>
+        <table className="standard-table">
           <thead>
             <tr>
-              <th>Profile</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Address</th>
-              <th>Actions</th>
+              <th>Profile</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user._id}>
+            {users.map(u => (
+              <tr key={u._id}>
+                <td><img src={u.profilePic || defaultProfilePicUrl} alt={u.name} className="user-profile-pic" /></td>
+                <td>{u.name}</td><td>{u.email}</td><td>{u.phone}</td>
+                <td>{u.address || '—'}</td>
                 <td>
-                  <img
-                    src={user.profilePic || defaultProfilePicUrl}
-                    alt={user.name}
-                    className="user-profile-pic"
-                  />
-                </td>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.phone}</td>
-                <td>{user.address || 'No address available'}</td>
-                <td>
-                  <button className="admin-user-btn" onClick={() => viewUserDetails(user)}>View</button>
-                  <button className="admin-user-btn cancel" onClick={() => handleDeleteUser(user._id)}>Delete</button>
+                  <button className="admin-user-btn" onClick={() => viewUserDetails(u)}>View</button>
+                  <button className="admin-user-btn cancel" onClick={() => handleDeleteUser(u._id)}>Delete</button>
                 </td>
               </tr>
             ))}
@@ -175,84 +161,71 @@ const AdminManageUsers = () => {
 
         {/* User Details Modal */}
         {showUserModal && selectedUser && (
-          <div 
-            className="modal" 
-            style={{ 
-              position: 'fixed', 
-              zIndex: '9999', 
-              left: 0, top: 0, 
-              width: '100%', 
-              height: '100%', 
-              overflow: 'auto', 
-              backgroundColor: 'rgba(0,0,0,0.5)' 
-            }}
-          >
-            <div className="modal-content" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+          <div className="modal">
+            <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => setShowUserModal(false)}>×</span>
               <h3>User Details</h3>
-              <img
-                src={selectedUser.profilePic || defaultProfilePicUrl}
-                alt={selectedUser.name}
-                className="user-profile-pic-large"
-              />
-              <p><strong>Name:</strong> {selectedUser.name}</p>
-              <p><strong>Email:</strong> {selectedUser.email}</p>
-              <p><strong>Phone:</strong> {selectedUser.phone}</p>
-              <p><strong>Address:</strong> {selectedUser.address || 'No address available'}</p>
+              <div className="user-info">
+                <img src={selectedUser.profilePic || defaultProfilePicUrl}
+                     alt={selectedUser.name}
+                     className="user-profile-pic-large" />
+                <div className="user-fields">
+                  <p><strong>Name:</strong> {selectedUser.name}</p>
+                  <p><strong>Email:</strong> {selectedUser.email}</p>
+                  <p><strong>Phone:</strong> {selectedUser.phone}</p>
+                  <p><strong>Address:</strong> {selectedUser.address || '—'}</p>
+                </div>
+              </div>
 
-              {/* Order History Section */}
-              <h4>Order History</h4>
-              {selectedUser.orderHistory && selectedUser.orderHistory.length > 0 ? (
-                <ul>
-                  {selectedUser.orderHistory.map((order) => (
-  <li key={order._id}>
-    <p><strong>Order ID:</strong> {order._id}</p>
-    <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
-    <p><strong>Total:</strong> ${order.total}</p>
-    <p><strong>Status:</strong> {order.status}</p>
-    <h5>Items:</h5>
-    {order.items && order.items.length > 0 ? (
-      <ul>
-        {order.items.map((item, index) => (
-          <li key={index}>
-            <p><strong>Item Name:</strong> {item.name}</p>
-            <p><strong>Price:</strong> ${item.price}</p>
-            <p><strong>Quantity:</strong> {item.quantity}</p>
-            <p><strong>Final Price:</strong> ${item.finalPrice}</p>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <p>No items found.</p>
-    )}
-  </li>
-))}
-
-                </ul>
-              ) : (
-                <p>No orders found.</p>
-              )}
+              <h3>Order History</h3>
+              <div className="order-history">
+                {selectedUser.orderHistory.length > 0 ? selectedUser.orderHistory.map(order => {
+                  const computedTotal = order.items.reduce(
+                    (sum, it) => sum + it.finalPrice * it.quantity, 0
+                  );
+                  return (
+                    <div className="order-card" key={order._id}>
+                      <div className="order-header">
+                        <span className="order-id">Order #{order._id}</span>
+                        <span className="order-date">{new Date(order.createdAt).toLocaleDateString()}</span>
+                      </div>
+                      <table className="items-table">
+                        <thead>
+                          <tr>
+                            <th>Name</th><th>Price</th><th>Qty</th><th>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {order.items.map((item, i) => (
+                            <tr key={i}>
+                              <td>{item.name}</td>
+                              <td>Rs.{item.finalPrice}</td>
+                              <td>{item.quantity}</td>
+                              <td>Rs.{item.finalPrice * item.quantity}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                      <div className="order-footer">
+                        <span className="order-status">Status: {order.status}</span>
+                        <span className="order-final-total">Final Total: Rs.{computedTotal}</span>
+                      </div>
+                    </div>
+                  );
+                }) : (
+                  <p className="no-orders">No orders found.</p>
+                )}
+              </div>
             </div>
           </div>
         )}
 
         {/* Delete Confirmation Modal */}
         {showDeleteModal && (
-          <div 
-            className="modal" 
-            style={{ 
-              position: 'fixed', 
-              zIndex: '9999', 
-              left: 0, top: 0, 
-              width: '100%', 
-              height: '100%', 
-              overflow: 'auto', 
-              backgroundColor: 'rgba(0,0,0,0.5)' 
-            }}
-          >
-            <div className="modal-content" style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+          <div className="modal">
+            <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => setShowDeleteModal(false)}>×</span>
-              <h3>Are you sure you want to delete this user?</h3>
+              <h3>Confirm Delete</h3>
               <textarea
                 placeholder="Reason for deletion"
                 value={deletionReason}

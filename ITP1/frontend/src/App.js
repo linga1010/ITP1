@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
-import ProfilePage from './pages/ProfilePage';
+import ProfilePage from './pages/EditProfilePage';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminManageUsers from './pages/AdminManageUsers';
 import UserHomePage from './pages/UserHomePage';
