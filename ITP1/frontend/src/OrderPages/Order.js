@@ -98,7 +98,7 @@ const OrderPage = () => {
  
 
   return (
-    <div className="container">
+    <div className="containerorder">
       <h2>Package Order Summary</h2>
       <Button className="back-button" onClick={() => navigate("/view-package")} type="default">
         ← Back to Packages
@@ -129,7 +129,7 @@ const OrderPage = () => {
             </div>
           ))}
 
-          <h3>Total: Rs.{getTotalPrice()}</h3>
+          <h3>Total Price :  Rs {getTotalPrice()}</h3>
 
           <div className="terms-checkbox">
             <Checkbox onChange={(e) => setIsAgreed(e.target.checked)}>
