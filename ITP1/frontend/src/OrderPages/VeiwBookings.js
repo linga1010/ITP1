@@ -1,3 +1,4 @@
+
 // ViewBookings.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -29,24 +30,16 @@ const ViewBookings = () => {
   });
 
   useEffect(() => {
-    const fetchBookings = async () => {
+    const fetchData = async () => {
       const token = localStorage.getItem("token");
-
-      if (!token) {
-        navigate("/login");
-        return;
-      }
+      if (!token) return navigate("/login");
 
       try {
         const profileRes = await axios.get("http://localhost:5000/api/users/profile", {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!profileRes.data.isAdmin) {
-          setError("❌ Access denied. Admins only.");
-          navigate("/user-home");
-          return;
-        }
+        if (!profileRes.data.isAdmin) return navigate("/user-home");
 
         const [bookingsRes, productRes, packageRes] = await Promise.all([
           axios.get("http://localhost:5000/api/admin/bookings", { headers: { Authorization: `Bearer ${token}` } }),
@@ -54,130 +47,87 @@ const ViewBookings = () => {
           axios.get("http://localhost:5000/api/packages")
         ]);
 
-        const sortedBookings = bookingsRes.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setBookings(sortedBookings);
+        const sorted = bookingsRes.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setBookings(sorted);
         setProducts(productRes.data);
         setPackages(packageRes.data);
-        updateOrderCounts(sortedBookings);
-        calculateSalesAndProfit(sortedBookings, productRes.data, packageRes.data);
+        updateOrderCounts(sorted);
+        calculateSalesAndProfit(sorted, productRes.data, packageRes.data);
       } catch (err) {
-        console.error("❌ Failed to fetch bookings:", err);
-        setError("❌ Failed to fetch bookings or profile.");
+        setError("❌ Failed to fetch data.");
       } finally {
         setLoading(false);
       }
     };
-
-    fetchBookings();
+    fetchData();
   }, [navigate]);
 
-  const updateOrderCounts = (bookings) => {
+  const updateOrderCounts = (orders) => {
     setOrderCounts({
-      totalOrders: bookings.length,
-      pendingOrders: bookings.filter(order => order.status === "pending").length,
-      shippingOrders: bookings.filter(order => order.status === "shipped").length,
-      deliveredOrders: bookings.filter(order => order.status === "delivered").length,
-      removedOrders: bookings.filter(order => order.status === "removed").length,
-      canceledOrders: bookings.filter(order => order.status === "canceled").length,
+      totalOrders: orders.length,
+      pendingOrders: orders.filter(o => o.status === "pending").length,
+      shippingOrders: orders.filter(o => o.status === "shipped").length,
+      deliveredOrders: orders.filter(o => o.status === "delivered").length,
+      removedOrders: orders.filter(o => o.status === "removed").length,
+      canceledOrders: orders.filter(o => o.status === "canceled").length,
     });
   };
 
-  const handleStartDateChange = (e) => {
-    const selectedStart = new Date(e.target.value);
-    if (endDate) {
-      const selectedEnd = new Date(endDate);
-      const oneMonthEarlier = new Date(selectedEnd);
-      oneMonthEarlier.setMonth(oneMonthEarlier.getMonth() - 1);
-  
-      if (selectedStart > selectedEnd || selectedStart < oneMonthEarlier) {
-        alert("⚠️ Start date must be before end date and within one month.");
-        return;
-      }
-    }
-    setStartDate(e.target.value);
+  const isInDateRange = (dateStr) => {
+    const date = new Date(dateStr);
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
+    return (!start || date >= start) && (!end || date <= end);
   };
-  
-  
-  const handleEndDateChange = (e) => {
-    const selectedEnd = new Date(e.target.value);
-    if (startDate) {
-      const selectedStart = new Date(startDate);
-      const oneMonthLater = new Date(selectedStart);
-      oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
-  
-      if (selectedEnd < selectedStart || selectedEnd > oneMonthLater) {
-        alert("⚠️ End date must be after start date and within one month.");
-        return;
-      }
-    }
-    setEndDate(e.target.value);
-  };
-  
 
-  const calculateSalesAndProfit = async (orders, productList, packageList) => {
+  const calculateSalesAndProfit = (orders, productList, packageList) => {
     let sales = 0;
     let profit = 0;
 
-    for (const order of orders) {
-      if (order.status === "delivered") {
+    orders.forEach(order => {
+      if (order.status === "delivered" && isInDateRange(order.createdAt)) {
         sales += order.total;
-
-        for (const item of order.items) {
+        order.items.forEach(item => {
           const pack = packageList.find(p => p.name === item.name);
           if (pack) {
             let itemProfit = 0;
-
-            for (const { productId, quantity } of pack.products) {
-              const product = productList.find(p => p._id === productId._id);
-              if (product) {
+            pack.products.forEach(({ productId, quantity }) => {
+              const prod = productList.find(p => p._id === productId._id);
+              if (prod) {
                 const unitsSold = quantity * item.quantity;
-                const productProfit = (product.sellingPrice - product.costPrice) * unitsSold;
-                itemProfit += productProfit;
+                itemProfit += (prod.sellingPrice - prod.costPrice) * unitsSold;
               }
-            }
-
+            });
             const discount = (pack.totalPrice - pack.finalPrice) * item.quantity;
-            itemProfit -= discount;
-            profit += itemProfit;
+            profit += itemProfit - discount;
           }
-        }
+        });
       }
-    }
+    });
 
     setTotalSales(sales);
     setTotalProfit(profit);
   };
 
   const calculateOrderProfit = (order) => {
-    let totalProfit = 0;
+    if (order.status !== "delivered" || !isInDateRange(order.createdAt)) return "0.00";
 
-    for (const item of order.items) {
+    let totalProfit = 0;
+    order.items.forEach(item => {
       const pack = packages.find(p => p.name === item.name);
-      console.log(pack);
       if (pack) {
         let itemProfit = 0;
-
-        for (const { productId, quantity } of pack.products) {
-          const product = products.find((p) => p._id === productId._id); // 👈 FIXED here!
-        
-          if (product) {
+        pack.products.forEach(({ productId, quantity }) => {
+          const prod = products.find(p => p._id === productId._id);
+          if (prod) {
             const unitsSold = quantity * item.quantity;
-            const profit = (product.sellingPrice - product.costPrice) * unitsSold;
-            itemProfit += profit;
-          } else {
-            console.warn("⚠️ Product not found for ID:", productId._id);
+            itemProfit += (prod.sellingPrice - prod.costPrice) * unitsSold;
           }
-        }
-        
-        
-
+        });
         const discount = (pack.totalPrice - pack.finalPrice) * item.quantity;
-        itemProfit -= discount;
-        totalProfit += itemProfit;
+        totalProfit += itemProfit - discount;
       }
-    }
-    
-
+    });
     return totalProfit.toFixed(2);
   };
 
@@ -201,95 +151,70 @@ const ViewBookings = () => {
       calculateSalesAndProfit(updatedBookings, products, packages);
 
       alert(`✅ Order marked as ${status} successfully!`);
-    }  catch (err) {
+    } catch (err) {
       console.error(`❌ Failed to update order to ${status}:`, err);
       console.log("💬 Backend response:", err.response?.data);
       alert(err.response?.data?.message || "❌ Failed to update order.");
     }
-    
   };
 
-  const monthMap = {
-    january: 0,
-    february: 1,
-    march: 2,
-    april: 3,
-    may: 4,
-    june: 5,
-    july: 6,
-    august: 7,
-    september: 8,
-    october: 9,
-    november: 10,
-    december: 11,
-  };
-  
+  const handleStartDateChange = (e) => setStartDate(e.target.value);
+  const handleEndDateChange = (e) => setEndDate(e.target.value);
+
   const filteredBookings = bookings.filter(order => {
-    const createdAt = new Date(order.createdAt);
-    const monthIndex = createdAt.getMonth(); // 0 (Jan) to 11 (Dec)
-    const monthName = createdAt.toLocaleString("default", { month: "long" }); // "April"
     const search = searchTerm.toLowerCase();
-  
-    const matchesMonthName = monthName.toLowerCase().includes(search);
-    const matchesMonthNumber = !isNaN(search) && parseInt(search) === monthIndex + 1;
-    const matchesMappedMonth = monthMap[search] !== undefined && monthMap[search] === monthIndex;
-  
+    const createdAt = new Date(order.createdAt);
     return (
-      (order.user && order.user.toLowerCase().includes(search)) ||
-      (order.userName && order.userName.toLowerCase().includes(search)) ||
-      (order.status && order.status.toLowerCase().includes(search)) ||
-      createdAt.toLocaleDateString().includes(search) ||
-      matchesMonthName || matchesMonthNumber || matchesMappedMonth
+      (!startDate || createdAt >= new Date(startDate)) &&
+      (!endDate || createdAt <= new Date(endDate)) &&
+      (
+        (order.user && order.user.toLowerCase().includes(search)) ||
+        (order.userName && order.userName.toLowerCase().includes(search)) ||
+        (order.status && order.status.toLowerCase().includes(search)) ||
+        createdAt.toLocaleDateString().includes(search)
+      )
     );
   });
-  
-
-  if (loading) return <p>Loading bookings...</p>;
-  if (error) return <p>{error}</p>;
 
   return (
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
       <div className="main-content">
         <div className="view-bookings-container">
-          <h2>All Order Booking Details</h2>
+          <h2 className="booking-title">📋 All Order Booking Details</h2>
 
-          
+          <h4 className="summary-heading">📦 Order Summary</h4>
+<div className="status-box-row">
+  <div className="status-box">Total: {orderCounts.totalOrders}</div>
+  <div className="status-box">Pending: {orderCounts.pendingOrders}</div>
+  <div className="status-box">Shipping: {orderCounts.shippingOrders}</div>
+  <div className="status-box">Delivered: {orderCounts.deliveredOrders}</div>
+  <div className="status-box">Removed: {orderCounts.removedOrders}</div>
+  <div className="status-box">Canceled: {orderCounts.canceledOrders}</div>
+</div>
 
-
-          <div className="order-summary">
-            <h3>Order Summary</h3>
-            <p>Total Orders: {orderCounts.totalOrders}</p>
-            <p>Pending Orders: {orderCounts.pendingOrders}</p>
-            <p>Shipping Orders: {orderCounts.shippingOrders}</p>
-            <p>Delivered Orders: {orderCounts.deliveredOrders}</p>
-            <p>Removed Orders: {orderCounts.removedOrders}</p>
-            <p>Canceled Orders: {orderCounts.canceledOrders}</p>
+          <h4 className="summary-heading">💰 Sales & Profit</h4>
+          <div className="card summary-card gradient-green">
+            <p>Total Sales: Rs {totalSales}</p>
+            <p>Total Profit: Rs {totalProfit.toFixed(2)}</p>
           </div>
 
-          <div className="sales-profit">
-            <h3>💰 Sales & Profit</h3>
-            <p>Total Sales (Delivered): Rs. {totalSales}</p>
-            <p>Total Profit (Delivered): Rs. {totalProfit.toFixed(2)}</p>
-          </div>
-
-          <input
-            type="text"
-            placeholder="Search by User, Name, Status, or Date     🔍︎"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-bar"
-          />
-
-          <div className="date-filter">
-            <label>
-              Start Date:{" "}
-                <input type="date" value={startDate} onChange={handleStartDateChange} />
-            </label>
-            <label style={{ marginLeft: "1rem" }}>
-              End Date:{" "}
-                <input type="date" value={endDate} onChange={handleEndDateChange} />
-             </label>
+          <div className="filters-row">
+            <input
+              type="text"
+              placeholder="Search by User, Name, Status, or Date 🔍︎"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-bar"
+            />
+            <div className="date-input">
+              <label>Start Date:</label>
+              <input type="date" value={startDate} onChange={handleStartDateChange} />
+            </div>
+            <div className="date-input">
+              <label>End Date:</label>
+              <input type="date" value={endDate} onChange={handleEndDateChange} />
+            </div>
           </div>
 
           <div className="booking-table">
@@ -317,7 +242,7 @@ const ViewBookings = () => {
                         <ul>
                           {order.items.map((item, index) => (
                             <li key={index}>
-                              {item.name} (x{item.quantity}) - Rs. {item.finalPrice || item.price}
+                              {item.name} (x{item.quantity}) – Rs. {item.finalPrice || item.price}
                             </li>
                           ))}
                         </ul>
@@ -337,7 +262,6 @@ const ViewBookings = () => {
                             <button className="confirm-btn" onClick={() => updateOrderStatus(order._id, "confirm")}>
                               ✅ Confirm Order
                             </button>
-                            <br />
                             <button className="remove-btn" onClick={() => updateOrderStatus(order._id, "remove")}>
                               ❌ Remove Order
                             </button>
@@ -351,13 +275,13 @@ const ViewBookings = () => {
                             📦 Deliver Order
                           </button>
                         ) : order.status === "delivered" ? (
-                          <p>✅ Delivered</p>
+                          <span className="delivered-tag">✅ Delivered</span>
                         ) : order.status === "removed" ? (
-                          <p>❌ Removed</p>
+                          <span className="removed-tag">❌ Removed</span>
                         ) : order.status === "canceled" ? (
-                          <p>❌ Canceled</p>
+                          <span className="canceled-tag">❌ Canceled</span>
                         ) : (
-                          <p>✔ Confirmed</p>
+                          <span>✔ Confirmed</span>
                         )}
                       </td>
                     </tr>
