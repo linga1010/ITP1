@@ -1,5 +1,4 @@
-
-// ViewBookings.jsx
+// ViewOrderBookings.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -318,32 +317,61 @@ const ViewBookings = () => {
                       <td>{order.status}</td>
                       <td>{new Date(order.createdAt).toLocaleString()}</td>
                       <td>
-                        {order.status === "pending" ? (
-                          <>
-                            <button className="confirm-btn" onClick={() => updateOrderStatus(order._id, "confirm")}>
-                              ✅ Confirm Order
-                            </button>
-                            <button className="remove-btn" onClick={() => updateOrderStatus(order._id, "remove")}>
-                              ❌ Remove Order
-                            </button>
-                          </>
-                        ) : order.status === "success" ? (
-                          <button className="ship-btn" onClick={() => updateOrderStatus(order._id, "ship")}>
-                            🚚 Ship Order
-                          </button>
-                        ) : order.status === "shipped" ? (
-                          <button className="deliver-btn" onClick={() => updateOrderStatus(order._id, "deliver")}>
-                            📦 Deliver Order
-                          </button>
-                        ) : order.status === "delivered" ? (
-                          <span className="delivered-tag">✅ Delivered</span>
-                        ) : order.status === "removed" ? (
-                          <span className="removed-tag">❌ Removed</span>
-                        ) : order.status === "canceled" ? (
-                          <span className="canceled-tag">❌ Canceled</span>
-                        ) : (
-                          <span>✔ Confirmed</span>
-                        )}
+                       {order.status === "pending" ? (
+                        <>
+                         <button
+                          className="confirm-btn"
+                           onClick={() => {
+                          if (window.confirm("Are you sure you want to confirm this order?")) {
+                          updateOrderStatus(order._id, "confirm");
+                         }
+                        }}
+                         >
+                       ✅ Confirm Order
+                       </button>
+                      <button
+                       className="remove-btn"
+                        onClick={() => {
+                         if (window.confirm("Are you sure you want to remove this order?")) {
+                          updateOrderStatus(order._id, "remove");
+                         }
+                        }}
+                       >
+                        ❌ Remove Order
+                      </button>
+                    </>
+                    ) : order.status === "success" ? (
+  <button
+    className="ship-btn"
+    onClick={() => {
+      if (window.confirm("Are you sure you want to ship this order?")) {
+        updateOrderStatus(order._id, "ship");
+      }
+    }}
+  >
+    🚚 Ship Order
+  </button>
+                    ) : order.status === "shipped" ? (
+                     <button
+                       className="deliver-btn"
+                       onClick={() => {
+                     if (window.confirm("Are you sure you want to deliver this order?")) {
+                      updateOrderStatus(order._id, "deliver");
+                       }
+                      }}
+                     >
+                    📦 Deliver Order
+                    </button>
+                    ) : order.status === "delivered" ? (
+                    <span className="delivered-tag">✅ Delivered</span>
+                    ) : order.status === "removed" ? (
+                      <span className="removed-tag">❌ Removed</span>
+                    ) : order.status === "canceled" ? (
+                      <span className="canceled-tag">❌ Canceled</span>
+                    ) : (
+                    <span>✔ Confirmed</span>
+                    )}
+
                       </td>
                     </tr>
                   ))}
