@@ -29,6 +29,8 @@ const ViewBookings = () => {
     canceledOrders: 0,
   });
 
+  const today = new Date().toISOString().split("T")[0];
+
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
@@ -61,6 +63,17 @@ const ViewBookings = () => {
     };
     fetchData();
   }, [navigate]);
+
+  useEffect(() => {
+    calculateSalesAndProfit(bookings, products, packages);
+  }, [startDate, endDate]);
+  
+
+  const monthMap = {
+    january: 0, february: 1, march: 2, april: 3,
+    may: 4, june: 5, july: 6, august: 7,
+    september: 8, october: 9, november: 10, december: 11,
+  };
 
   const updateOrderCounts = (orders) => {
     setOrderCounts({
@@ -158,21 +171,66 @@ const ViewBookings = () => {
     }
   };
 
-  const handleStartDateChange = (e) => setStartDate(e.target.value);
-  const handleEndDateChange = (e) => setEndDate(e.target.value);
+  const handleStartDateChange = e => {
+    const sel = new Date(e.target.value);
+    if (endDate) {
+      const end = new Date(endDate);
+      const min = new Date(end);
+      min.setMonth(end.getMonth() - 1);
+      if (sel > end || sel < min) {
+        return alert("⚠️ Start date must be before end date .");
+      }
+    }
+    setStartDate(e.target.value);
+  };
+
+  const handleEndDateChange = e => {
+    const sel = new Date(e.target.value);
+    if (startDate) {
+      const st = new Date(startDate);
+      const max = new Date(st);
+      max.setMonth(st.getMonth() + 1);
+      if (sel < st || sel > max) {
+        return alert("⚠️ End date must be after start date .");
+      }
+    }
+    setEndDate(e.target.value);
+  };
+
+  const clearFilters = () => {
+    setStartDate("");
+    setEndDate("");
+    setSearchTerm("");
+  };
+  
+  
 
   const filteredBookings = bookings.filter(order => {
-    const search = searchTerm.toLowerCase();
-    const createdAt = new Date(order.createdAt);
+    const dt = new Date(order.createdAt);
+
+    // if startDate set, exclude earlier
+    let start = startDate ? new Date(startDate) : null;
+    if (start && dt < start) return false;
+
+    // if endDate set, extend to 23:59:59
+    let end = endDate ? new Date(endDate) : null;
+    if (end) {
+      end.setHours(23, 59, 59, 999);
+      if (dt > end) return false;
+    }
+
+    const s = searchTerm.toLowerCase();
+    const monthName = dt.toLocaleString("default", { month: "long" }).toLowerCase();
+    const monthIdx = dt.getMonth() + 1;
+
     return (
-      (!startDate || createdAt >= new Date(startDate)) &&
-      (!endDate || createdAt <= new Date(endDate)) &&
-      (
-        (order.user && order.user.toLowerCase().includes(search)) ||
-        (order.userName && order.userName.toLowerCase().includes(search)) ||
-        (order.status && order.status.toLowerCase().includes(search)) ||
-        createdAt.toLocaleDateString().includes(search)
-      )
+      (order.user && order.user.toLowerCase().includes(s)) ||
+      (order.userName && order.userName.toLowerCase().includes(s)) ||
+      (order.status && order.status.toLowerCase().includes(s)) ||
+      dt.toLocaleDateString().includes(s) ||
+      monthName.includes(s) ||
+      (!isNaN(s) && parseInt(s) === monthIdx) ||
+      (monthMap[s] === dt.getMonth())
     );
   });
 
@@ -184,14 +242,14 @@ const ViewBookings = () => {
           <h2 className="booking-title">📋 All Order Booking Details</h2>
 
           <h4 className="summary-heading">📦 Order Summary</h4>
-<div className="status-box-row">
-  <div className="status-box">Total: {orderCounts.totalOrders}</div>
-  <div className="status-box">Pending: {orderCounts.pendingOrders}</div>
-  <div className="status-box">Shipping: {orderCounts.shippingOrders}</div>
-  <div className="status-box">Delivered: {orderCounts.deliveredOrders}</div>
-  <div className="status-box">Removed: {orderCounts.removedOrders}</div>
-  <div className="status-box">Canceled: {orderCounts.canceledOrders}</div>
-</div>
+        <div className="status-box-row">
+          <div className="status-box">Total: {orderCounts.totalOrders}</div>
+          <div className="status-box">Pending: {orderCounts.pendingOrders}</div>
+          <div className="status-box">Shipping: {orderCounts.shippingOrders}</div>
+          <div className="status-box">Delivered: {orderCounts.deliveredOrders}</div>
+          <div className="status-box">Removed: {orderCounts.removedOrders}</div>
+          <div className="status-box">Canceled: {orderCounts.canceledOrders}</div>
+        </div>
 
           <h4 className="summary-heading">💰 Sales & Profit</h4>
           <div className="card summary-card gradient-green">
@@ -209,12 +267,15 @@ const ViewBookings = () => {
             />
             <div className="date-input">
               <label>Start Date:</label>
-              <input type="date" value={startDate} onChange={handleStartDateChange} />
+              <input type="date" value={startDate} onChange={handleStartDateChange} max={today} />
             </div>
             <div className="date-input">
               <label>End Date:</label>
-              <input type="date" value={endDate} onChange={handleEndDateChange} />
-            </div>
+              <input type="date" value={endDate} onChange={handleEndDateChange} max={today}/>
+            </div>       
+            <button className="clear-date-btn" onClick={clearFilters}>
+            ❌Clear
+            </button>
           </div>
 
           <div className="booking-table">
@@ -251,7 +312,7 @@ const ViewBookings = () => {
                         Rs. {order.total}
                         <br />
                         <span style={{ color: "green", fontSize: "0.9em" }}>
-                          Profit: Rs. {calculateOrderProfit(order)}
+                          Profit: Rs {calculateOrderProfit(order)}
                         </span>
                       </td>
                       <td>{order.status}</td>

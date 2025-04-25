@@ -52,6 +52,7 @@
   cursor: pointer;
   height: fit-content;
   margin-top: 24px;
+  margin-bottom: 10px;
   transition: 0.2s ease-in-out;
 }
 

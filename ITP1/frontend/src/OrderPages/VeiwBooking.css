@@ -3,7 +3,7 @@
   padding: 30px;
   background: #ffffffdd;
   border-radius: 12px;
-  max-width: 1000px;
+  max-width: 1200px;
   margin: 50px auto;
   box-shadow: 0 6px 20px rgba(0,0,0,0.1);
 }
@@ -49,7 +49,7 @@
 
 .status-box {
   background: linear-gradient(to right, #36D1DC, #5B86E5);
-  color: white;
+  color: rgb(0, 0, 0);
   padding: 14px 16px;
   border-radius: 10px;
   font-weight: bold;
@@ -67,7 +67,10 @@
 }
 
 .gradient-green {
-  background: linear-gradient(to right, #56ab2f, #a8e063);
+  background: linear-gradient(to right, #4a9b24, #9ace5a);
+  color:#000000;
+  font-weight: bold;
+  font-size: 18px;
 }
 
 .filters-row {
@@ -90,6 +93,25 @@
   display: flex;
   flex-direction: column;
 }
+
+.clear-date-btn {
+  padding: 6px 12px;
+  margin-left: 10px;
+  margin-bottom: 15px;
+  background-color: #fc8319;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-size: 16px;
+}
+
+.clear-date-btn:hover {
+  background-color: #d35400;
+}
+
+
 
 .booking-table {
   overflow-x: auto;

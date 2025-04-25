@@ -1,4 +1,3 @@
-// AdminDashboard.js - Removed Pie Charts, Added Top Margin
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../Component/Adminnavigation';
@@ -13,31 +12,41 @@ const AdminDashboard = () => {
   const [startDateError, setStartDateError] = useState('');
   const [endDateError, setEndDateError] = useState('');
 
+  const today = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
   const handleStartDateChange = (value) => {
     setStartDate(value);
-    if (endDate && new Date(value) > new Date(endDate)) {
-      setStartDateError('Start date cannot be after end date');
-      setEndDateError('');
+
+    if (value > today) {
+      setStartDateError("Start date cannot be after today");
+    } else if (endDate && new Date(value) > new Date(endDate)) {
+      setStartDateError("Start date cannot be after end date");
+      setEndDateError("");
     } else {
-      setStartDateError('');
-      setEndDateError('');
+      setStartDateError("");
+      setEndDateError("");
     }
   };
 
   const handleEndDateChange = (value) => {
     setEndDate(value);
-    if (startDate && new Date(value) < new Date(startDate)) {
-      setEndDateError('End date must be after start date');
-      setStartDateError('');
+
+    if (value > today) {
+      setEndDateError("End date cannot be after today");
+    } else if (startDate && new Date(value) < new Date(startDate)) {
+      setEndDateError("End date cannot be before start date");
+      setStartDateError("");
     } else {
-      setEndDateError('');
-      setStartDateError('');
+      setEndDateError("");
+      setStartDateError("");
     }
   };
 
   const clearFilters = () => {
     setStartDate('');
     setEndDate('');
+    setStartDateError('');
+    setEndDateError('');
     fetchInvoiceData();
     fetchPackageData();
   };
@@ -48,12 +57,10 @@ const AdminDashboard = () => {
   const [packageProfit, setPackageProfit] = useState(0);
 
   useEffect(() => {
-    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-      return;
-    }
+    if (startDateError || endDateError) return;
     fetchInvoiceData();
     fetchPackageData();
-  }, [startDate, endDate]);
+  }, [startDate, endDate, startDateError, endDateError]);
 
   const fetchInvoiceData = async () => {
     try {
@@ -154,13 +161,11 @@ const AdminDashboard = () => {
       },
     ],
   };
-  
+
   const barChartOptions = {
     responsive: true,
     plugins: {
-      legend: {
-        position: 'top',
-      },
+      legend: { position: 'top' },
       tooltip: {
         callbacks: {
           label: function (context) {
@@ -186,22 +191,22 @@ const AdminDashboard = () => {
       <Navbar onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
       <div className="admin-dashboard" style={{ marginTop: '80px' }}>
         <h2 className="dashboard-title">WELCOME TO THE ADMIN DASHBOARD</h2>
-        
-
 
         <div className="date-filter-row">
-  <div className="date-field">
-    <label><strong>Start Date:</strong></label>
-    <input type="date" value={startDate} onChange={e => handleStartDateChange(e.target.value)} />
-  </div>
+          <div className="date-field">
+            <label><strong>Start Date:</strong></label>
+            <input type="date" value={startDate} max={today} onChange={e => handleStartDateChange(e.target.value)} />
+            {startDateError && <p style={{ color: 'red' }}>{startDateError}</p>}
+          </div>
 
-  <div className="date-field">
-    <label><strong>End Date:</strong></label>
-    <input type="date" value={endDate} onChange={e => handleEndDateChange(e.target.value)} />
-  </div>
+          <div className="date-field">
+            <label><strong>End Date:</strong></label>
+            <input type="date" value={endDate} max={today} onChange={e => handleEndDateChange(e.target.value)} />
+            {endDateError && <p style={{ color: 'red' }}>{endDateError}</p>}
+          </div>
 
-  <button onClick={clearFilters} className="clear-btn">Clear Data</button>
-</div>
+          <button onClick={clearFilters} className="clear-btn">Clear Data</button>
+        </div>
 
         <div className="summary-row">
           <div className="summary-box gradient-blue">
@@ -223,7 +228,7 @@ const AdminDashboard = () => {
 
         <div className="chart-box full-width">
           <h4>Sales & Profit Comparison</h4>
-          <Bar data={barChartData} options={barChartOptions} /> 
+          <Bar data={barChartData} options={barChartOptions} />
         </div>
       </div>
     </>
