@@ -113,7 +113,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 15px;
-  width: 70%;
+  width: 85%;
   transform: translateY(0px);
   transition: 0.5s;
   overflow-y: auto;
@@ -147,7 +147,7 @@ h2 i {
 }
 
 .input-field {
-  width: 100%;
+  width: 250px;
   padding: 10px 20px;
   outline: none;
   border: 2px solid #ccc;
@@ -164,7 +164,7 @@ h2 i {
 }
 
 .btn {
-  width: 90%;
+  width: 95%;
   padding: 10px 20px;
   background: #ff8c42;
   border: none;

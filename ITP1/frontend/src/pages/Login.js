@@ -1,42 +1,49 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth"; // Import useAuth hook
-import { useNavigate } from "react-router-dom"; // Import useNavigate
-import "../styles/Login.css";
+import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import "../styles/Login.css"; // or VkLogin.css if you renamed it
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); 
-  const { login, user } = useAuth(); // Removed getUser()
-  const navigate = useNavigate(); 
+  const [error, setError] = useState("");
+  const { login, user } = useAuth();
+  const navigate = useNavigate();
 
-  // 🔹 Check if user is already logged in and redirect accordingly
+  // Redirect already-logged-in users
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (token && user) {
       if (user.isAdmin) {
-        navigate("/admin-dashboard"); // Redirect admin users
+        navigate("/admin-dashboard");
       } else {
-        navigate("/user-home"); // Redirect normal users
+        navigate("/user-home");
       }
     }
-  }, [navigate, user]); // Removed getUser from dependencies
+  }, [navigate, user]);
+
+  // Auto-clear error messages after 3 seconds
+  useEffect(() => {
+    if (!error) return;
+    const timer = setTimeout(() => {
+      setError("");
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [error]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); 
+    setError("");
 
     if (!email || !password) {
       setError("❌ Please fill out all fields.");
       return;
     }
-  
+
     try {
-      const loggedInUser = await login(email, password); 
+      const loggedInUser = await login(email, password);
 
       if (loggedInUser) {
-        // 🔹 Redirect based on `isAdmin` field
         if (loggedInUser.isAdmin) {
           navigate("/admin/view-profile");
         } else {
@@ -45,21 +52,22 @@ const Login = () => {
       } else {
         setError("❌ Invalid email or password.");
       }
-    } catch (error) {
+    } catch (err) {
       setError("❌ Error during login.");
     }
   };
 
   return (
-    <div className="box">
-      <div className="login">
-        <div className="loginBx">
+    <div className="vk-box">
+      <div className="vk-login">
+        <div className="vk-loginBx">
           <h2>
-            <i className="fa-solid fa-right-to-bracket"></i> Login <i className="fa-solid fa-heart"></i>
+            <i className="fa-solid fa-right-to-bracket"></i> Login{" "}
+            <i className="fa-solid fa-heart"></i>
           </h2>
-          {error && <div className="error-message">{error}</div>}
-          <form onSubmit={handleSubmit} className="login-form">
-            <div className="form-field">
+          {error && <div className="vk-error-message">{error}</div>}
+          <form onSubmit={handleSubmit} className="vk-login-form">
+            <div className="vk-form-field">
               <input
                 type="email"
                 value={email}
@@ -68,7 +76,7 @@ const Login = () => {
                 required
               />
             </div>
-            <div className="form-field">
+            <div className="vk-form-field">
               <input
                 type="password"
                 value={password}
@@ -77,11 +85,13 @@ const Login = () => {
                 required
               />
             </div>
-            <div className="form-field">
-              <button type="submit" className="login-btn">Login</button>
+            <div className="vk-form-field">
+              <button type="submit" className="vk-login-btn">
+                Login
+              </button>
             </div>
           </form>
-          <div className="group">
+          <div className="vk-group">
             <a href="/forgot-password">Forgot Password</a>
             <a href="/signup">Sign up</a>
           </div>
