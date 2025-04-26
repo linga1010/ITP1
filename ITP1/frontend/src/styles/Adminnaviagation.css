@@ -48,7 +48,7 @@ body, html {
 
 /* Back button - Left aligned */
 .back-btn {
-  background-color: #4CAF50; /* Green color */
+  background-color: #4CAF50 !important; /* Green color */
   color: white;
 }
 

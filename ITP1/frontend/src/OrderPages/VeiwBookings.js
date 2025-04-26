@@ -284,10 +284,10 @@ const ViewBookings = () => {
                 <tbody>
                   {filteredBookings.map((order) => (
                     <tr key={order._id}>
-                      <td>{order.user}</td>
-                      <td>{order.userName}</td>
-                      <td>{order.location || "N/A"}</td>
-                      <td>
+                      <td >{order.user}</td>
+                      <td className="usernametable">{order.userName}</td>
+                      <td className="locationtable">{order.location || "N/A"}</td>
+                      <td className="itemtable">
                         <ul>
                           {order.items.map((item, index) => (
                             <li key={index}>
@@ -304,7 +304,7 @@ const ViewBookings = () => {
                         </span>
                       </td>
                       <td>{order.status}</td>
-                      <td>{new Date(order.createdAt).toLocaleString()}</td>
+                      <td className="datetime">{new Date(order.createdAt).toLocaleString()}</td>
                       <td>
                         {order.status === "pending" ? (
                           <>
