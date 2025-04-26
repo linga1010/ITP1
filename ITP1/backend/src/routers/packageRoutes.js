@@ -3,20 +3,25 @@
 import express from 'express';
 import multer from 'multer';
 import { createPackage, getPackages, getPackageById, updatePackage, deletePackage } from '../controllers/PackageController.js';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import cloudinary from '../config/cloudinary.js'; // 👈 make sure this is correct path
+
+
 
 const router = express.Router();
 
-// Multer setup for image upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'Packages', // 👈 save package images inside Cloudinary folder "Packages"
+    allowed_formats: ['jpg', 'jpeg', 'png'],
+    public_id: (req, file) => Date.now().toString(), // 👈 unique filename
+  },
 });
 
-const fileFilter = (req, file, cb) => {
-  file.mimetype.startsWith('image/') ? cb(null, true) : cb(new Error('Only image files are allowed!'), false);
-};
+const upload = multer({ storage });
 
-const upload = multer({ storage, fileFilter });
 
 // Routes
 router.post('/', upload.single('image'), createPackage);

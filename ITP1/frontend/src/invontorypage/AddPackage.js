@@ -41,6 +41,7 @@ const AddPackage = () => {
 
   // Submit package
   const handleSubmit = async (values) => {
+
     if (!image) return message.error("Please upload an image");
 
     const formData = new FormData();
@@ -254,31 +255,50 @@ const AddPackage = () => {
           <Form.Item label="Final Price">
             <Input value={finalPrice} readOnly />
           </Form.Item>
+          
 
-          <Form.Item label="Upload Image">
-            <Upload
-              beforeUpload={(file) => {
-                setImage(file);
-                setPreview(URL.createObjectURL(file));
-                return false;
-              }}
-              showUploadList={false}
-            >
-              <Button>Browse Image</Button>
-            </Upload>
 
-            {preview && (
-              <img
-                src={preview}
-                alt="Preview"
-                style={{
-                  marginLeft: "10px",
-                  maxWidth: "200px",
-                  display: "block",
-                }}
-              />
-            )}
-          </Form.Item>
+
+
+          <Form.Item
+  label="Upload Image"
+  required
+  validateStatus={!image ? "error" : "success"}
+  help={!image ? "Please upload an image" : ""}
+>
+  <Upload
+    beforeUpload={(file) => {
+      const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
+      if (!isJpgOrPng) {
+        message.error("Only JPG, JPEG, and PNG files are allowed!");
+        return Upload.LIST_IGNORE;
+      }
+
+      setImage(file);
+      setPreview(URL.createObjectURL(file));
+      return false;
+    }}
+    showUploadList={false}
+  >
+    <Button>Browse Image</Button>
+  </Upload>
+
+  {preview && (
+    <img
+      src={preview}
+      alt="Preview"
+      style={{
+        marginLeft: "10px",
+        maxWidth: "200px",
+        marginTop: "10px",
+        display: "block",
+        borderRadius: "8px",
+      }}
+    />
+  )}
+</Form.Item>
+
+          
 
           <Form.Item>
           <Button style={{ backgroundColor: "#ffcc00", color: "black" }} type="primary" htmlType="submit">

@@ -84,7 +84,7 @@ const PackageList = () => {
             {filteredPackages.map((pkg) => (
               <tr key={pkg._id}>
                 <td>
-                  <img src={`http://localhost:5000${pkg.image}`} alt="Package" width="50" />
+                  <img src={pkg.image} alt="Package" style={{ width: "80px", height: "80px" }} />
                 </td>
                 <td>{pkg.name}</td>
                 <td>

@@ -20,11 +20,24 @@ const AddProduct = () => {
   const [previewImage, setPreviewImage] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
 
+  
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const fileType = file.type;
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+  
+      if (!allowedTypes.includes(fileType)) {
+        setErrorMessage("Only JPG, JPEG, and PNG files are allowed.");
+        setImage(null);
+        setPreviewImage(null);
+        return;
+      }
+  
       setImage(file);
       setPreviewImage(URL.createObjectURL(file));
+      setErrorMessage(""); // Clear error if valid
     }
   };
 
@@ -32,6 +45,16 @@ const AddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
+
+    if (name.length < 4 || name.length > 25) {
+      setErrorMessage("Product name must be between 4 and 25 characters.");
+      return; 
+    }
+  
+    if (sku.length < 4 || sku.length > 25) {
+      setErrorMessage("SKU must be between 4 and 25 characters.");
+      return; 
+    }
 
     if (parseFloat(sellingPrice) <= parseFloat(costPrice)) {
       setErrorMessage("Selling price must be greater than cost price.");

@@ -147,9 +147,9 @@ const UserDashboard = () => {
                     onClick={() => navigate("/view-package")}
                   >
                     <img
-                      src={pkg?.image ? `${BASE_URL}${pkg.image}` : "#"}
-                      alt={pkg?.name || "Package"}
-                      className="package-image"
+                        src={pkg?.image ? pkg.image : "#"}
+                         alt={pkg?.name || "Package"}
+                       className="package-image"
                     />
                     <h3>{pkg?.name || "Package Name"}</h3>
                     <p>Price: Rs. {pkg?.totalPrice || "0"}</p>

@@ -147,7 +147,7 @@ const ViewPackage = () => {
               <Row gutter={[16, 16]} style={{ width: "100%" }}>
                 <Col xs={24} sm={8} md={8} lg={8}>
                   <img
-                    src={`http://localhost:5000${pkg.image}`}
+                    src={pkg.image}
                     alt="Package"
                     style={{
                       width: "100%",

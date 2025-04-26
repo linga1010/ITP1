@@ -5,13 +5,14 @@ import fs from 'fs';
 import path from 'path';
 import Package from '../models/Package.js';  // Add the .js extension
 import Product from '../models/Product.js';  // Add the .js extension if not done already
+import cloudinary from '../config/cloudinary.js';
 
 
 // Create a package
 export const createPackage = async (req, res) => {
   try {
     const { name, discount, products } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : null;
+    const image = req.file ? req.file.path : null;
 
     let parsedProducts;
     try {
@@ -52,6 +53,15 @@ export const createPackage = async (req, res) => {
   }
 };
 
+
+
+
+
+
+
+
+
+
 // Get all packages
 export const getPackages = async (req, res) => {
   try {
@@ -77,8 +87,7 @@ export const getPackageById = async (req, res) => {
 export const updatePackage = async (req, res) => {
   try {
     const { name, products, discount } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : req.body.image; // Retain the old image if new one isn't uploaded
-
+    const image = req.file ? req.file.path : req.body.image;
     // Validate discount value
     if (discount && (isNaN(discount) || discount < 0 || discount > 100)) {
       return res.status(400).json({ message: "Discount should be a valid number between 0 and 100" });
@@ -122,6 +131,19 @@ export const updatePackage = async (req, res) => {
   }
 };
 
+
+
+
+
+
+
+
+
+
+
+
+/*
+
 // Delete package
 export const deletePackage = async (req, res) => {
   try {
@@ -137,6 +159,31 @@ export const deletePackage = async (req, res) => {
         }
       } catch (err) {
         console.error("Error deleting image:", err);
+      }
+    }
+
+    res.status(200).json({ message: "Package deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};   */
+
+// Delete package
+export const deletePackage = async (req, res) => {
+  try {
+    const deletedPackage = await Package.findByIdAndDelete(req.params.id);
+    if (!deletedPackage) return res.status(404).json({ message: "Package not found" });
+
+    if (deletedPackage.image) {
+      const imageUrlParts = deletedPackage.image.split('/');
+      const imageNameWithExtension = imageUrlParts[imageUrlParts.length - 1];
+      const publicId = `Packages/${imageNameWithExtension.split('.')[0]}`;
+
+      try {
+        await cloudinary.uploader.destroy(publicId);
+        console.log('✅ Image deleted from Cloudinary');
+      } catch (err) {
+        console.error('❌ Error deleting image from Cloudinary:', err);
       }
     }
 

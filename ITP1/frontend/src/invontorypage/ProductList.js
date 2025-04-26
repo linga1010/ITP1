@@ -94,7 +94,7 @@ const ProductList = () => {
               {filteredPackages.map((product) => (
                 <tr key={product.sku}>
                   <td>
-                    <img src={`http://localhost:5000/${product.image}`} alt="Product" />
+                  <img src={product.image} alt="Product" style={{ width: "80px", height: "80px" }} />
                   </td>
                   <td>{product.name}</td>
                   <td>{product.sku}</td>
