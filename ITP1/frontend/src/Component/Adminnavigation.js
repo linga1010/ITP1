@@ -176,25 +176,23 @@ const Adminnaviagtion = () => {
 
       {/* Logout confirmation modal */}
       {showLogoutModal && (
-  <div className="modal-overlay" onClick={cancelLogout}>
-    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-      {/* 👇 Insert animated emoji here */}
-      <div className="emoji-animation">
-        <img 
-          src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif" 
-          alt="Sad Emoji Animation" 
-          className="animated-emoji" 
-        />
-      </div>
+ <div className="admin-logout-modal-overlay" onClick={cancelLogout}>
+ <div className="admin-logout-modal-box" onClick={(e) => e.stopPropagation()}>
+   <div className="admin-logout-emoji-animation">
+     <img 
+       src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif" 
+       alt="Sad Emoji Animation" 
+       className="admin-logout-animated-emoji" 
+     />
+   </div>
+   <p>Are you sure you want to logout?</p>
+   <div className="admin-logout-modal-buttons">
+     <button className="admin-logout-yes-btn" onClick={confirmLogout}>Yes</button>
+     <button className="admin-logout-no-btn" onClick={cancelLogout}>No</button>
+   </div>
+ </div>
+</div>
 
-      <p>Are you sure you want to logout?</p>
-
-      <div className="modal-buttons">
-        <button className="yes-btn" onClick={confirmLogout}>Yes</button>
-        <button className="no-btn" onClick={cancelLogout}>No</button>
-      </div>
-    </div>
-  </div>
 )}
 
     </div>

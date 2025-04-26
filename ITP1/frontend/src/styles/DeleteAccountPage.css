@@ -1,100 +1,99 @@
-/* DeleteAccountPage.css */
+/* src/styles/DeleteAccountPage.css */
+.dap-container {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 30px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  text-align: center;
+}
 
-.profile-container {
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 25px;
-    background: #f9f9fb; /* Light background for consistency */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
-    font-family: "Poppins", sans-serif;
-    text-align: center;
-    color: #f5f3f3; /* White text */
+.dap-title {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  background: linear-gradient(45deg, #ff5733, #ff8c42);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.dap-success {
+  color: #2e7d32;
+  font-weight: bold;
+
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.dap-error {
+  color: #c62828;
+  font-weight: bold;
+
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.dap-input {
+  width: 90%;
+  max-width: 500px;
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+  border: 2px solid #ffcc00;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #000;
+}
+
+.dap-button-group {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.dap-btn {
+  padding: 0.9rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  color: #fff;
+}
+
+.dap-delete-btn {
+  background-color: #e74c3c;
+}
+.dap-delete-btn:hover {
+  background-color: #c0392b;
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(192, 57, 43, 0.4);
+}
+
+.dap-cancel-btn {
+  background-color: #3498db;
+}
+.dap-cancel-btn:hover {
+  background-color: #2980b9;
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(41, 128, 185, 0.4);
+}
+
+@media (max-width: 600px) {
+  .dap-input {
+    width: 100%;
   }
-  
-  h1 {
-    text-transform: uppercase;
-    font-weight: 700;
-    letter-spacing: 0.25em;
-    background: linear-gradient(45deg, #ff5733, #ff8c42);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
-    margin-bottom: 30px;
+  .dap-button-group {
+    flex-direction: column;
   }
-  
-  .success-message {
-    color: #4caf50;
-    font-size: 14px;
-    margin-bottom: 10px;
+  .dap-btn {
+    width: 100%;
   }
-  
-  .error-message {
-    color: #e74c3c;
-    font-size: 14px;
-    margin-bottom: 10px;
-  }
-  
-  .profile-input {
-    width: 90%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 2px solid #ffcc00;
-    border-radius: 5px;
-    font-size: 16px;
-    background-color: #f9f9f9;
-    color: #0b0b0b;
-    text-align: center;
-  }
-  
-  .profile-btn {
-    padding: 10px 15px;
-    margin: 8px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #1e1e2f;
-    background-color: #ffcc00;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: 0.3s ease-in-out;
-  }
-  
-  .profile-btn:hover {
-    background-color: #e6b800;
-  }
-  
-  .delete-btn {
-    background-color: #e74c3c;
-    color: #ffffff;
-  }
-  
-  .delete-btn:hover {
-    background-color: #c0392b;
-  }
-  
-  .cancel-btn {
-    background-color: #3498db;
-    color: #ffffff;
-  }
-  
-  .cancel-btn:hover {
-    background-color: #2980b9;
-  }
-  
-  @media (max-width: 600px) {
-    .profile-container {
-      width: 90%;
-      padding: 15px;
-    }
-  
-    .profile-input {
-      width: 100%;
-    }
-  
-    .profile-btn {
-      width: 100%;
-    }
-  }
-  
+}

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/AdminUser.css';
-import "../styles/Body.css";
+import '../styles/AdminDeletedUser.css';
 import Adminnaviagtion from "../Component/Adminnavigation"; 
 
 const AdminDeletedUsers = () => {
@@ -57,9 +56,9 @@ const AdminDeletedUsers = () => {
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
 
-      <div className="main-content">
+      <div className="maincontent">
     <div>
-      <h2>Deleted Users</h2>
+      <h1>Deleted Users</h1>
       {error && <p>{error}</p>}
 
       <table>

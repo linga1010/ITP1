@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/Profile.css';
-import "../styles/Body.css";
+//import "../styles/Body.css";
 import Adminnaviagtion from "../Component/Adminnavigation"; 
 
 const AdminProfile = () => {
@@ -51,7 +51,7 @@ const AdminProfile = () => {
     <div className="admin-dashboard-container">
     <Adminnaviagtion />
 
-    <div className="main-content">
+    <div className="maincontent">
 
 
     <div className="profile-container">
@@ -72,10 +72,11 @@ const AdminProfile = () => {
       </div>
 
       <div className="profile-actions">
-        <button className="profile-btn" onClick={handleBackToDashboard}>⬅ Back to Dashboard</button>
         <button className="profile-btn" onClick={() => navigate('/profile')}>✏️ Edit Profile</button>
         <button className="profile-btn" onClick={() => navigate('/change-password')}>🔐 Change Password</button>
         <button className="profile-btn" onClick={() => navigate('/delete-account')}>🗑️ Delete Account</button>
+        <button className="profile-btn" onClick={handleBackToDashboard}>⬅ Back to Dashboard</button>
+
       </div>
     </div>
 
