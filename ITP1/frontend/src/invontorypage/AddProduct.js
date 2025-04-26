@@ -154,11 +154,12 @@ const AddProduct = () => {
   return (
 
     <div className="admin-dashboard-container">
-      <Adminnaviagtion /> {/* Add the Admin navigation component here */}
+      <Adminnaviagtion /> 
+      <p><br></br></p>  <p><br></br></p> 
 
       <div className="main-content">
-    
-      <h2>Add Product</h2>
+      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>Add Product</p>
+  
       {errorMessage && <p className="error-message">{errorMessage}</p>}
 
       <div className="form-content">

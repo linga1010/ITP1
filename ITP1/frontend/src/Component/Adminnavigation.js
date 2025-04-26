@@ -77,7 +77,9 @@ const Adminnaviagtion = () => {
   const sidebarItems = [
     {
       title: 'Home',
-      links: [{ to: '/admin-dashboard', label: 'Admin Dashboard' }],
+      links: [{ to: '/admin-dashboard', label: 'Admin Dashboard' },
+        { to: '/SalesReport', label: 'Sales Report' }]
+      
     },
     {
       title: 'User Management',
