@@ -6,7 +6,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 30%, #d6e5fa 70%); /* Soft blue background */
+  background: linear-gradient(135deg, #f5f7fa 30%, #d6e5fa 70%);
 }
 
 * {
@@ -19,18 +19,11 @@ body {
   initial-value: 0deg;
 }
 
-.box {
+.vk-box {
   position: relative;
   width: 400px;
   height: 200px;
-  background: repeating-conic-gradient(
-    from var(--a),
-    #ff8c42 0%,
-    #ff8c42 5%,
-    transparent 5%,
-    transparent 40%,
-    #ff8c42 50%
-  );
+  background: repeating-conic-gradient(from var(--a), #ff8c42 0%, #ff8c42 5%, transparent 5%, transparent 40%, #ff8c42 50%);
   filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2));
   border-radius: 20px;
   animation: rotating 4s linear infinite;
@@ -41,56 +34,45 @@ body {
 }
 
 @keyframes rotating {
-  0% {
-    --a: 0deg;
-  }
-  100% {
-    --a: 360deg;
-  }
+  0% { --a: 0deg; }
+  100% { --a: 360deg; }
 }
 
-.box::before {
+.vk-box::before {
   content: "";
   position: absolute;
   width: 100%;
   height: 100%;
-  background: repeating-conic-gradient(
-    from var(--a),
-    #ffd700 0%,
-    #ffd700 5%,
-    transparent 5%,
-    transparent 40%,
-    #ffd700 50%
-  );
+  background: repeating-conic-gradient(from var(--a), #ffd700 0%, #ffd700 5%, transparent 5%, transparent 40%, #ffd700 50%);
   filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.2));
   border-radius: 20px;
   animation: rotating 4s linear infinite;
   animation-delay: -1s;
 }
 
-.box::after {
+.vk-box::after {
   content: "";
   position: absolute;
   inset: 4px;
-  background: rgba(255, 255, 255, 0.9); /* Light inner box */
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 15px;
   border: 8px solid #eaeaea;
 }
 
-.box:hover {
+.vk-box:hover {
   width: 450px;
   height: 500px;
 }
 
-.box:hover .login {
+.vk-box:hover .vk-login {
   inset: 40px;
 }
 
-.box:hover .loginBx {
+.vk-box:hover .vk-loginBx {
   transform: translateY(0px);
 }
 
-.login {
+.vk-login {
   position: absolute;
   inset: 60px;
   display: flex;
@@ -98,7 +80,7 @@ body {
   align-items: center;
   flex-direction: column;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.8); /* Lighter background */
+  background: rgba(255, 255, 255, 0.8);
   color: #333;
   z-index: 1000;
   box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -107,16 +89,16 @@ body {
   overflow: hidden;
 }
 
-.loginBx {
+.vk-loginBx {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Start with top alignment */
-  gap: 20px;
+  justify-content: flex-start;
+  gap: 00px;
   width: 70%;
-  height: auto; /* Let it adjust based on content */
-  padding-bottom: 20px; /* Add space at the bottom */
+  height: auto;
+  padding-bottom: -0px;
   transform: translateY(126px);
   transition: 0.5s;
 }
@@ -125,41 +107,39 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: nowrap;
   gap: 0.5em;
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.25em;
   background: linear-gradient(45deg, #ff8c42, #ffd700);
   background-clip: text;
- -webkit-background-clip: text;
+  -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
   margin-bottom: 10px;
-  margin-top: 45px; /* Added this line to move the header slightly down */
+  margin-top: 45px;
 }
-
 
 h2 i {
   color: #ff8c42;
   text-shadow: 0 0 5px #ff8c42, 0 0 20px #ff8c42;
 }
 
-.form-field {
-  width: 100%;
+.vk-form-field {
+  width: 330px;
   margin-bottom: 15px;
 }
 
-input {
-  width: 100%;
+.vk-box input {
+  width: 280px;
   padding: 10px 20px;
-  outline: none;
-  border: none;
+  outline: black;
+  border: black;
   font-size: 1em;
   color: #333;
   background: rgba(255, 255, 255, 0.8);
   border: 2px solid #ccc;
-  border-radius: 30px;
+  border-radius: 50px;
   transition: 0.3s;
 }
 
@@ -182,20 +162,18 @@ button:hover {
   box-shadow: 0 0 10px #ff8c42, 0 0 40px #ff8c42;
 }
 
-.group {
+.vk-group {
   width: 100%;
   display: flex;
   justify-content: space-between;
 }
 
-
-
-.group a {
+.vk-group a {
   color: #ff8c42;
   font-weight: 600;
 }
 
-.error-message {
+.vk-error-message {
   margin-top: -40px;
   font-size: 1em;
   font-weight: bold;
@@ -206,7 +184,7 @@ button:hover {
   text-align: center;
 }
 
-.success-message {
+.vk-success-message {
   margin-top: -10px;
   font-size: 1em;
   font-weight: bold;
@@ -225,8 +203,8 @@ button:hover {
     font-size: 18px;
   }
 }
-.login-btn
-{
+
+.vk-login-btn {
   width: 100%;
   padding: 10px 20px;
   background: #ff8c42;
@@ -237,6 +215,7 @@ button:hover {
   transition: background-color 0.3s ease;
   border-radius: 30px;
 }
-.login-btn:hover {
+
+.vk-login-btn:hover {
   background-color: #45a049;
 }
