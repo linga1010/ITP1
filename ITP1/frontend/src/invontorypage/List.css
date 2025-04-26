@@ -3,6 +3,7 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+  width: 100%;
   background-color: #f4f4f4;
 }
 
@@ -11,21 +12,26 @@ h2 {
   margin-bottom: 20px;
 }
 
+
 table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
+  border: 2px solid rgb(0, 0, 0,0.5); 
 }
 
 th, td {
   padding: 12px;
   text-align: left;
-  border: 1px solid #ddd;
+  border: 2px solid  rgb(0, 0, 0,0.5); 
 }
 
 th {
   background-color: #f2f2f2;
+  font-weight: bold;
 }
+
+
 
 button {
   padding: 6px 12px;
@@ -118,9 +124,12 @@ button.add:hover {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 20px;
   width: 100%;
+  gap: 0px; 
+  padding-bottom: 20px;
 }
+
+
 .tablelist {
   background-color:  rgba(250, 250, 250,0.1);
 }
@@ -139,19 +148,17 @@ button.add:hover {
   font-weight: bold;
 }
 
-/* Filter and Search Section */
 .filter-container {
   display: flex;
-  gap: 100px;
+  gap: 20px; /* ✅ reduced gap */
   align-items: center;
   width: 100%;
-  
 }
 
 .create-invoice-container {
   display: flex;
   justify-content: flex-start;
-  gap: 200px; /* Increase this value to increase the gap */
+  gap: 20px; /* Increase this value to increase the gap */
   align-items: center; /* Ensures button and input are aligned */
   margin-bottom: 20px;
   width: 100%;
@@ -169,7 +176,6 @@ button.add:hover {
   display: flex;
   gap: 20px;
   align-items: center;
-  flex-wrap: wrap;
   width: 100%;
 }
 
@@ -177,7 +183,7 @@ button.add:hover {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 200px;
+  width: 220px;
 }
 
 .search-container button, .date-container button {
@@ -193,6 +199,8 @@ button.add:hover {
   background-color: #0b7dda;
 }
 
+
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .filter-container {
@@ -203,4 +211,38 @@ button.add:hover {
     width: 100%;
     justify-content: center;
   }
+}
+
+
+.totals-container {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px; 
+  
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.totals-box {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px 30px;
+  text-align: center;
+  box-shadow: 0px 4px 8px rgba(0,0,0,0.1);
+  min-width: 200px;
+}
+
+.totals-box h3 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  color: #374495;
+}
+
+.totals-box p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin: 0;
 }

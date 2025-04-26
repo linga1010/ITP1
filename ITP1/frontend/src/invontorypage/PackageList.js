@@ -55,10 +55,13 @@ const PackageList = () => {
 
   return (
     <div className="admin-dashboard-container">
-      <Adminnaviagtion /> {/* Add the Admin navigation component here */}
+      <Adminnaviagtion /> 
+      <p><br></br></p>  <p><br></br></p> 
 
       <div className="main-content">
-        <h2>Package List</h2>
+      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+      Package List </p>
+       
 
         <input
           placeholder="Search by package name"
@@ -66,6 +69,8 @@ const PackageList = () => {
           onChange={handleSearch}
           style={{ width: "300px", marginBottom: "20px" }}
         />
+
+        
         <div className="tablelist">
         <table>
           <thead>

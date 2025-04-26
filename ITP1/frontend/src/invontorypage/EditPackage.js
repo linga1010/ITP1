@@ -200,11 +200,13 @@ const EditPackage = () => {
 
   return (
     <div className="admin-dashboard-container">
-    <Adminnaviagtion /> {/* Add the Admin navigation component here */}
-
+    <Adminnaviagtion /> 
+    <p><br></br></p>  <p><br></br></p> 
     <div className="main-content">
     <div>
-      <h2>Edit Package</h2>
+    <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+    Edit Package</p>
+     
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
         <Form.Item
           name="name"
