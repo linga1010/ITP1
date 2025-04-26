@@ -82,6 +82,213 @@ const SalesReport = () => {
     return profit;
   };
 
+
+  const getReportPeriod = () => {
+    if (startDate && endDate) {
+      return `Report Period: ${new Date(startDate).toLocaleDateString()} ➔ ${new Date(endDate).toLocaleDateString()}`;
+    } else if (selectedMonth !== '' && selectedYear !== '') {
+      const months = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+      return `Report Period: ${months[selectedMonth]} ${selectedYear}`;
+    } else {
+      return `Full Report (All Time)`;
+    }
+  };
+
+  const handlePrint = () => {
+    const newWindow = window.open('', '_blank');
+    
+    const html = `
+      <html>
+      <head>
+        <title>Sales Report - Vk Aura</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+          th, td { border: 1px solid black; padding: 8px; text-align: center; }
+          h2, h3 { text-align: center; }
+          .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+          }
+          .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: white;
+          }
+          .cancel-btn { background-color: #f44336; }
+          .download-btn { background-color: #2196F3; }
+          .print-btn { background-color: #4CAF50; }
+        </style>
+      </head>
+      <body>
+        <h2>Vk Aura - Sales Report</h2>
+        <h3>${getReportPeriod()}</h3>
+  
+        <h3>Summary</h3>
+        <p><strong>Invoice Sales:</strong> Rs ${invoiceSales.toFixed(2)}</p>
+        <p><strong>Invoice Profit:</strong> Rs ${invoiceProfit.toFixed(2)}</p>
+        <p><strong>Package Sales:</strong> Rs ${packageSales.toFixed(2)}</p>
+        <p><strong>Package Profit:</strong> Rs ${packageProfit.toFixed(2)}</p>
+        <p><strong>Total Sales:</strong> Rs ${(invoiceSales + packageSales).toFixed(2)}</p>
+        <p><strong>Total Profit:</strong> Rs ${(invoiceProfit + packageProfit).toFixed(2)}</p>
+  
+        <h3>Invoice Details</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Invoice Number</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Profit</th>
+              <th>Invoice Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filteredInvoices.map(inv => `
+              <tr>
+                <td>${inv.invoiceNumber}</td>
+                <td>${inv.customerName}</td>
+                <td>Rs ${inv.amountAfterDiscount?.toFixed(2)}</td>
+                <td>Rs ${calculateInvoiceProfit(inv).toFixed(2)}</td>
+                <td>${new Date(inv.invoiceDate).toLocaleDateString()}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+  
+        <h3>Delivered Package Details</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Customer Name</th>
+              <th>Package Total</th>
+              <th>Profit</th>
+              <th>Delivery Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${deliveredOrders.map(order => `
+              <tr>
+                <td>${order.userName}</td>
+                <td>Rs ${order.total?.toFixed(2)}</td>
+                <td>Rs ${calculateOrderProfit(order).toFixed(2)}</td>
+                <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+  
+        <!-- 🚀 Here are your bottom 3 buttons -->
+        <div class="button-group">
+          <button class="button cancel-btn" onclick="window.close()">❌ Cancel</button>
+          <button class="button download-btn" onclick="downloadHTML()">📥 Download</button>
+          <button class="button print-btn" onclick="window.print()">🖨️ Print</button>
+        </div>
+  
+        <script>
+          function downloadHTML() {
+            const element = document.body;
+            const htmlContent = '<html><head><title>Sales Report</title></head><body>' + element.innerHTML + '</body></html>';
+            const blob = new Blob([htmlContent], { type: 'text/html' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'Sales-Report-VkAura.html';
+            link.click();
+          }
+        </script>
+  
+      </body>
+      </html>
+    `;
+  
+    newWindow.document.write(html);
+    newWindow.document.close();
+  };
+  
+  const handleDownload = () => {
+    const element = document.createElement('a');
+    
+    const html = `
+      <html>
+      <head><title>Sales Report - Vk Aura</title></head>
+      <body>
+        <h2>Sales Report - Vk Aura</h2>
+        <h3>${getReportPeriod()}</h3> <!-- 🛑 Added report period here -->
+  
+        <h3>Summary</h3>
+        <p><strong>Invoice Sales:</strong> Rs ${invoiceSales.toFixed(2)}</p>
+        <p><strong>Invoice Profit:</strong> Rs ${invoiceProfit.toFixed(2)}</p>
+        <p><strong>Package Sales:</strong> Rs ${packageSales.toFixed(2)}</p>
+        <p><strong>Package Profit:</strong> Rs ${packageProfit.toFixed(2)}</p>
+        <p><strong>Total Sales:</strong> Rs ${(invoiceSales + packageSales).toFixed(2)}</p>
+        <p><strong>Total Profit:</strong> Rs ${(invoiceProfit + packageProfit).toFixed(2)}</p>
+  
+        <h3>Invoice Details</h3>
+        <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th>Invoice Number</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Profit</th>
+              <th>Invoice Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filteredInvoices.map(inv => `
+              <tr>
+                <td>${inv.invoiceNumber}</td>
+                <td>${inv.customerName}</td>
+                <td>Rs ${inv.amountAfterDiscount?.toFixed(2)}</td>
+                <td>Rs ${calculateInvoiceProfit(inv).toFixed(2)}</td>
+                <td>${new Date(inv.invoiceDate).toLocaleDateString()}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+  
+        <h3>Delivered Package Details</h3>
+        <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
+          <thead>
+            <tr>
+              <th>Customer Name</th>
+              <th>Package Total</th>
+              <th>Profit</th>
+              <th>Delivery Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${deliveredOrders.map(order => `
+              <tr>
+                <td>${order.userName}</td>
+                <td>Rs ${order.total?.toFixed(2)}</td>
+                <td>Rs ${calculateOrderProfit(order).toFixed(2)}</td>
+                <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </body>
+      </html>
+    `;
+  
+    const blob = new Blob([html], { type: 'text/html' });
+    element.href = URL.createObjectURL(blob);
+    element.download = 'Sales-Report-VkAura.html';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+  
+
   const invoiceSales = filteredInvoices.reduce((sum, inv) => sum + (inv.amountAfterDiscount || 0), 0);
   const invoiceProfit = filteredInvoices.reduce((sum, inv) => sum + calculateInvoiceProfit(inv), 0);
   const packageSales = deliveredOrders.reduce((sum, o) => sum + (o.total || 0), 0);
@@ -98,44 +305,97 @@ const SalesReport = () => {
   return (
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
+      <p><br></br></p>  <p><br></br></p>  <p><br></br></p>
       <div className="main-content">
-        <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>📊 Sales Report</h2>
+      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+      📊 Sales Report </p>
+     
 
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
-          <div>
-            <label>Start Date:</label><br />
-            <input type="date" value={startDate} onChange={e => { setStartDate(e.target.value); setSelectedMonth(''); setSelectedYear(''); }} max={today} />
-          </div>
-          <div>
-            <label>End Date:</label><br />
-            <input type="date" value={endDate} onChange={e => { setEndDate(e.target.value); setSelectedMonth(''); setSelectedYear(''); }} max={today} />
-          </div>
-          <div>
-            <label>Month:</label><br />
-            <select value={selectedMonth} onChange={(e) => { setSelectedMonth(e.target.value); setStartDate(''); setEndDate(''); }}>
-              <option value="">Select Month</option>
-              {months.map((month, index) => (
-                <option key={index} value={index}>{month}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label>Year:</label><br />
-       
 
-            <select value={selectedYear} onChange={(e) => { setSelectedYear(e.target.value); setStartDate(''); setEndDate(''); }}>
-  <option value="">Select Year</option>
-  {Array.from({ length: currentYear - 2020 }, (_, i) => currentYear - i).map(year => (
-    <option key={year} value={year}>{year}</option>
-  ))}
-</select>
-          </div>
-        </div>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '50px', flexWrap: 'wrap', marginBottom: '20px', alignItems: 'center' }}>
+  
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' ,marginTop: '20px' }}>
+    <label>Start Date:</label>
+    <input 
+      type="date" 
+      value={startDate} 
+      onChange={e => { setStartDate(e.target.value); setSelectedMonth(''); setSelectedYear(''); }} 
+      max={today} 
+      style={{ padding: '10px', minWidth: '120px' }}
+    />
+  </div>
 
-        {/* --- Top Summary --- */}
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start',marginTop: '20px' }}>
+    <label>End Date:</label>
+    <input 
+      type="date" 
+      value={endDate} 
+      onChange={e => { setEndDate(e.target.value); setSelectedMonth(''); setSelectedYear(''); }} 
+      max={today} 
+      style={{ padding: '10px', minWidth: '120px' }}
+    />
+  </div>
+
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+    <label>Month:</label>
+    <select 
+      value={selectedMonth} 
+      onChange={(e) => { setSelectedMonth(e.target.value); setStartDate(''); setEndDate(''); }}
+      style={{ padding: '10px', minWidth: '120px' }}
+    >
+      <option value="">Select Month</option>
+      {months.map((month, index) => (
+        <option key={index} value={index}>{month}</option>
+      ))}
+    </select>
+  </div>
+
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+    <label>Year:</label>
+    <select 
+      value={selectedYear} 
+      onChange={(e) => { setSelectedYear(e.target.value); setStartDate(''); setEndDate(''); }}
+      style={{ padding: '10px', minWidth: '120px' }}
+    >
+      <option value="">Select Year</option>
+      {Array.from({ length: currentYear - 2020 }, (_, i) => currentYear - i).map(year => (
+        <option key={year} value={year}>{year}</option>
+      ))}
+    </select>
+  </div>
+
+  <button 
+    style={{ 
+      padding: '10px', 
+      marginTop: '35px',
+      minWidth: '120px',  
+      color: 'white', 
+      alignItems: 'center',
+      justifyContent: 'center'
+    }} 
+    onClick={handlePrint}
+  >
+    🖨️ Print
+  </button>
+  <button 
+    style={{ 
+      padding: '10px', 
+      marginTop: '35px',
+      minWidth: '120px',  
+      color: 'white', 
+      alignItems: 'center',
+      justifyContent: 'center'
+    }} 
+    onClick={handleDownload}
+  >
+    📥 Download
+  </button>
+
+</div>
+
         <div className="totals-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
           <div className="totals-box">
-            <h3>Invoice Sales</h3>
+            <h3 >Invoice Sales</h3>
             <p>Rs {invoiceSales.toFixed(2)}</p>
           </div>
           <div className="totals-box">
@@ -163,8 +423,8 @@ const SalesReport = () => {
           </div>
         </div>
 
-        {/* --- Invoice Table --- */}
-        <h3 style={{ marginTop: '30px' }}>🧾 Invoice Details</h3>
+
+        <h3 style={{ marginTop: '30px', color: '#374495' }}>🧾 Invoice Details</h3>
         <table style={{ width: '100%', tableLayout: 'auto', backgroundColor: 'white', marginTop: '10px' }}>
           <thead>
             <tr>
@@ -189,8 +449,8 @@ const SalesReport = () => {
           </tbody>
         </table>
 
-        {/* --- Package Table --- */}
-        <h3 style={{ marginTop: '30px' }}>📦 Delivered Package Details</h3>
+  
+        <h3 style={{ marginTop: '30px', color: '#374495' }}>📦 Delivered Package Details</h3>
         <table style={{ width: '100%', tableLayout: 'auto', backgroundColor: 'white', marginTop: '10px' }}>
           <thead>
             <tr>
