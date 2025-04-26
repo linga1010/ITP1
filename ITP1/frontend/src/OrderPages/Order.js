@@ -1,3 +1,4 @@
+// OrderPage.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -18,35 +19,28 @@ const OrderPage = () => {
     const storedCart = JSON.parse(localStorage.getItem(`cart_user_${user._id}`)) || [];
     setCart(storedCart);
   }, [user]);
-  console.log(user)
 
-  const getTotalPrice = () => {
-    return cart
-      .reduce((total, item) => total + item.finalPrice * item.quantity, 0)
-      .toFixed(2);
-  };
+  const getTotalPrice = () =>
+    cart.reduce((sum, item) => sum + item.finalPrice * item.quantity, 0).toFixed(2);
 
   const handleQuantityChange = (id, value) => {
-    let quantity = parseInt(value, 10);
-    if (isNaN(quantity) || quantity < 1) {
+    let qty = parseInt(value, 10);
+    if (isNaN(qty) || qty < 1) {
       message.error("Quantity cannot be less than 1");
-      quantity = 1;
-    } else if (quantity > 25) {
+      qty = 1;
+    } else if (qty > 25) {
       message.error("Quantity cannot be more than 25");
-      quantity = 25;
+      qty = 25;
     }
-
-    const updatedCart = cart.map((item) =>
-      item._id === id ? { ...item, quantity } : item
-    );
-    setCart(updatedCart);
-    localStorage.setItem(`cart_user_${user._id}`, JSON.stringify(updatedCart));
+    const updated = cart.map(i => (i._id === id ? { ...i, quantity: qty } : i));
+    setCart(updated);
+    localStorage.setItem(`cart_user_${user._id}`, JSON.stringify(updated));
   };
 
-  const handleRemoveFromCart = (id) => {
-    const updatedCart = cart.filter((item) => item._id !== id);
-    setCart(updatedCart);
-    localStorage.setItem(`cart_user_${user._id}`, JSON.stringify(updatedCart));
+  const handleRemoveFromCart = id => {
+    const updated = cart.filter(i => i._id !== id);
+    setCart(updated);
+    localStorage.setItem(`cart_user_${user._id}`, JSON.stringify(updated));
   };
 
   const handlePay = () => {
@@ -62,51 +56,102 @@ const OrderPage = () => {
     setModalVisible(true);
   };
 
-  const handleConfirmLocation = async () => {
-    if (!location.trim()) {
-      message.error("Please enter your location");
+  const handleConfirmLocation = () => {
+    const txt = location.trim();
+    if (!txt) {
+      message.error("Please enter your location.");
       return;
     }
-    if (!/^[a-zA-Z\s]{5,}$/.test(location.trim())) {
-      message.error("Location must be at least 5 characters long and contain only letters.");
-      return;
+    const coordRegex = /^Lat: [-+]?[0-9]*\.?[0-9]+, Long: [-+]?[0-9]*\.?[0-9]+$/;
+    // Allow letters, numbers, spaces, commas, periods, and hyphens
+    const addrRegex = /^[a-zA-Z0-9\s,.-]{5,}$/;
+    if (coordRegex.test(txt) || addrRegex.test(txt)) {
+      submitOrder();
+    } else {
+      message.error("Please enter a valid address (min 5 characters) or click ‘Share My Location’." );
     }
-  
+  };
+
+  const submitOrder = async () => {
     const orderData = {
       user: user.email,
       userName: user.name,
-      location: location,
+      location,
       items: cart,
       total: parseFloat(getTotalPrice()),
     };
-  
     try {
-      const response = await axios.post("http://localhost:5000/api/orders", orderData);
-      message.success(response.data.message);
-  
+      const res = await axios.post("http://localhost:5000/api/orders", orderData);
+      message.success(res.data.message);
       localStorage.setItem(`total_price_user_${user._id}`, getTotalPrice());
-  
       setModalVisible(false);
       navigate("/PaymentDetails");
-    } catch (error) {
-      console.error("❌ Order Error:", error.response?.data || error.message);
+    } catch (err) {
+      console.error("❌ Order Error:", err.response?.data || err.message);
       message.error("❌ Order Failed! Check console for details.");
     }
   };
-  
-    
- 
+
+  // Reverse geocode via OSM Nominatim
+  const getUserLocation = () => {
+    if (!navigator.geolocation) {
+      message.error("❌ Geolocation is not supported by your browser.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        const { latitude, longitude } = coords;
+        try {
+          const r = await axios.get("https://nominatim.openstreetmap.org/reverse", {
+            params: { lat: latitude, lon: longitude, format: "json" },
+          });
+          const addr = r.data.display_name;
+          if (addr) {
+            setLocation(addr);
+            message.success("✅ Location detected and filled!");
+          } else {
+            const fallback = `Lat: ${latitude.toFixed(2)}, Long: ${longitude.toFixed(2)}`;
+            setLocation(fallback);
+            message.warning("⚠️ Coordinates used (no address found).");
+          }
+        } catch {
+          const fallback = `Lat: ${latitude.toFixed(2)}, Long: ${longitude.toFixed(2)}`;
+          setLocation(fallback);
+          message.error("❌ Couldn't fetch address. Coordinates used.");
+        }
+      },
+      err => {
+        console.error("Error getting location:", err);
+        message.error("❌ Unable to retrieve your location.");
+      }
+    );
+  };
 
   return (
     <div className="containerorder">
       <h2>Package Order Summary</h2>
-      <Button className="back-button" onClick={() => navigate("/view-package")} type="default">
+      <Button
+        className="backbutton"
+        onClick={() => navigate("/view-package")}
+        type="default"
+        style={{
+          position: "fixed",
+          top: "30px",
+          right: "20px",
+          zIndex: 1000,
+          padding: "10px 15px",
+          minWidth: "auto",
+          height: "auto",
+          backgroundColor: "#007bff",
+          color: "white",
+        }}
+      >
         ← Back to Packages
       </Button>
 
       {cart.length > 0 ? (
         <div className="cart">
-          {cart.map((item) => (
+          {cart.map(item => (
             <div key={item._id} className="cart-item">
               <h4>{item.name}</h4>
               <p>Rs.{item.finalPrice.toFixed(2)}</p>
@@ -115,32 +160,36 @@ const OrderPage = () => {
                 min={1}
                 max={25}
                 value={item.quantity}
-                onChange={(e) => handleQuantityChange(item._id, e.target.value)}
-                onFocus={(e) => e.target.select()}
-                onBlur={(e) => {
-                  if (e.target.value === "") {
-                    handleQuantityChange(item._id, "1");
-                  }
+                onChange={e => handleQuantityChange(item._id, e.target.value)}
+                onFocus={e => e.target.select()}
+                onBlur={e => {
+                  if (!e.target.value) handleQuantityChange(item._id, "1");
                 }}
               />
-              <Button id="b3" onClick={() => handleRemoveFromCart(item._id)} type="danger">
+              <Button
+                id="b3"
+                onClick={() => handleRemoveFromCart(item._id)}
+                type="danger"
+              >
                 Remove
               </Button>
             </div>
           ))}
-
-          <h3>Total Price :  Rs {getTotalPrice()}</h3>
-
+          <h3>Total Price : Rs {getTotalPrice()}</h3>
           <div className="terms-checkbox">
-            <Checkbox onChange={(e) => setIsAgreed(e.target.checked)}>
-              I agree to the{" "}
+            <Checkbox onChange={e => setIsAgreed(e.target.checked)}>
+              I agree to the{' '}
               <a href="/terms-and-conditions" target="_blank" rel="noreferrer">
                 Terms and Conditions
               </a>.
             </Checkbox>
           </div>
-
-          <Button className="pay-button" onClick={handlePay} type="primary" disabled={!isAgreed}>
+          <Button
+            className="pay-button"
+            onClick={handlePay}
+            type="primary"
+            disabled={!isAgreed}
+          >
             Pay
           </Button>
         </div>
@@ -148,13 +197,33 @@ const OrderPage = () => {
         <p>No packages in the cart</p>
       )}
 
-      <Button className="order-history-button" onClick={() => navigate("/OrderHistoryDetails")} type="default">
+      <Button
+        className="order-history-button"
+        onClick={() => navigate("/OrderHistoryDetails")}
+        type="default"
+      >
         Order History
       </Button>
 
-      
-      <Modal title="Enter Your Location" open={modalVisible} onOk={handleConfirmLocation} onCancel={() => setModalVisible(false)} okText="Pay">
-        <Input placeholder="Enter your location" value={location} onChange={(e) => setLocation(e.target.value)} />
+      <Modal
+        title="Enter Your Location"
+        open={modalVisible}
+        onOk={handleConfirmLocation}
+        onCancel={() => setModalVisible(false)}
+        okText="Pay"
+      >
+        <Input
+          placeholder="Enter your location"
+          value={location}
+          onChange={e => setLocation(e.target.value)}
+        />
+        <Button
+          onClick={getUserLocation}
+          type="default"
+          style={{ marginTop: 10 }}
+        >
+          Share My Location
+        </Button>
       </Modal>
     </div>
   );

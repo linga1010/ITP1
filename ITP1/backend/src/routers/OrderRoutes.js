@@ -5,27 +5,31 @@ import Package from "../models/Package.js";
 import Product from "../models/Product.js";
 
 const router = express.Router();
-
-//  Place an order
+// Place an order
 router.post("/", async (req, res) => {
   try {
-    const { user, userName, items, total } = req.body;
+    // 🔥 pull location out of the body
+    const { user, userName, items, total, location } = req.body;
 
-    if (!user || !items || items.length === 0 || !total) {
-      return res.status(400).json({ message: "Invalid order data!" });
+    // 🔥 validate that location is present
+    if (!user || !items || items.length === 0 || !total || !location) {
+      return res
+        .status(400)
+        .json({ message: "Invalid order data! All fields (including location) are required." });
     }
 
+    // 🔥 include location when creating the order
     const newOrder = new Order({
       user,
       userName,
       items,
       total,
-      status: "pending", // Default status
+      location,        // ← store location
+      status: "pending",
       createdAt: new Date(),
     });
 
     await newOrder.save();
-
     res.status(201).json({ message: "✅ Order placed successfully!", order: newOrder });
   } catch (error) {
     console.error("❌ Order Placement Error:", error.message);
@@ -33,7 +37,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-//  Fetch all orders (Admin View)
+
+// Fetch all orders (Admin View)
 router.get("/", async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
@@ -44,7 +49,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-//  Fetch orders by user ID (User View)
+// Fetch orders by user ID (User View)
 router.get("/:userId", async (req, res) => {
   try {
     const userId = decodeURIComponent(req.params.userId);
@@ -61,13 +66,6 @@ router.get("/:userId", async (req, res) => {
     res.status(500).json({ message: "❌ Server Error", error: error.message });
   }
 });
-
-
-
-
-
-
-
 
 // Confirm order (Change status to "success" and reduce stock)
 router.put("/:id/confirm", async (req, res) => {
@@ -136,15 +134,7 @@ router.put("/:id/confirm", async (req, res) => {
   }
 });
 
-
-
-
-
-
-
-
-
-//  Ship Order
+// Ship Order
 router.put("/:id/ship", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -160,7 +150,7 @@ router.put("/:id/ship", async (req, res) => {
   }
 });
 
-//  Deliver Order
+// Deliver Order
 router.put("/:id/deliver", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -176,8 +166,7 @@ router.put("/:id/deliver", async (req, res) => {
   }
 });
 
-
-//  Change order status to "removed" (instead of deleting the order)
+// Change order status to "removed" (instead of deleting the order)
 router.put("/:id/remove", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
@@ -195,6 +184,7 @@ router.put("/:id/remove", async (req, res) => {
     res.status(500).json({ message: "❌ Internal Server Error", error: error.message });
   }
 });
+
 // Cancel pending order
 router.put("/:id/cancel", async (req, res) => {
   try {

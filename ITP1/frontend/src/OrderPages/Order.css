@@ -115,18 +115,9 @@
   background-color: #016a0a;
 }
 
-.back-button {
-  margin-bottom: 20px;
-  background-color: #01850c;
-  color: #ffffff;
-  border: 1px solid #ccc;
-  padding: 8px 15px;
-  border-radius: 5px;
-}
 
-.back-button:hover {
-  background-color: #016a0a;
-}
+
+
 
 /* Responsive Design */
 @media (max-width: 600px) {

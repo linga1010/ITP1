@@ -111,10 +111,10 @@ const ViewPackage = () => {
         type="default"
         style={{
           position: "fixed",
-          top: "20px",
+          top: "30px",
           right: "20px",
           zIndex: 1000,
-          padding: "5px 10px",
+          padding: "10px 15px",
           minWidth: "auto",
           height: "auto",
           backgroundColor: "#007bff",
