@@ -3,9 +3,12 @@
   padding: 30px;
   background: #ffffffdd;
   border-radius: 12px;
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 50px auto;
+  margin-left: 0%;
   box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  
+  scroll-behavior: smooth;
 }
 
 .booking-title {
@@ -130,7 +133,7 @@
   vertical-align: top;
   white-space: normal;
   word-wrap: break-word;
-  max-width: 220px;
+  max-width: 210px;
 }
 
 .booking-table th {

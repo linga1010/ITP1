@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./VeiwBooking.css";
 import "../styles/Body.css";
+
 import Adminnaviagtion from "../Component/Adminnavigation";
 
 const ViewBookings = () => {
@@ -66,13 +67,6 @@ const ViewBookings = () => {
   useEffect(() => {
     calculateSalesAndProfit(bookings, products, packages);
   }, [startDate, endDate]);
-  
-
-  const monthMap = {
-    january: 0, february: 1, march: 2, april: 3,
-    may: 4, june: 5, july: 6, august: 7,
-    september: 8, october: 9, november: 10, december: 11,
-  };
 
   const updateOrderCounts = (orders) => {
     setOrderCounts({
@@ -165,7 +159,6 @@ const ViewBookings = () => {
       alert(`✅ Order marked as ${status} successfully!`);
     } catch (err) {
       console.error(`❌ Failed to update order to ${status}:`, err);
-      console.log("💬 Backend response:", err.response?.data);
       alert(err.response?.data?.message || "❌ Failed to update order.");
     }
   };
@@ -201,17 +194,12 @@ const ViewBookings = () => {
     setEndDate("");
     setSearchTerm("");
   };
-  
-  
 
   const filteredBookings = bookings.filter(order => {
     const dt = new Date(order.createdAt);
-
-    // if startDate set, exclude earlier
     let start = startDate ? new Date(startDate) : null;
     if (start && dt < start) return false;
 
-    // if endDate set, extend to 23:59:59
     let end = endDate ? new Date(endDate) : null;
     if (end) {
       end.setHours(23, 59, 59, 999);
@@ -228,8 +216,7 @@ const ViewBookings = () => {
       (order.status && order.status.toLowerCase().includes(s)) ||
       dt.toLocaleDateString().includes(s) ||
       monthName.includes(s) ||
-      (!isNaN(s) && parseInt(s) === monthIdx) ||
-      (monthMap[s] === dt.getMonth())
+      (!isNaN(s) && parseInt(s) === monthIdx)
     );
   });
 
@@ -241,14 +228,14 @@ const ViewBookings = () => {
           <h2 className="booking-title">📋 All Order Booking Details</h2>
 
           <h4 className="summary-heading">📦 Order Summary</h4>
-        <div className="status-box-row">
-          <div className="status-box">Total: {orderCounts.totalOrders}</div>
-          <div className="status-box">Pending: {orderCounts.pendingOrders}</div>
-          <div className="status-box">Shipping: {orderCounts.shippingOrders}</div>
-          <div className="status-box">Delivered: {orderCounts.deliveredOrders}</div>
-          <div className="status-box">Removed: {orderCounts.removedOrders}</div>
-          <div className="status-box">Canceled: {orderCounts.canceledOrders}</div>
-        </div>
+          <div className="status-box-row">
+            <div className="status-box">Total: {orderCounts.totalOrders}</div>
+            <div className="status-box">Pending: {orderCounts.pendingOrders}</div>
+            <div className="status-box">Shipping: {orderCounts.shippingOrders}</div>
+            <div className="status-box">Delivered: {orderCounts.deliveredOrders}</div>
+            <div className="status-box">Removed: {orderCounts.removedOrders}</div>
+            <div className="status-box">Canceled: {orderCounts.canceledOrders}</div>
+          </div>
 
           <h4 className="summary-heading">💰 Sales & Profit</h4>
           <div className="card summary-card gradient-green">
@@ -271,9 +258,9 @@ const ViewBookings = () => {
             <div className="date-input">
               <label>End Date:</label>
               <input type="date" value={endDate} onChange={handleEndDateChange} max={today}/>
-            </div>       
+            </div>
             <button className="clear-date-btn" onClick={clearFilters}>
-            ❌Clear
+              ❌Clear
             </button>
           </div>
 
@@ -286,6 +273,7 @@ const ViewBookings = () => {
                   <tr>
                     <th>User</th>
                     <th>UserName</th>
+                    <th>Location</th>
                     <th>Items</th>
                     <th>Total + Profit</th>
                     <th>Status</th>
@@ -298,6 +286,7 @@ const ViewBookings = () => {
                     <tr key={order._id}>
                       <td>{order.user}</td>
                       <td>{order.userName}</td>
+                      <td>{order.location || "N/A"}</td>
                       <td>
                         <ul>
                           {order.items.map((item, index) => (
@@ -317,61 +306,40 @@ const ViewBookings = () => {
                       <td>{order.status}</td>
                       <td>{new Date(order.createdAt).toLocaleString()}</td>
                       <td>
-                       {order.status === "pending" ? (
-                        <>
-                         <button
-                          className="confirm-btn"
-                           onClick={() => {
-                          if (window.confirm("Are you sure you want to confirm this order?")) {
-                          updateOrderStatus(order._id, "confirm");
-                         }
-                        }}
-                         >
-                       ✅ Confirm Order
-                       </button>
-                      <button
-                       className="remove-btn"
-                        onClick={() => {
-                         if (window.confirm("Are you sure you want to remove this order?")) {
-                          updateOrderStatus(order._id, "remove");
-                         }
-                        }}
-                       >
-                        ❌ Remove Order
-                      </button>
-                    </>
-                    ) : order.status === "success" ? (
-  <button
-    className="ship-btn"
-    onClick={() => {
-      if (window.confirm("Are you sure you want to ship this order?")) {
-        updateOrderStatus(order._id, "ship");
-      }
-    }}
-  >
-    🚚 Ship Order
-  </button>
-                    ) : order.status === "shipped" ? (
-                     <button
-                       className="deliver-btn"
-                       onClick={() => {
-                     if (window.confirm("Are you sure you want to deliver this order?")) {
-                      updateOrderStatus(order._id, "deliver");
-                       }
-                      }}
-                     >
-                    📦 Deliver Order
-                    </button>
-                    ) : order.status === "delivered" ? (
-                    <span className="delivered-tag">✅ Delivered</span>
-                    ) : order.status === "removed" ? (
-                      <span className="removed-tag">❌ Removed</span>
-                    ) : order.status === "canceled" ? (
-                      <span className="canceled-tag">❌ Canceled</span>
-                    ) : (
-                    <span>✔ Confirmed</span>
-                    )}
-
+                        {order.status === "pending" ? (
+                          <>
+                            <button className="confirm-btn" onClick={() => {
+                              if (window.confirm("Are you sure you want to confirm this order?")) {
+                                updateOrderStatus(order._id, "confirm");
+                              }
+                            }}>✅ Confirm Order</button>
+                            <button className="remove-btn" onClick={() => {
+                              if (window.confirm("Are you sure you want to remove this order?")) {
+                                updateOrderStatus(order._id, "remove");
+                              }
+                            }}>❌ Remove Order</button>
+                          </>
+                        ) : order.status === "success" ? (
+                          <button className="ship-btn" onClick={() => {
+                            if (window.confirm("Are you sure you want to ship this order?")) {
+                              updateOrderStatus(order._id, "ship");
+                            }
+                          }}>🚚 Ship Order</button>
+                        ) : order.status === "shipped" ? (
+                          <button className="deliver-btn" onClick={() => {
+                            if (window.confirm("Are you sure you want to deliver this order?")) {
+                              updateOrderStatus(order._id, "deliver");
+                            }
+                          }}>📦 Deliver Order</button>
+                        ) : order.status === "delivered" ? (
+                          <span className="delivered-tag">✅ Delivered</span>
+                        ) : order.status === "removed" ? (
+                          <span className="removed-tag">❌ Removed</span>
+                        ) : order.status === "canceled" ? (
+                          <span className="canceled-tag">❌ Canceled</span>
+                        ) : (
+                          <span>✔ Confirmed</span>
+                        )}
                       </td>
                     </tr>
                   ))}
