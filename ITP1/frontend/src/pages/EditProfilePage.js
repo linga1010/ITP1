@@ -2,7 +2,6 @@ import '../styles/Profile.css';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Profile.css';
 
 const defaultProfilePicUrl = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
@@ -194,6 +193,9 @@ const ProfilePage = () => {
             </div>
           )}
         </div>
+        <p>
+          <strong>Email:</strong> {user.email}
+        </p>
 
         <p>
           <strong>Name:</strong> {user.name}
@@ -230,10 +232,7 @@ const ProfilePage = () => {
           </button>
         )}
 
-        <p>
-          <strong>Email:</strong> {user.email}
-        </p>
-
+     
         <p>
           <strong>Address:</strong> {user.address}
         </p>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/AdminUser.css';
-import "../styles/Body.css";
+//import "../styles/Body.css";
 import Adminnaviagtion from "../Component/Adminnavigation"; 
 
 const defaultProfilePicUrl = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
@@ -143,8 +143,8 @@ const AdminManageUsers = () => {
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
 
-      <div className="main-content">
-        <h2>Manage Users</h2>
+      <div className="maincontent">
+        <h1>Manage Users</h1>
         {/* summary counts */}
         <div className="summary">
           <p>Total Admins: {admins.length}</p>

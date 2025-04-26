@@ -1,4 +1,18 @@
-/* Modal backdrop & centering */
+.maincontent {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  margin-left: 10%;
+  margin-right: -15%;
+  padding: 100px;
+  background-color: #ffffff; /* Solid white */
+  border: 10px solid #000000; /* Solid black */
+  color: #000000; /* Solid black text */
+   min-height: 50vh; /* Ensures minimum height */
+  overflow-y: auto; /* Only vertical scrolling if needed */
+  transition: margin-left 0.1s ease;
+}
+
+
 .modal {
   position: fixed;
   top: 0; left: 0;
@@ -172,13 +186,13 @@
 
 
 /* Summary counts */
-.admin-dashboard-container .main-content .summary {
+.admin-dashboard-container .maincontent .summary {
   display: flex;
   gap: 1.5rem;
   margin-bottom: 1rem;
   align-items: center;
 }
-.admin-dashboard-container .main-content .summary p {
+.admin-dashboard-container .maincontent .summary p {
   font-size: 1rem;
   font-weight: 600;
   color: #333;
@@ -186,12 +200,12 @@
 }
 
 /* Search box wrapper */
-.admin-dashboard-container .main-content .search-box {
+.admin-dashboard-container .maincontent .search-box {
   margin-bottom: 1.5rem;
 }
 
 /* Search input */
-.admin-dashboard-container .main-content .search-input {
+.admin-dashboard-container .maincontent .search-input {
   width: 100%;
   max-width: 360px;
   padding: 0.5rem 0.75rem;
@@ -200,8 +214,40 @@
   font-size: 0.95rem;
   transition: border-color 0.2s;
 }
-.admin-dashboard-container .main-content .search-input:focus {
+.admin-dashboard-container .maincontent .search-input:focus {
   outline: none;
   border-color: #007bff; /* or your primary accent */
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+/* 1. Fix column widths so the table never grows beyond its container */
+
+/* 2. Allow long words/URLs to break and wrap to new lines */
+.standard-table th,
+.standard-table td {
+  white-space: normal;       /* allow wrapping */
+  word-wrap: break-word;     /* break long words */
+  overflow-wrap: anywhere;   /* ensure even single long strings break */
+}
+
+/* 3. (Optional) If you want to cap a specific column—e.g. Address—at 200px */
+.standard-table td:nth-child(5),
+.standard-table th:nth-child(5) {
+  max-width: 200px;         /* limit width */
+}
+h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 0.5em;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  background: linear-gradient(45deg, #ff8c42, #ffd700);
+  background-clip: text;
+ -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px;
+  margin-top: 45px; /* Added this line to move the header slightly down */
 }

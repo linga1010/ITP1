@@ -121,3 +121,81 @@
   cursor: pointer;
 }
 
+.admin-logout-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.admin-logout-modal-box {
+  background: #fff;
+  padding: 3rem 2rem;
+  border-radius: 16px;
+  text-align: center;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+}
+
+.admin-logout-emoji-animation {
+  margin-bottom: 1.5rem;
+}
+
+.admin-logout-animated-emoji {
+  width: 300px;
+  height: 250px;
+}
+
+.admin-logout-modal-box p {
+  font-size: 1.3rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-logout-modal-buttons {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: space-evenly;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.admin-logout-yes-btn, 
+.admin-logout-no-btn {
+  padding: 1.1rem 2.2rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.15rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
+}
+
+.admin-logout-yes-btn {
+  background: #e53935;
+  color: #fff;
+}
+
+.admin-logout-yes-btn:hover {
+  background: #c62828;
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(229, 57, 53, 0.5);
+}
+
+.admin-logout-no-btn {
+  background: #66bb6a;
+  color: #fff;
+}
+
+.admin-logout-no-btn:hover {
+  background: #4caf50;
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(102, 187, 106, 0.5);
+}

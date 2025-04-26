@@ -68,10 +68,11 @@ const ViewProfilePage = () => {
       </div>
 
       <div className="profile-actions">
-        <button className="profile-btn" onClick={handleBackToDashboard}>⬅ Back to Dashboard</button>
         <button className="profile-btn" onClick={() => navigate('/profile')}>✏️ Edit Profile</button>
         <button className="profile-btn" onClick={() => navigate('/change-password')}>🔐 Change Password</button>
         <button className="profile-btn" onClick={() => navigate('/delete-account')}>🗑️ Delete Account</button>
+        <button className="profile-btn" onClick={handleBackToDashboard}>⬅ Back to Dashboard</button>
+
       </div>
     </div>
    

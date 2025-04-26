@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+// src/pages/ChangePasswordPage.js
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import '../styles/ChangePasswordPage.css';
 
 const ChangePasswordPage = () => {
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
-  const [passwordCriteria, setPasswordCriteria] = useState({
+  const [currentPassword,   setCurrentPassword]   = useState('');
+  const [newPassword,       setNewPassword]       = useState('');
+  const [confirmPassword,   setConfirmPassword]   = useState('');
+  const [error,             setError]             = useState('');
+  const [message,           setMessage]           = useState('');
+  const [passwordCriteria,  setPasswordCriteria]  = useState({
     length: false,
     number: false,
     lowercase: false,
@@ -18,93 +19,102 @@ const ChangePasswordPage = () => {
   });
   const navigate = useNavigate();
 
-  const handleChangePassword = () => {
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      setError('❌ All fields are required');
-      return;
-    }
-    if (newPassword !== confirmPassword) {
-      setError('❌ Passwords do not match');
-      return;
-    }
-    if (!Object.values(passwordCriteria).every(Boolean)) {
-      setError("❌ Password does not meet all security requirements.");
-      return;
-    }
-
-    const token = localStorage.getItem('token');
-    axios
-      .put(
-        'http://localhost:5000/api/users/change-password',
-        { currentPassword, newPassword, confirmPassword },
-        { headers: { Authorization: `Bearer ${token}` } }
-      )
-      .then(() => {
-        setMessage('✅ Password updated successfully');
-        setError('');
-        setTimeout(() => {
-          navigate('/profile');
-        }, 2000);
-      })
-      .catch((error) => {
-        setError('❌ ' + (error.response?.data?.message || 'Error updating password'));
-        setMessage('');
-      });
-  };
-
-  const validatePassword = (password) => {
+  const validatePassword = (pw) => {
     setPasswordCriteria({
-      length: password.length >= 8,
-      number: /\d/.test(password),
-      lowercase: /[a-z]/.test(password),
-      uppercase: /[A-Z]/.test(password),
-      specialChar: /[!@#$%^&*(),.?":{}|<>]/.test(password),
+      length:     pw.length >= 8,
+      number:     /\d/.test(pw),
+      lowercase:  /[a-z]/.test(pw),
+      uppercase:  /[A-Z]/.test(pw),
+      specialChar:/[!@#$%^&*(),.?":{}|<>]/.test(pw),
     });
   };
 
   const handleNewPasswordChange = (e) => {
-    setNewPassword(e.target.value);
-    validatePassword(e.target.value);
+    const pw = e.target.value;
+    setNewPassword(pw);
+    validatePassword(pw);
+  };
+
+  const handleChangePassword = () => {
+    setError(''); setMessage('');
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      return setError('❌ All fields are required');
+    }
+    if (newPassword !== confirmPassword) {
+      return setError('❌ Passwords do not match');
+    }
+    if (!Object.values(passwordCriteria).every(Boolean)) {
+      return setError('❌ Password does not meet all requirements');
+    }
+
+    const token = localStorage.getItem('token');
+    axios.put(
+      'http://localhost:5000/api/users/change-password',
+      { currentPassword, newPassword, confirmPassword },
+      { headers: { Authorization: `Bearer ${token}` } }
+    )
+    .then(() => {
+      setMessage('✅ Password updated successfully');
+      setTimeout(() => navigate('/view-profile'), 2000);
+    })
+    .catch((err) => {
+      setError('❌ ' + (err.response?.data?.message || 'Error updating password'));
+    });
   };
 
   return (
-    <div className="profile-container">
-      <h1>Change Password</h1>
+    <div className="cpw-container">
+      <h1 >Change Password</h1>
 
-      {message && <p className="success-message">{message}</p>}
-      {error && <p className="error-message">{error}</p>}
+      {message && <p className="cpw-success">{message}</p>}
+      {error   && <p className="cpw-error">{error}</p>}
 
       <input
         type="password"
-        className="profile-input"
+        className="cpw-input"
         placeholder="Current Password"
         value={currentPassword}
-        onChange={(e) => setCurrentPassword(e.target.value)}
-      />
-      <input
-        type="password"
-        className="profile-input"
-        placeholder="New Password"
-        value={newPassword}
-        onChange={handleNewPasswordChange} // Call the new function here
-      />
-      <div className="password-criteria">
-        <p>{passwordCriteria.length ? "✅" : "❌"} At least 8 characters</p>
-        <p>{passwordCriteria.number ? "✅" : "❌"} At least 1 number (0-9)</p>
-        <p>{passwordCriteria.lowercase ? "✅" : "❌"} At least 1 lowercase letter (a-z)</p>
-        <p>{passwordCriteria.uppercase ? "✅" : "❌"} At least 1 uppercase letter (A-Z)</p>
-        <p>{passwordCriteria.specialChar ? "✅" : "❌"} At least 1 special symbol (!@#$%^&*)</p>
-      </div>
-      <input
-        type="password"
-        className="profile-input"
-        placeholder="Confirm Password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
+        onChange={e => setCurrentPassword(e.target.value)}
       />
 
-      <button className="profile-btn save-btn" onClick={handleChangePassword}>Update Password</button>
-      <button className="profile-btn cancel-btn" onClick={() => navigate('/view-profile')}>Cancel</button>
+      <input
+        type="password"
+        className="cpw-input"
+        placeholder="New Password"
+        value={newPassword}
+        onChange={handleNewPasswordChange}
+      />
+
+      <div className="cpw-criteria">
+        <p>{passwordCriteria.length     ? '✅' : '❌'} At least 8 characters</p>
+        <p>{passwordCriteria.number     ? '✅' : '❌'} At least 1 number</p>
+        <p>{passwordCriteria.lowercase  ? '✅' : '❌'} At least 1 lowercase letter</p>
+        <p>{passwordCriteria.uppercase  ? '✅' : '❌'} At least 1 uppercase letter</p>
+        <p>{passwordCriteria.specialChar? '✅' : '❌'} At least 1 special symbol</p>
+      </div>
+
+      <input
+        type="password"
+        className="cpw-input"
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        onChange={e => setConfirmPassword(e.target.value)}
+      />
+
+      <div className="cpw-button-group">
+        <button
+          className="cpw-btn cpw-save-btn"
+          onClick={handleChangePassword}
+        >
+          Update Password
+        </button>
+        <button
+          className="cpw-btn cpw-cancel-btn"
+          onClick={() => navigate('/view-profile')}
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   );
 };
