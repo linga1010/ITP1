@@ -206,7 +206,7 @@ const AdminManageUsers = () => {
 
         {/* User Details Modal */}
         {showUserModal && selectedUser && (
-          <div className="modal">
+          <div className="modal" style={{marginTop: '80px'}}>
             <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => setShowUserModal(false)}>×</span>
               <h3>User Details</h3>
