@@ -26,6 +26,7 @@ import viewPaymentRoutes from './routers/ViewPaymentRoutes.js';
 
 import chatRoutes from './routers/chatRoutes.js'; // ✅ Import chat routes
 import Chat from './models/Chat.js'; // ✅ Import Chat model
+import User from './models/user.model.js'; 
 
 dotenv.config();
 
@@ -119,73 +120,115 @@ const messageQueue = {}; // Queue to store messages for offline users
 io.on('connection', (socket) => {
   console.log('⚡ User connected:', socket.id);
 
-  // User or admin joins the room (identifiable by email)
-  socket.on('joinRoom', (userEmail) => {
+  socket.on('joinRoom', async (userEmail) => {
     console.log(`User ${userEmail} joined room ${userEmail}`);
     socket.join(userEmail);
     activeUsers[userEmail] = socket.id;
-
-    // Send updated user list to admin (using emails)
-    io.emit('userList', Object.keys(activeUsers).map(email => ({ _id: email, name: email })));
+  
+    try {
+      const chatUsers = await Chat.find({
+        $or: [{ senderId: 'admin' }, { receiverId: 'admin' }]
+      }).sort({ updatedAt: -1 });
+  
+      const userLastMessage = new Map();
+  
+      chatUsers.forEach(chat => {
+        const otherUser = chat.senderId === 'admin' ? chat.receiverId : chat.senderId;
+        if (!userLastMessage.has(otherUser)) {
+          userLastMessage.set(otherUser, chat.createdAt);
+        }
+      });
+  
+      // ✅ Get user emails
+      const userEmails = Array.from(userLastMessage.keys());
+  
+      // ✅ Fetch user details from database (User model)
+      const usersFromDB = await User.find({ email: { $in: userEmails } });
+  
+      // ✅ Build final userList
+      const userList = userEmails.map(email => {
+        const userFromDB = usersFromDB.find(u => u.email === email);
+        return {
+          _id: email,
+          name: userFromDB ? userFromDB.name : email,
+          profilePic: userFromDB ? userFromDB.profilePic : null,
+          lastMessageTime: userLastMessage.get(email),
+        };
+      });
+  
+      io.emit('userList', userList);
+  
+    } catch (error) {
+      console.error('Error fetching chat users:', error.message);
+    }
+  
+    io.emit('userOnline', userEmail);
   });
+  
 
-  // Listen for sendMessage event from users or admin
   socket.on('sendMessage', async (data) => {
     const { senderEmail, receiverEmail, message } = data;
-
-    // Create a new chat message and save it to the database
+  
     const chat = new Chat({
       senderId: senderEmail,
       receiverId: receiverEmail,
       message: message,
     });
-
+  
     try {
       const savedChat = await chat.save();
-      console.log('Message saved successfully:', savedChat);
-
-      // If the receiver is online, send the message immediately
+      console.log('💬 Message saved:', savedChat);
+  
+      // Send message to receiver if online
       if (activeUsers[receiverEmail]) {
         io.to(activeUsers[receiverEmail]).emit('message', savedChat);
       } else {
-        // If the receiver (admin or user) is offline, add message to the queue
+        // Save to queue if offline
         if (!messageQueue[receiverEmail]) {
           messageQueue[receiverEmail] = [];
         }
         messageQueue[receiverEmail].push(savedChat);
       }
-
-      // Emit the message back to the sender (for confirmation)
-      io.to(activeUsers[senderEmail]).emit('message', savedChat);
-
+  
+      // ✅ Send message back to sender only if sender and receiver are DIFFERENT
+      if (senderEmail !== receiverEmail && activeUsers[senderEmail]) {
+        io.to(activeUsers[senderEmail]).emit('message', savedChat);
+      }
+  
     } catch (error) {
-      console.error('Error saving chat:', error.message);
+      console.error('❌ Error saving chat:', error.message);
       io.to(activeUsers[senderEmail]).emit('messageError', { error: 'Failed to save message.' });
     }
   });
 
-  // Handle disconnections
+  
+  
   socket.on('disconnect', () => {
+    let disconnectedUser = null;
+
     for (let email in activeUsers) {
       if (activeUsers[email] === socket.id) {
-        console.log(`${email} disconnected`);
+        disconnectedUser = email;
         delete activeUsers[email];
-
-        // Deliver any queued messages when the user comes back online
-        if (messageQueue[email]) {
-          messageQueue[email].forEach(msg => {
-            io.to(socket.id).emit('message', msg);
-          });
-          delete messageQueue[email];
-        }
+        break;
       }
+    }
+
+    if (disconnectedUser) {
+      const lastSeenAt = new Date();
+      console.log(`⚡ User ${disconnectedUser} disconnected, last seen at ${lastSeenAt}`);
+
+      // Inform clients user is offline with last seen
+      io.emit('userOffline', { userId: disconnectedUser, lastSeenAt: lastSeenAt });
+
+      // (Optional) If you want, you can save lastSeenAt to a database permanently.
     }
   });
 });
 
-// ----------------- End of Socket.IO -----------------
 
-// Start Server
+
+
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
