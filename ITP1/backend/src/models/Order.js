@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const OrderSchema = new mongoose.Schema({
   user: { type: String, required: true },
   userName: { type: String },
+  userPhone: { type: String },    // ✨ NEW FIELD added
   items: [
     {
       name: String,
@@ -12,7 +13,7 @@ const OrderSchema = new mongoose.Schema({
     },
   ],
   total: { type: Number, required: true },
-  location: { type: String, required: true },  // Add location field
+  location: { type: String, required: true },
   status: { type: String, default: "pending" },
   createdAt: { type: Date, default: Date.now },
 });
