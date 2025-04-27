@@ -12,21 +12,26 @@ function AdminChatPage() {
   const [selectedUser, setSelectedUser] = useState(null);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
+  const [file, setFile] = useState(null);
   const [unreadUsers, setUnreadUsers] = useState(new Set());
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [lastSeen, setLastSeen] = useState({});
   const [isUserTyping, setIsUserTyping] = useState(false);
   const [seenStatus, setSeenStatus] = useState(false);
+  const fileInputRef = useRef(null);
   const chatBoxRef = useRef(null);
+  const [isRecording, setIsRecording] = useState(false);
+const [mediaRecorder, setMediaRecorder] = useState(null);
+const [audioChunks, setAudioChunks] = useState([]);
+
+
 
   useEffect(() => {
     socket = io('http://localhost:5000');
-
     socket.emit('joinRoom', 'admin');
 
     socket.on('userList', (userList) => {
-      const nonAdminUsers = userList
-        .filter(user => user._id !== 'admin')
+      const nonAdminUsers = userList.filter(user => user._id !== 'admin')
         .sort((a, b) => new Date(b.lastMessageTime) - new Date(a.lastMessageTime));
       setUsers(nonAdminUsers);
     });
@@ -47,12 +52,6 @@ function AdminChatPage() {
       }
     });
 
-    socket.on('messagesRead', ({ reader }) => {
-      if (selectedUser && reader === selectedUser._id) {
-        setSeenStatus(true);
-      }
-    });
-
     socket.on('userOnline', (userId) => {
       setOnlineUsers((prev) => [...prev, userId]);
     });
@@ -60,6 +59,12 @@ function AdminChatPage() {
     socket.on('userOffline', ({ userId, lastSeenAt }) => {
       setOnlineUsers((prev) => prev.filter(id => id !== userId));
       setLastSeen((prev) => ({ ...prev, [userId]: lastSeenAt }));
+    });
+
+    socket.on('messagesRead', ({ reader }) => {
+      if (selectedUser && reader === selectedUser._id) {
+        setSeenStatus(true);
+      }
     });
 
     return () => {
@@ -77,7 +82,7 @@ function AdminChatPage() {
 
   const handleUserClick = async (user) => {
     setSelectedUser(user);
-    setUnreadUsers(prev => {
+    setUnreadUsers((prev) => {
       const updated = new Set(prev);
       updated.delete(user._id);
       return updated;
@@ -86,20 +91,101 @@ function AdminChatPage() {
 
     try {
       const response = await axios.get(`http://localhost:5000/api/chats/${user._id}`);
-      setMessages(response.data);
+      const sortedMessages = response.data.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+      setMessages(sortedMessages);
       scrollToBottom();
     } catch (error) {
       console.error('Error fetching user chats:', error);
     }
   };
 
-  const sendMessage = () => {
-    if (message.trim() === '' || !selectedUser) return;
+
+  const handleMicClick = async () => {
+    if (isRecording) {
+      // Stop recording
+      mediaRecorder.stop();
+      setIsRecording(false);
+    } else {
+      // Start recording
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const recorder = new MediaRecorder(stream);
+        setMediaRecorder(recorder);
+        setAudioChunks([]);
+  
+        recorder.ondataavailable = (e) => {
+          if (e.data.size > 0) {
+            setAudioChunks(prev => [...prev, e.data]);
+          }
+         
+          
+        };
+  
+        recorder.onstop = async () => {
+          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+          const formData = new FormData();
+          formData.append('file', audioBlob, 'voiceMessage.webm');
+  
+          try {
+            const uploadRes = await axios.post('http://localhost:5000/api/upload', formData);
+            const audioUrl = uploadRes.data.url;
+  
+            socket.emit('sendMessage', {
+              senderEmail: 'admin',
+              receiverEmail: selectedUser._id,
+              messageType: 'audio',
+              messageContent: audioUrl,
+            });
+  
+          } catch (error) {
+            console.error('Failed to upload voice message:', error);
+          }
+        };
+  
+        recorder.start();
+        setIsRecording(true);
+      } else {
+        alert('Microphone not supported');
+      }
+    }
+  };
+
+  
+
+  const handleFileChange = async (e) => {
+    if (!e.target.files[0] || !selectedUser) return;
+
+    const selectedFile = e.target.files[0];
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+
+    try {
+      const uploadRes = await axios.post('http://localhost:5000/api/upload', formData);
+      const messageContent = uploadRes.data.url;
+      let messageType = selectedFile.type.startsWith('image/') ? 'image' : 'audio';
+
+      socket.emit('sendMessage', {
+        senderEmail: 'admin',
+        receiverEmail: selectedUser._id,
+        messageType,
+        messageContent,
+      });
+
+      setFile(null);
+      setSeenStatus(false);
+    } catch (error) {
+      console.error('File upload failed', error);
+    }
+  };
+
+  const sendMessage = async () => {
+    if (!selectedUser || message.trim() === '') return;
 
     socket.emit('sendMessage', {
       senderEmail: 'admin',
       receiverEmail: selectedUser._id,
-      message,
+      messageType: 'text',
+      messageContent: message.trim(),
     });
 
     setMessage('');
@@ -124,6 +210,10 @@ function AdminChatPage() {
     }
   };
 
+  const openFilePicker = () => {
+    fileInputRef.current.click();
+  };
+
   const getUserStatus = (user) => {
     if (onlineUsers.includes(user._id)) {
       return <span style={{ color: 'green', fontSize: '12px' }}>🟢 Online</span>;
@@ -134,152 +224,145 @@ function AdminChatPage() {
     return <span style={{ color: 'gray', fontSize: '12px' }}>Offline</span>;
   };
 
+  const renderMessage = (msg) => {
+    if (msg.messageType === 'text') {
+      return <div>{msg.messageContent}</div>;
+    }
+    if (msg.messageType === 'image') {
+      return <img src={msg.messageContent} alt="sent" style={{ maxWidth: '200px', borderRadius: '10px' }} />;
+    }
+    if (msg.messageType === 'audio') {
+      return <audio controls src={msg.messageContent} />;
+    }
+  };
+
   return (
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
-      <p><br /></p><p><br /></p>
-      <div className="main-content">
-        <div style={{ display: 'flex', height: '100vh' }}>
-          
-          {/* Users List */}
-          <div style={{ width: '500px', borderRight: '1px solid gray', padding: '10px', overflowY: 'scroll' }}>
-            <h3>Users</h3>
-            {users.map((user) => (
-              <div
-                key={user._id}
-                onClick={() => handleUserClick(user)}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  padding: '10px',
-                  cursor: 'pointer',
-                  backgroundColor: selectedUser?._id === user._id ? '#f0f0f0' : 'white',
-                  borderBottom: '1px solid #ccc'
-                }}
-              >
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <img
-                      src={user.profilePic || defaultProfilePicUrl}
-                      alt="Profile"
-                      style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px' }}
-                    />
-                    <span>{user.name}</span>
-                  </div>
+      <p><br></br></p>   <p><br></br></p>  <p><br></br></p>
+      <div style={{ display: 'flex', height: '100vh', marginTop: '20px' }}>
+        {/* Users List */}
+        <div style={{ width: '350px', background: '#f0f2f5', overflowY: 'auto', borderRight: '1px solid #ddd' }}>
+          {users.map((user) => (
+            <div
+              key={user._id}
+              onClick={() => handleUserClick(user)}
+              style={{
+                padding: '10px',
+                backgroundColor: selectedUser?._id === user._id ? '#d9fdd3' : 'white',
+                cursor: 'pointer',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                borderBottom: '1px solid #ddd'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <img src={user.profilePic || defaultProfilePicUrl} alt="" style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px' }} />
+                <div>
+                  <div style={{ fontWeight: 'bold' }}>{user.name}</div>
                   {getUserStatus(user)}
                 </div>
+              </div>
+              {unreadUsers.has(user._id) && <span style={{ background: 'red', width: '10px', height: '10px', borderRadius: '50%' }} />}
+            </div>
+          ))}
+        </div>
 
+        {/* Chat Section */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', backgroundColor: '#ece5dd' }}>
+          {selectedUser ? (
+            <>
+              {/* Chat header */}
+              <div style={{ background: '#075E54', padding: '10px', color: 'white', display: 'flex', alignItems: 'center' }}>
+                <img src={selectedUser.profilePic || defaultProfilePicUrl} alt="" style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px' }} />
                 <div>
-                  <span
-                    style={{
-                      width: '12px',
-                      height: '12px',
-                      borderRadius: '50%',
-                      display: 'inline-block',
-                      backgroundColor: unreadUsers.has(user._id) ? 'red' : 'white',
-                      border: '1px solid #ccc',
-                    }}
-                  />
+                  <div>{selectedUser.name}</div>
+                  {getUserStatus(selectedUser)}
                 </div>
               </div>
-            ))}
-          </div>
 
-          {/* Chat Area */}
-          <div style={{ width: '75%', padding: '10px', display: 'flex', flexDirection: 'column' }}>
-            {selectedUser ? (
-              <>
-                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
-                  <img
-                    src={selectedUser.profilePic || defaultProfilePicUrl}
-                    alt="Profile"
-                    style={{ width: '50px', height: '50px', borderRadius: '50%', marginRight: '10px' }}
-                  />
-                  <div>
-                    <h3>Chat with {selectedUser.name}</h3>
-                    {getUserStatus(selectedUser)}
-                  </div>
-                </div>
-
-                <div
-                  ref={chatBoxRef}
-                  onClick={handleReadMessages}
-                  onScroll={handleReadMessages}
-                  style={{ flex: 1, overflowY: 'scroll', border: '1px solid gray', padding: '10px', marginBottom: '10px' }}
-                >
-                  {messages.map((msg, idx) => (
-                    <div
-                      key={idx}
-                      style={{
-                        marginBottom: '10px',
-                        textAlign: msg.senderId === 'admin' ? 'right' : 'left'
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: 'inline-block',
-                          backgroundColor: msg.senderId === 'admin' ? '#DCF8C6' : '#FFF',
-                          padding: '8px 12px',
-                          borderRadius: '15px',
-                          maxWidth: '60%',
-                          wordWrap: 'break-word',
-                          position: 'relative'
-                        }}
-                      >
-                        {msg.message}
-                        <div style={{ fontSize: '10px', color: 'gray', marginTop: '5px', textAlign: 'right' }}>
-                          {timeago.format(msg.createdAt)}
-                          {idx === messages.length - 1 && msg.senderId === 'admin' && seenStatus && (
-                            <span style={{ marginLeft: '5px', color: 'blue' }}>Seen ✅</span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {isUserTyping && (
-                    <div style={{ marginLeft: '10px', fontSize: '12px', color: 'gray' }}>
-                      {selectedUser.name} is typing...
-                    </div>
-                  )}
-                </div>
-
-                <div style={{ display: 'flex' }}>
-                  <input
-                    type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyDown={(e) => {
-                      handleTyping();
-                      if (e.key === 'Enter') {
-                        sendMessage();
-                      }
-                    }}
-                    placeholder="Type a message..."
-                    style={{ flex: 1, marginRight: '10px', padding: '10px', borderRadius: '20px', border: '1px solid gray' }}
-                  />
-                  <button
-                    onClick={sendMessage}
+              {/* Chat messages */}
+              <div ref={chatBoxRef} onClick={handleReadMessages} onScroll={handleReadMessages} style={{ flex: 1, overflowY: 'scroll', padding: '10px' }}>
+                {messages.map((msg, idx) => (
+                  <div
+                    key={idx}
                     style={{
-                      padding: '10px 20px',
-                      borderRadius: '20px',
-                      backgroundColor: '#007BFF',
-                      color: 'white',
-                      border: 'none',
-                      cursor: 'pointer'
+                      textAlign: msg.senderId === 'admin' ? 'right' : 'left',
+                      marginBottom: '10px'
                     }}
                   >
-                    Send
-                  </button>
-                </div>
-              </>
-            ) : (
-              <div style={{ textAlign: 'center', marginTop: '100px' }}>
-                <h3>Select a user to start chatting</h3>
+                    <div style={{
+                      display: 'inline-block',
+                      backgroundColor: msg.senderId === 'admin' ? '#DCF8C6' : '#FFF',
+                      padding: '8px 12px',
+                      borderRadius: '10px',
+                      maxWidth: '60%',
+                      wordWrap: 'break-word'
+                    }}>
+                      {renderMessage(msg)}
+                      <div style={{ fontSize: '10px', color: 'gray', textAlign: 'right', marginTop: '5px' }}>
+                        {timeago.format(msg.createdAt)}
+                        {idx === messages.length - 1 && msg.senderId === 'admin' && seenStatus && (
+                          <span style={{ marginLeft: '5px', color: 'blue' }}> Seen ✅</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {isUserTyping && (
+                  <div style={{ fontSize: '12px', color: 'gray', marginTop: '5px' }}>
+                    {selectedUser.name} is typing...
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
+              {/* Chat input */}
+              <div style={{ display: 'flex', alignItems: 'center', padding: '10px', background: '#f0f2f5' }}>
+                {/* 📎 Upload icon */}
+                <button onClick={openFilePicker} style={{ marginRight: '10px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px' }}>
+                  📎
+                </button>
+                <input type="file" accept="image/*,audio/*" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
+
+                {/* ✏️ Text input */}
+                <input
+                  type="text"
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  onKeyDown={(e) => { handleTyping(); if (e.key === 'Enter') sendMessage(); }}
+                  placeholder="Type a message"
+                  style={{ flex: 1, padding: '10px', borderRadius: '20px', border: '1px solid gray', marginRight: '10px' }}
+                />
+
+<button
+  onClick={handleMicClick}
+  style={{
+    marginRight: '10px',
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    fontSize: '20px'
+  }}
+>
+  {isRecording ? '🛑' : '🎤'}
+</button>
+
+
+                {/* 📤 Send Button */}
+                <button
+                  onClick={sendMessage}
+                  style={{ padding: '10px 20px', borderRadius: '20px', background: '#25D366', color: 'white', border: 'none', fontWeight: 'bold' }}
+                >
+                  Send
+                </button>
+              </div>
+            </>
+          ) : (
+            <div style={{ marginTop: '100px', textAlign: 'center' }}>
+              <h3>Select a user to start chatting</h3>
+            </div>
+          )}
         </div>
       </div>
     </div>

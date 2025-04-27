@@ -10,6 +10,7 @@ import { dirname } from 'path';
 import http from 'http'; // Add http server
 import { Server } from 'socket.io'; // Import socket.io
 
+
 // Import routes
 import priestRoutes from './routers/priestRoutes.js';
 import bookingRoutes from './routers/bookingRoutes.js';
@@ -27,6 +28,10 @@ import viewPaymentRoutes from './routers/ViewPaymentRoutes.js';
 import chatRoutes from './routers/chatRoutes.js'; // ✅ Import chat routes
 import Chat from './models/Chat.js'; // ✅ Import Chat model
 import User from './models/user.model.js'; 
+import uploadRoutes from './routers/uploadRoutes.js';
+
+
+
 
 dotenv.config();
 
@@ -101,6 +106,7 @@ app.use('/api/payment', paymentRoutes);
 app.use('/api/viewPaymentDetails', viewPaymentRoutes);
 
 app.use('/api/chats', chatRoutes); // ✅ Added Chat API
+app.use('/api/upload', uploadRoutes); 
 
 // 404 Handler
 app.use((req, res, next) => {
@@ -165,32 +171,29 @@ io.on('connection', (socket) => {
     io.emit('userOnline', userEmail);
   });
   
-
   socket.on('sendMessage', async (data) => {
-    const { senderEmail, receiverEmail, message } = data;
+    const { senderEmail, receiverEmail, messageType, messageContent } = data;
   
     const chat = new Chat({
       senderId: senderEmail,
       receiverId: receiverEmail,
-      message: message,
+      messageType,
+      messageContent,
     });
   
     try {
       const savedChat = await chat.save();
       console.log('💬 Message saved:', savedChat);
   
-      // Send message to receiver if online
       if (activeUsers[receiverEmail]) {
         io.to(activeUsers[receiverEmail]).emit('message', savedChat);
       } else {
-        // Save to queue if offline
         if (!messageQueue[receiverEmail]) {
           messageQueue[receiverEmail] = [];
         }
         messageQueue[receiverEmail].push(savedChat);
       }
   
-      // ✅ Send message back to sender only if sender and receiver are DIFFERENT
       if (senderEmail !== receiverEmail && activeUsers[senderEmail]) {
         io.to(activeUsers[senderEmail]).emit('message', savedChat);
       }
@@ -200,7 +203,7 @@ io.on('connection', (socket) => {
       io.to(activeUsers[senderEmail]).emit('messageError', { error: 'Failed to save message.' });
     }
   });
-
+  
   
   
   socket.on('disconnect', () => {
