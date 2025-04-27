@@ -1,4 +1,3 @@
-// OrderPage.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -63,36 +62,29 @@ const OrderPage = () => {
       return;
     }
     const coordRegex = /^Lat: [-+]?[0-9]*\.?[0-9]+, Long: [-+]?[0-9]*\.?[0-9]+$/;
-    // Allow letters, numbers, spaces, commas, periods, and hyphens
     const addrRegex = /^[a-zA-Z0-9\s,.-]{5,}$/;
     if (coordRegex.test(txt) || addrRegex.test(txt)) {
-      submitOrder();
+      proceedToPayment(); // 👉 Go to payment
     } else {
-      message.error("Please enter a valid address (min 5 characters) or click ‘Share My Location’." );
+      message.error("Please enter a valid address (min 5 characters) or click ‘Share My Location’.");
     }
   };
 
-  const submitOrder = async () => {
-    const orderData = {
-      user: user.email,
-      userName: user.name,
-      location,
-      items: cart,
-      total: parseFloat(getTotalPrice()),
-    };
+  const proceedToPayment = () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/orders", orderData);
-      message.success(res.data.message);
+      // Save cart, total and location to localStorage
+      localStorage.setItem(`location_user_${user._id}`, location);
       localStorage.setItem(`total_price_user_${user._id}`, getTotalPrice());
+
+      message.success("✅ Location saved. Proceeding to payment...");
       setModalVisible(false);
       navigate("/PaymentDetails");
-    } catch (err) {
-      console.error("❌ Order Error:", err.response?.data || err.message);
-      message.error("❌ Order Failed! Check console for details.");
+    } catch (error) {
+      console.error("❌ Error saving location:", error);
+      message.error("❌ Could not proceed to payment. Try again.");
     }
   };
 
-  // Reverse geocode via OSM Nominatim
   const getUserLocation = () => {
     if (!navigator.geolocation) {
       message.error("❌ Geolocation is not supported by your browser.");
@@ -210,7 +202,7 @@ const OrderPage = () => {
         open={modalVisible}
         onOk={handleConfirmLocation}
         onCancel={() => setModalVisible(false)}
-        okText="Pay"
+        okText="Proceed to Pay"
       >
         <Input
           placeholder="Enter your location"

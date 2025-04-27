@@ -18,10 +18,10 @@ const Payment = () => {
   const { user } = useAuth();
   const errorRef = useRef(null);
 
-  // Ensure totalPrice is parsed as a number
   const storedPrice = localStorage.getItem(`total_price_user_${user?._id}`);
   const totalPrice = storedPrice ? parseFloat(storedPrice) : 0;
   const cart = JSON.parse(localStorage.getItem(`cart_user_${user?._id}`)) || [];
+  const location = localStorage.getItem(`location_user_${user?._id}`) || "";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -83,11 +83,12 @@ const Payment = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/payment", {
+      // 1. Submit payment details first
+      const paymentResponse = await axios.post("http://localhost:5000/api/payment", {
         userId: user._id,
         userName: user.name,
         items: cart,
-        totalPrice: totalPrice, // Added totalPrice to payload
+        totalPrice: totalPrice,
         paymentMethod: "Card",
         cardNumber: paymentData.cardNumber,
         holderName: paymentData.holderName,
@@ -95,16 +96,32 @@ const Payment = () => {
         cvv: paymentData.cvv,
       });
 
-      if (response.data.success) {
-        message.success("✅ Payment successful! Your order has been placed.");
+      if (paymentResponse.data.success) {
+        // 2. Now save the Order separately
+        const orderData = {
+          user: user.email,
+          userName: user.name,
+          location: location,
+          items: cart,
+          total: parseFloat(totalPrice),
+        };
 
-        // Clear cart & total price after successful payment
+        const orderResponse = await axios.post("http://localhost:5000/api/orders", orderData);
+
+        if (orderResponse.data.message) {
+          message.success("✅ Payment & Order successful!");
+        } else {
+          message.warning("⚠️ Payment done, but order not saved properly.");
+        }
+
+        // 3. Clean up localStorage
         localStorage.removeItem(`cart_user_${user._id}`);
         localStorage.removeItem(`total_price_user_${user._id}`);
+        localStorage.removeItem(`location_user_${user._id}`);
 
         navigate("/OrderHistoryDetails");
       } else {
-        message.error(response.data.message || "❌ Payment failed. Try again.");
+        message.error(paymentResponse.data.message || "❌ Payment failed. Try again.");
       }
     } catch (err) {
       console.error("❌ Payment Error:", err.response?.data || err.message);
@@ -122,7 +139,7 @@ const Payment = () => {
 
   return (
     <div className="payment-container">
-      <h2 >💳 Payment Page</h2>
+      <h2>💳 Payment Page</h2>
       {error && <p ref={errorRef} className="error">{error}</p>}
 
       <form onSubmit={handleSubmit}>
