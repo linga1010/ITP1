@@ -41,7 +41,9 @@ import AdminBookingList from './Bookkingpages/AdminBookingList';
 import UserBookPriest from './Bookkingpages/UserBookPriest';
 import UserBookingList from './Bookkingpages/UserBookingList';
 
-import TermsAndConditions from './OrderPages/Term&condition'
+import TermsAndConditions from './OrderPages/Term&condition';
+import ChatPage from './ChatPage/ChatPage';
+import AdminChatPage from './ChatPage/AdminChatPage';
 
 
 
@@ -96,6 +98,9 @@ function App() {
         <Route path="/user/booking-list" element={<UserBookingList />} />
         
       <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+      <Route path="/ChatPage" element={<ChatPage />} />
+      <Route path="/AdminChatPage" element={<AdminChatPage />} />
+
     
 
       

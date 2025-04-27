@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import "../styles/UserHome.css";
 import { useAuth } from "../hooks/useAuth";
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaComments } from "react-icons/fa";  // Import the chat icon
 
 const BASE_URL = "http://localhost:5000";
 
@@ -89,6 +89,10 @@ const UserDashboard = () => {
     navigate("/view-profile");
   };
 
+  const handleChatClick = () => {
+    navigate("/ChatPage"); // Navigate to ChatPage
+  };
+
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
@@ -103,6 +107,10 @@ const UserDashboard = () => {
               <li className="nav-item123"><Link to="/user/book-priest">Book Priest</Link></li>
             </ul>
           </div>
+          {/* Add Chat Icon to the Navbar */}
+          <div className="chat-icon" onClick={handleChatClick}>
+              <FaComments size={24} />
+            </div>
           <div className="nav-right">
             <div className="profile-wrapper" onClick={handleProfileClick}>
               <img
@@ -114,6 +122,8 @@ const UserDashboard = () => {
             <button className="nav-btn logout-btn" onClick={() => setShowLogoutModal(true)}>
               Logout
             </button>
+
+            
           </div>
         </nav>
         <div className="welcome-text">
@@ -147,9 +157,9 @@ const UserDashboard = () => {
                     onClick={() => navigate("/view-package")}
                   >
                     <img
-                        src={pkg?.image ? pkg.image : "#"}
-                         alt={pkg?.name || "Package"}
-                       className="package-image"
+                      src={pkg?.image ? pkg.image : "#"}
+                      alt={pkg?.name || "Package"}
+                      className="package-image"
                     />
                     <h3>{pkg?.name || "Package Name"}</h3>
                     <p>Price: Rs. {pkg?.totalPrice || "0"}</p>
@@ -236,24 +246,23 @@ const UserDashboard = () => {
 
       {/* Logout Confirmation Modal */}
       {showLogoutModal && (
- <div className="admin-logout-modal-overlay" onClick={cancelLogout}>
- <div className="admin-logout-modal-box" onClick={(e) => e.stopPropagation()}>
-   <div className="admin-logout-emoji-animation">
-     <img 
-       src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif" 
-       alt="Sad Emoji Animation" 
-       className="admin-logout-animated-emoji" 
-     />
-   </div>
-   <p>Are you sure you want to logout?</p>
-   <div className="admin-logout-modal-buttons">
-     <button className="admin-logout-yes-btn" onClick={confirmLogout}>Yes</button>
-     <button className="admin-logout-no-btn" onClick={cancelLogout}>No</button>
-   </div>
- </div>
-</div>
-
-)}
+        <div className="admin-logout-modal-overlay" onClick={cancelLogout}>
+          <div className="admin-logout-modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-logout-emoji-animation">
+              <img 
+                src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif" 
+                alt="Sad Emoji Animation" 
+                className="admin-logout-animated-emoji" 
+              />
+            </div>
+            <p>Are you sure you want to logout?</p>
+            <div className="admin-logout-modal-buttons">
+              <button className="admin-logout-yes-btn" onClick={confirmLogout}>Yes</button>
+              <button className="admin-logout-no-btn" onClick={cancelLogout}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

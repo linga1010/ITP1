@@ -119,7 +119,10 @@ const Adminnaviagtion = () => {
     },
     {
       title: 'Feedback Management',
-      links: [{ to: '/adminFeedback', label: 'View Feedback' }],
+      links: [{ to: '/adminFeedback', label: 'View Feedback' },
+        { to: '/AdminChatPage', label: 'View chats' }
+      ],
+      
     },
   ];
 

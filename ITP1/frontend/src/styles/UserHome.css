@@ -23,6 +23,10 @@
   flex-wrap: wrap;
   width: 100%;
 }
+.chat-icon{
+margin-right: 20px; 
+  padding: 10px;
+}
 
 /* Centered Navbar Links */
 .nav-center {
@@ -59,7 +63,7 @@
 }
 
 .profile-wrapper {
-  margin-right: 150px;
+  margin-right: 20px;
   cursor: pointer;
   z-index: 1000;
 }
