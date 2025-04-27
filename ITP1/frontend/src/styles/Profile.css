@@ -1,20 +1,20 @@
+/* src/styles/Profile.css */
 .profile-container {
   max-width: 600px;
   margin: 40px auto;
   padding: 25px;
-  background: #f9f9fb; /* Dark background for consistency */
+  background: #f9f9fb;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   border-radius: 12px;
   font-family: "Poppins", sans-serif;
   text-align: center;
-  color: #f5f3f3; /* White text */
+  color: #f5f3f3;
 }
 
 h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: nowrap;
   gap: 0.5em;
   text-transform: uppercase;
   font-weight: 700;
@@ -48,14 +48,13 @@ h1 {
 }
 
 .profile-pic-section {
-  position: relative;
   margin-bottom: 20px;
 }
 
 .profile-pic {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
+  width: 250px;
+  height: 250px;
+  border-radius: 100%;
   object-fit: cover;
   border: 3px solid #ffcc00;
 }
@@ -67,59 +66,67 @@ h1 {
 }
 
 .profile-info strong {
-  color: #ffcc00;
+  color: #0b0b0b;
 }
 
 .profile-input {
   width: 90%;
-  min-height: 80px;
+  min-height: 40px;
   padding: 10px;
   margin-top: 5px;
   border: 2px solid #ffcc00;
-  
   border-radius: 5px;
   font-size: 16px;
   background-color: #f9f9f9;
   color: #0b0b0b;
   text-align: center;
-  resize: vertical; /* optional: user can resize if needed */
-  overflow-wrap: break-word;
-  word-break: break-word;
-  white-space: pre-wrap;
 }
 
-
-/* Updated button styles */
-.profile-container button {
-  padding: 10px 15px;
-  margin: 8px;
-  font-size: 14px;
-  color: #FFFFFF !important;
-    background-color:  #1E88E5 !important;
-  
+/* General “primary” buttons */
+.action-btn {
+  padding: 0.9rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: 0.3s ease-in-out;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background-color: #3498db;
+  color: #fff;
+  margin: 0.25em;
 }
 
-.profile-container button:hover {
-  background-color: #45a049;
+.action-btn:hover {
+  background-color: #3498db;
+  transform: scale(1.05);
+
 }
 
-.profile-container button:disabled {
+.action-btn:disabled {
   background-color: #555;
   cursor: not-allowed;
 }
 
-/* Back button styles */
-.profile-container .back-btn {
-  background-color: #ffcc00; /* Default button color */
-  color: #121111;
+/* “Cancel / remove” buttons */
+.cancelremove {
+  padding: 0.9rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background-color: #e74c3c !important;
+  color: #fff;
+  margin: 0.25em;
 }
 
-.profile-container .back-btn:hover {
-  background-color: #e0482a;
+.cancelremove:hover {
+  background-color: #c0392b !important;
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(192, 57, 43, 0.4);
 }
 
 @media (max-width: 600px) {
@@ -128,11 +135,27 @@ h1 {
     padding: 15px;
   }
 
-  .profile-info input {
+  .profile-input {
     width: 100%;
   }
 
-  .profile-container button {
+  .action-btn,
+  .cancelremove {
     width: 100%;
   }
+}
+.success-message{
+  color: #2e7d32;
+  font-weight: bold;
+
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  color: #c62828;
+  font-weight: bold;
+
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
 }

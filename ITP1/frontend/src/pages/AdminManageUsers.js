@@ -197,7 +197,7 @@ const AdminManageUsers = () => {
                 <td>{u.address || '—'}</td>
                 <td>
                   <button className="admin-user-btn" onClick={() => viewUserDetails(u)}>View</button>
-                  <button className="admin-user-btn cancel" onClick={() => handleDeleteUser(u._id)}>Delete</button>
+                  <button className="admin-user-btn cancel" onClick={() => handleDeleteUser(u._id)}>Remove</button>
                 </td>
               </tr>
             ))}
@@ -271,7 +271,7 @@ const AdminManageUsers = () => {
           <div className="modal">
             <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => setShowDeleteModal(false)}>×</span>
-              <h3>Confirm Delete</h3>
+              <h3>Confirm Remove</h3>
               <textarea
                 placeholder="Reason for deletion"
                 value={deletionReason}
