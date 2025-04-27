@@ -90,7 +90,7 @@ const Adminnaviagtion = () => {
       ],
     },
     {
-      title: 'Inventory Management',
+      title: 'Inventory',
       links: [
         { to: '/add-product', label: 'Add New Product' },
         { to: '/product-list', label: 'View All Products' },
@@ -103,14 +103,14 @@ const Adminnaviagtion = () => {
       ],
     },
     {
-      title: 'Order Management',
+      title: 'Orders',
       links: [
         { to: '/admin/view-bookings', label: 'View Order Bookings' },
         { to: '/admin/viewPayment', label: 'View Order Payments' },
       ],
     },
     {
-      title: 'Booking Management',
+      title: 'Bookings',
       links: [
         { to: '/admin/add-priest', label: 'Add Priest' },
         { to: '/admin/priest-list', label: 'View All Priests' },
@@ -118,7 +118,7 @@ const Adminnaviagtion = () => {
       ],
     },
     {
-      title: 'Feedback Management',
+      title: 'Feedback',
       links: [{ to: '/adminFeedback', label: 'View Feedback' },
         { to: '/AdminChatPage', label: 'View chats' }
       ],
@@ -143,22 +143,22 @@ const Adminnaviagtion = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="admin-dashboard-container">
-      <header className="navbar">
-        <div className="navbar-right">
+    <div className="admin-dashboard-container" >
+      <header className="navbar" style={{background:' #2c3e50'}} >
+        <div className="navbar-right" >
           <button className="hamburger-icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             <FaBars />
           </button>
           <BackButton />
-          <p>Welcome back, <strong>{user?.name || 'Admin'}</strong></p>
+          <p style={{fontSize: '36px'}}>Welcome back, <strong>{user?.name || 'Admin'}</strong></p>
           <button className="logout-btn" onClick={() => setShowLogoutModal(true)}>
             <FaSignOutAlt /> Logout
           </button>
         </div>
       </header>
 
-      <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
-        <h2 className="Admin">Admin</h2>
+      <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}  style={{background:' #2c3e50'}} >
+        <p   style={{color: 'rgb(255, 255, 255)',fontSize: '36px',marginTop:'80px'}} >Admin</p>
         <ul className="sidebar-menu">
           {sidebarItems.map((item, index) => (
             <li key={index}>
