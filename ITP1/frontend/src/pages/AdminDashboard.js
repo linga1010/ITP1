@@ -3,6 +3,7 @@ import axios from 'axios';
 import Navbar from '../Component/Adminnavigation';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
+import "../styles/Body.css";
 import '../styles/AdminDashboard.css';
 
 const AdminDashboard = () => {

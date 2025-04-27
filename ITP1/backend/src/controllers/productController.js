@@ -18,12 +18,17 @@ const addProduct = async (req, res) => {
   try {
     const { name, sku, sellingPrice, costPrice, quantity, unit } = req.body;
 
-    // Check for duplicate SKU
+
     if (await Product.findOne({ sku })) {
       return res.status(400).json({ message: "SKU already exists. Please use a unique SKU." });
     }
 
-    const imagePath = req.file?.path; // Handle image if uploaded
+    const imagePath = req.file?.path;
+
+    if (!imagePath) {
+      console.error('❌ Image upload failed: no imagePath received');
+      return res.status(400).json({ message: "Image upload failed" });
+    }
 
     const newProduct = new Product({
       name,
@@ -38,10 +43,12 @@ const addProduct = async (req, res) => {
     await newProduct.save();
     res.status(201).json({ message: "Product added successfully", product: newProduct });
   } catch (error) {
-    console.error('Error adding product:', error);
+    console.error('❌ Error adding product:', error); // Make sure we print the real error!
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
 
 // ✅ Update product by SKU
 const updateProduct = async (req, res) => {
@@ -71,6 +78,10 @@ const updateProduct = async (req, res) => {
   }
 };
 
+
+
+
+
 // ✅ Delete product by SKU
 const deleteProduct = async (req, res) => {
   try {
@@ -90,6 +101,7 @@ const deleteProduct = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 // ✅ Get all products
 const getProducts = async (req, res) => {

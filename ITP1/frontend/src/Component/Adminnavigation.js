@@ -77,7 +77,9 @@ const Adminnaviagtion = () => {
   const sidebarItems = [
     {
       title: 'Home',
-      links: [{ to: '/admin-dashboard', label: 'Admin Dashboard' }],
+      links: [{ to: '/admin-dashboard', label: 'Admin Dashboard' },
+        { to: '/SalesReport', label: 'Sales Report' }]
+      
     },
     {
       title: 'User Management',
@@ -88,7 +90,7 @@ const Adminnaviagtion = () => {
       ],
     },
     {
-      title: 'Inventory Management',
+      title: 'Inventory',
       links: [
         { to: '/add-product', label: 'Add New Product' },
         { to: '/product-list', label: 'View All Products' },
@@ -101,14 +103,14 @@ const Adminnaviagtion = () => {
       ],
     },
     {
-      title: 'Order Management',
+      title: 'Orders',
       links: [
         { to: '/admin/view-bookings', label: 'View Order Bookings' },
         { to: '/admin/viewPayment', label: 'View Order Payments' },
       ],
     },
     {
-      title: 'Booking Management',
+      title: 'Bookings',
       links: [
         { to: '/admin/add-priest', label: 'Add Priest' },
         { to: '/admin/priest-list', label: 'View All Priests' },
@@ -116,8 +118,11 @@ const Adminnaviagtion = () => {
       ],
     },
     {
-      title: 'Feedback Management',
-      links: [{ to: '/adminFeedback', label: 'View Feedback' }],
+      title: 'Feedback',
+      links: [{ to: '/adminFeedback', label: 'View Feedback' },
+        { to: '/AdminChatPage', label: 'View chats' }
+      ],
+      
     },
   ];
 
@@ -138,22 +143,22 @@ const Adminnaviagtion = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="admin-dashboard-container">
-      <header className="navbar">
-        <div className="navbar-right">
+    <div className="admin-dashboard-container" >
+      <header className="navbar" style={{background:' #2c3e50'}} >
+        <div className="navbar-right" >
           <button className="hamburger-icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             <FaBars />
           </button>
           <BackButton />
-          <p>Welcome back, <strong>{user?.name || 'Admin'}</strong></p>
+          <p style={{fontSize: '36px'}}>Welcome back, <strong>{user?.name || 'Admin'}</strong></p>
           <button className="logout-btn" onClick={() => setShowLogoutModal(true)}>
             <FaSignOutAlt /> Logout
           </button>
         </div>
       </header>
 
-      <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}>
-        <h2 className="Admin">Admin</h2>
+      <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}  style={{background:' #2c3e50'}} >
+        <p   style={{color: 'rgb(255, 255, 255)',fontSize: '36px',marginTop:'80px'}} >Admin</p>
         <ul className="sidebar-menu">
           {sidebarItems.map((item, index) => (
             <li key={index}>
@@ -176,25 +181,23 @@ const Adminnaviagtion = () => {
 
       {/* Logout confirmation modal */}
       {showLogoutModal && (
-  <div className="modal-overlay" onClick={cancelLogout}>
-    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-      {/* 👇 Insert animated emoji here */}
-      <div className="emoji-animation">
-        <img 
-          src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif" 
-          alt="Sad Emoji Animation" 
-          className="animated-emoji" 
-        />
-      </div>
+ <div className="admin-logout-modal-overlay" onClick={cancelLogout}>
+ <div className="admin-logout-modal-box" onClick={(e) => e.stopPropagation()}>
+   <div className="admin-logout-emoji-animation">
+     <img 
+       src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif" 
+       alt="Sad Emoji Animation" 
+       className="admin-logout-animated-emoji" 
+     />
+   </div>
+   <p>Are you sure you want to logout?</p>
+   <div className="admin-logout-modal-buttons">
+     <button className="admin-logout-yes-btn" onClick={confirmLogout}>Yes</button>
+     <button className="admin-logout-no-btn" onClick={cancelLogout}>No</button>
+   </div>
+ </div>
+</div>
 
-      <p>Are you sure you want to logout?</p>
-
-      <div className="modal-buttons">
-        <button className="yes-btn" onClick={confirmLogout}>Yes</button>
-        <button className="no-btn" onClick={cancelLogout}>No</button>
-      </div>
-    </div>
-  </div>
 )}
 
     </div>

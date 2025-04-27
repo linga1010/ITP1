@@ -12,6 +12,7 @@ const EditPackage = () => {
   const [products, setProducts] = useState([]);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [discount, setDiscount] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [finalPrice, setFinalPrice] = useState(0);
@@ -42,6 +43,12 @@ const EditPackage = () => {
         name: existingPackageFromState.name,
         discount: existingPackageFromState.discount,
       });
+
+      if (existingPackageFromState.image) {
+        setPreview(existingPackageFromState.image);
+      }
+
+      
 
       // Map over products and ensure they contain name, unit, and sellingPrice
       const updatedProducts = existingPackageFromState.products.map((item) => ({
@@ -193,11 +200,13 @@ const EditPackage = () => {
 
   return (
     <div className="admin-dashboard-container">
-    <Adminnaviagtion /> {/* Add the Admin navigation component here */}
-
+    <Adminnaviagtion /> 
+    <p><br></br></p>  <p><br></br></p> 
     <div className="main-content">
     <div>
-      <h2>Edit Package</h2>
+    <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+    Edit Package</p>
+     
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
         <Form.Item
           name="name"
@@ -268,18 +277,46 @@ const EditPackage = () => {
         <Form.Item label="Final Price">
           <Input value={finalPrice} readOnly />
         </Form.Item>
+        <Form.Item
+  label="Upload Image"
+  required
+  validateStatus={!image ? "error" : "success"}
+  help={!image ? "Please upload an image" : ""}
+>
+  <Upload
+    beforeUpload={(file) => {
+      const isImage = file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/jpg";
+      if (!isImage) {
+        message.error("Only JPG, JPEG, and PNG files are allowed!");
+        return Upload.LIST_IGNORE;
+      }
 
-        <Form.Item label="Upload Image">
-          <Upload
-            beforeUpload={(file) => {
-              setImage(file);
-              return false;
-            }}
-            showUploadList={false}
-          >
-            <Button>Upload Image</Button>
-          </Upload>
-        </Form.Item>
+      setImage(file);
+      const previewUrl = URL.createObjectURL(file);
+      setPreview(previewUrl);
+
+      return false; // prevent auto-upload
+    }}
+    showUploadList={false}
+  >
+    <Button>Upload Image</Button>
+  </Upload>
+
+  {preview && (
+    <img
+      src={preview}
+      alt="Preview"
+      style={{
+        marginTop: "10px",
+        maxWidth: "200px",
+        borderRadius: "8px",
+        boxShadow: "0px 4px 8px rgba(0,0,0,0.2)", // small glow effect
+      }}
+    />
+  )}
+</Form.Item>
+
+
 
         <Form.Item>
           <Button style={{ backgroundColor: "#ffcc00", color: "black" }} type="primary" htmlType="submit">

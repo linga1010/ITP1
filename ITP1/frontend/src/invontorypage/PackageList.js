@@ -55,10 +55,13 @@ const PackageList = () => {
 
   return (
     <div className="admin-dashboard-container">
-      <Adminnaviagtion /> {/* Add the Admin navigation component here */}
+      <Adminnaviagtion /> 
+      <p><br></br></p>  <p><br></br></p> 
 
       <div className="main-content">
-        <h2>Package List</h2>
+      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+      Package List </p>
+       
 
         <input
           placeholder="Search by package name"
@@ -66,6 +69,8 @@ const PackageList = () => {
           onChange={handleSearch}
           style={{ width: "300px", marginBottom: "20px" }}
         />
+
+        
         <div className="tablelist">
         <table>
           <thead>
@@ -84,7 +89,7 @@ const PackageList = () => {
             {filteredPackages.map((pkg) => (
               <tr key={pkg._id}>
                 <td>
-                  <img src={`http://localhost:5000${pkg.image}`} alt="Package" width="50" />
+                  <img src={pkg.image} alt="Package" style={{ width: "80px", height: "80px" }} />
                 </td>
                 <td>{pkg.name}</td>
                 <td>

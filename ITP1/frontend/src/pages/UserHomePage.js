@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import "../styles/UserHome.css";
 import { useAuth } from "../hooks/useAuth";
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaComments, FaBars, FaTimes } from "react-icons/fa";
 
 const BASE_URL = "http://localhost:5000";
 
@@ -15,6 +15,7 @@ const UserDashboard = () => {
   const [packageIndex, setPackageIndex] = useState(0);
   const [priestIndex, setPriestIndex] = useState(0);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     fetchPackages();
@@ -57,7 +58,26 @@ const UserDashboard = () => {
     return () => clearInterval(priestInterval);
   }, [priests]);
 
-  const getSlidingWindow = (array, currentIndex) => {
+  const confirmLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
+  const handleProfileClick = () => {
+    navigate("/view-profile");
+  };
+
+  const handleChatClick = () => {
+    navigate("/ChatPage");
+  };
+
+  const defaultProfilePicUrl = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+
+  const displayedPackages = getSlidingWindow(packages, packageIndex);
+  const displayedPriests = getSlidingWindow(priests, priestIndex);
+
+  function getSlidingWindow(array, currentIndex) {
     const totalItems = array.length;
     if (totalItems === 0) return [];
     if (totalItems <= 4) return array;
@@ -67,43 +87,40 @@ const UserDashboard = () => {
       array[(currentIndex + 2) % totalItems],
       array[(currentIndex + 3) % totalItems],
     ];
-  };
-
-  const displayedPackages = getSlidingWindow(packages, packageIndex);
-  const displayedPriests = getSlidingWindow(priests, priestIndex);
-
-  const confirmLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    navigate("/login");
-  };
-
-  const cancelLogout = () => {
-    setShowLogoutModal(false);
-  };
-
-  const defaultProfilePicUrl =
-    "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
-
-  const handleProfileClick = () => {
-    navigate("/view-profile");
-  };
+  }
 
   return (
     <div className="dashboard-container">
+      {/* Sidebar */}
+      <div
+        className={`sidebar ${sidebarOpen ? "open" : ""}`}
+        onMouseEnter={() => setSidebarOpen(true)}
+        onMouseLeave={() => setSidebarOpen(false)}
+      >
+        <button className="close-btn" onClick={() => setSidebarOpen(false)}>
+          <FaTimes />
+        </button>
+        <Link to="/view-package" onClick={() => setSidebarOpen(false)}>Packages</Link>
+        <Link to="/OrderHistoryDetails" onClick={() => setSidebarOpen(false)}>Order History</Link>
+        <Link to="/Feedback" onClick={() => setSidebarOpen(false)}>Feedbacks</Link>
+        <Link to="/about-us" onClick={() => setSidebarOpen(false)}>About Us</Link>
+        <Link to="/user/booking-list" onClick={() => setSidebarOpen(false)}>Booking Details</Link>
+        <Link to="/user/book-priest" onClick={() => setSidebarOpen(false)}>Book Priest</Link>
+        
+      </div>
+
+      {/* Navbar */}
       <header className="dashboard-header">
         <nav className="navbar">
+          <div className="nav-left">
+            <FaBars className="menu-icon" onClick={() => setSidebarOpen(true)} />
+          </div>
           <div className="nav-center">
-            <ul className="nav-links">
-              <li className="nav-item123"><Link to="/view-package">Packages</Link></li>
-              <li className="nav-item123"><Link to="/OrderHistoryDetails">Order History</Link></li>
-              <li className="nav-item123"><Link to="/Feedback">Feedbacks</Link></li>
-              <li className="nav-item123"><Link to="/about-us">About Us</Link></li>
-              <li className="nav-item123"><Link to="/user/booking-list">Booking Details</Link></li>
-              <li className="nav-item123"><Link to="/user/book-priest">Book Priest</Link></li>
-            </ul>
+          <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+          WELCOME TO VK AURA, {user?.name?.toUpperCase() || "USER"}</p>
           </div>
           <div className="nav-right">
+            <FaComments className="chat-icon" onClick={handleChatClick} />
             <div className="profile-wrapper" onClick={handleProfileClick}>
               <img
                 src={user?.profilePic ? user.profilePic : defaultProfilePicUrl}
@@ -116,112 +133,66 @@ const UserDashboard = () => {
             </button>
           </div>
         </nav>
-        <div className="welcome-text">
-          <h1>Welcome to Vk Aura</h1>
-          <p>Welcome back, <strong>{user?.name || "User"}</strong></p>
-        </div>
       </header>
 
       <main className="dashboard-content">
-        <section className="carousel-section">
-          <p className="carousel-heading">Packages</p>
-          <div className="carousel-container">
-            <button
-              className="arrow-button"
-              onClick={() =>
-                setPackageIndex((prevIndex) =>
-                  packages.length
-                    ? (prevIndex - 1 + packages.length) % packages.length
-                    : 0
-                )
-              }
-            >
-              &#8249;
-            </button>
-            <div className="package-section">
-              {displayedPackages.length > 0 ? (
-                displayedPackages.map((pkg, idx) => (
-                  <div
-                    key={pkg?._id || idx}
-                    className="package-card"
-                    onClick={() => navigate("/view-package")}
-                  >
-                    <img
-                      src={pkg?.image ? `${BASE_URL}${pkg.image}` : "#"}
-                      alt={pkg?.name || "Package"}
-                      className="package-image"
-                    />
-                    <h3>{pkg?.name || "Package Name"}</h3>
-                    <p>Price: Rs. {pkg?.totalPrice || "0"}</p>
-                  </div>
-                ))
-              ) : (
-                <p>Loading packages...</p>
-              )}
-            </div>
-            <button
-              className="arrow-button"
-              onClick={() =>
-                setPackageIndex((prevIndex) =>
-                  packages.length ? (prevIndex + 1) % packages.length : 0
-                )
-              }
-            >
-              &#8250;
-            </button>
-          </div>
-        </section>
+  <section className="carousel-section">
+    <div className="carousel-final-box">
+      
+      {/* Left Buttons for Packages */}
+      <div className="side-buttons">
+        <button className="side-arrow-button" onClick={() => setPackageIndex(prev => (prev - 1 + packages.length) % packages.length)}>
+          &#8249;
+        </button>
+        <button className="side-arrow-button" onClick={() => setPackageIndex(prev => (prev + 1) % packages.length)}>
+          &#8250;
+        </button>
+      </div>
 
-        <section className="carousel-section">
-          <p className="carousel-heading">Priests</p>
-          <div className="carousel-container">
-            <button
-              className="arrow-button"
-              onClick={() =>
-                setPriestIndex((prevIndex) =>
-                  priests.length
-                    ? (prevIndex - 1 + priests.length) % priests.length
-                    : 0
-                )
-              }
-            >
-              &#8249;
-            </button>
-            <div className="priest-section">
-              {displayedPriests.length > 0 ? (
-                displayedPriests.map((priest, idx) => (
-                  <div
-                    key={priest?._id || idx}
-                    className="priest-card"
-                    onClick={() => navigate("/user/book-priest")}
-                  >
-                    <img
-                      src={priest?.photo ? `${BASE_URL}${priest.photo}` : "#"}
-                      alt={priest?.name || "Priest"}
-                      className="priest-image"
-                    />
-                    <h3>{priest?.name || "Priest Name"}</h3>
-                    <p>Daily Charge: Rs. {priest?.dailyCharge || "0"}</p>
-                  </div>
-                ))
-              ) : (
-                <p>Loading priests...</p>
-              )}
-            </div>
-            <button
-              className="arrow-button"
-              onClick={() =>
-                setPriestIndex((prevIndex) =>
-                  priests.length ? (prevIndex + 1) % priests.length : 0
-                )
-              }
-            >
-              &#8250;
-            </button>
+      {/* Package and Priest Cards */}
+      <div className="package-priest-container">
+        {/* Package Card */}
+        {packages.length > 0 && (
+          <div className="package-card" onClick={() => navigate("/view-package")}>
+            <h3 className="card-heading">PACKAGES</h3>
+            <img src={packages[packageIndex]?.image || "#"} alt={packages[packageIndex]?.name || "Package"} className="package-image" />
+            <h4>{packages[packageIndex]?.name || "Package Name"}</h4>
+            <p>Price: Rs. {packages[packageIndex]?.totalPrice || "0"}</p>
           </div>
-        </section>
-      </main>
+        )}
 
+        {/* Priest Card */}
+        {priests.length > 0 && (
+          <div className="priest-card" onClick={() => navigate("/user/book-priest")}>
+            <h3 className="card-heading">PRIESTS</h3>
+            <img src={priests[priestIndex]?.photo ? `${BASE_URL}${priests[priestIndex].photo}` : "#"} alt={priests[priestIndex]?.name || "Priest"} className="priest-image" />
+            <h4>{priests[priestIndex]?.name || "Priest Name"}</h4>
+            <p>Daily Charge: Rs. {priests[priestIndex]?.dailyCharge || "0"}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Right Buttons for Priests */}
+      <div className="side-buttons">
+        <button className="side-arrow-button" onClick={() => setPriestIndex(prev => (prev - 1 + priests.length) % priests.length)}>
+          &#8249;
+        </button>
+        <button className="side-arrow-button" onClick={() => setPriestIndex(prev => (prev + 1) % priests.length)}>
+          &#8250;
+        </button>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+
+
+
+
+
+
+      {/* Footer */}
       <footer className="footer">
         <div className="footer-content">
           <p>&copy; 2025 VK Aura. All rights reserved.</p>
@@ -234,21 +205,17 @@ const UserDashboard = () => {
         </div>
       </footer>
 
-      {/* Logout Confirmation Modal */}
+      {/* Logout Modal */}
       {showLogoutModal && (
-        <div className="modal-overlay" onClick={cancelLogout}>
-          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-            <div className="emoji-animation">
-              <img
-                src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif"
-                alt="Sad Emoji"
-                className="animated-emoji"
-              />
+        <div className="admin-logout-modal-overlay" onClick={() => setShowLogoutModal(false)}>
+          <div className="admin-logout-modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-logout-emoji-animation">
+              <img src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif" alt="Sad Emoji" className="admin-logout-animated-emoji" />
             </div>
             <p>Are you sure you want to logout?</p>
-            <div className="modal-buttons">
-              <button className="yes-btn" onClick={confirmLogout}>Yes</button>
-              <button className="no-btn" onClick={cancelLogout}>No</button>
+            <div className="admin-logout-modal-buttons">
+              <button className="admin-logout-yes-btn" onClick={confirmLogout}>Yes</button>
+              <button className="admin-logout-no-btn" onClick={() => setShowLogoutModal(false)}>No</button>
             </div>
           </div>
         </div>

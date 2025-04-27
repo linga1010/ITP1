@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/Profile.css';
-import "../styles/Body.css";
+//import "../styles/Body.css";
 import Adminnaviagtion from "../Component/Adminnavigation"; 
 
 const AdminProfile = () => {
@@ -47,41 +47,64 @@ const AdminProfile = () => {
   };
 
   return (
+    <div className="view-profile-container">
+      <h1 className="view-profile-title">Your Profile</h1>
 
-    <div className="admin-dashboard-container">
-    <Adminnaviagtion />
+      {error && <p className="view-error-message">{error}</p>}
 
-    <div className="main-content">
-
-
-    <div className="profile-container">
-      <h1>Your Profile</h1>
-
-      {error && <p className="error-message">{error}</p>}
-
-      <div className="profile-info centered-profile">
+      <div className="view-profile-info view-centered-profile">
         <img
-          src={user.profilePic ? getCroppedImageUrl(user.profilePic) : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'}
+          src={
+            user.profilePic
+              ? getCroppedImageUrl(user.profilePic)
+              : 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png'
+          }
           alt="Profile"
-          className="profile-pic"
+          className="view-profile-pic"
         />
-        <p><strong>Name:</strong> {user.name}</p>
-        <p><strong>Email:</strong> {user.email}</p>
-        <p><strong>Address:</strong> {user.address}</p>
-        <p><strong>Phone:</strong> {user.phone}</p>
+        <p className="view-profile-field">
+          <strong>Name:</strong> {user.name}
+        </p>
+        <p className="view-profile-field">
+          <strong>Email:</strong> {user.email}
+        </p>
+        <p className="view-profile-field">
+          <strong>Address:</strong> {user.address}
+        </p>
+        <p className="view-profile-field">
+          <strong>Phone:</strong> {user.phone}
+        </p>
       </div>
 
-      <div className="profile-actions">
-        <button className="profile-btn" onClick={handleBackToDashboard}>⬅ Back to Dashboard</button>
-        <button className="profile-btn" onClick={() => navigate('/profile')}>✏️ Edit Profile</button>
-        <button className="profile-btn" onClick={() => navigate('/change-password')}>🔐 Change Password</button>
-        <button className="profile-btn" onClick={() => navigate('/delete-account')}>🗑️ Delete Account</button>
+      <div className="view-profile-actions">
+        <button
+          className="view-action-btn"
+          onClick={() => navigate('/profile')}
+        >
+          ✏️ Edit Profile
+        </button>
+        <button
+          className="view-action-btn"
+          onClick={() => navigate('/change-password')}
+        >
+          🔐 Change Password
+        </button>
+        <button
+          className="view-action-btn"
+          onClick={() => navigate('/delete-account')}
+        >
+          🗑️ Delete Account
+        </button>
+        <button
+          className="view-action-btn"
+          onClick={handleBackToDashboard}
+        >
+          ⬅ Back to Dashboard
+        </button>
       </div>
-    </div>
-
-    </div>
     </div>
   );
 };
+
 
 export default AdminProfile;

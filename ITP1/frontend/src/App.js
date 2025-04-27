@@ -28,6 +28,8 @@ import ViewProfilePage from './pages/ViewProfilePage';
 import AdminDeletedUsers from './pages/AdminDeletedUsers';
 import AdminFeedbackPage from './Feedback/pages/AdminFeedbackPage';
 import CreatePurchase from './invontorypage/CreatePurchase';
+import SalesReport from './invontorypage/SalesReport';
+
 import PurchaseList from './invontorypage/PurchaseList';
 import AdminProfile from './pages/AdminProfile';
 
@@ -39,7 +41,9 @@ import AdminBookingList from './Bookkingpages/AdminBookingList';
 import UserBookPriest from './Bookkingpages/UserBookPriest';
 import UserBookingList from './Bookkingpages/UserBookingList';
 
-import TermsAndConditions from './OrderPages/Term&condition'
+import TermsAndConditions from './OrderPages/Term&condition';
+import ChatPage from './ChatPage/ChatPage';
+import AdminChatPage from './ChatPage/AdminChatPage';
 
 
 
@@ -73,10 +77,15 @@ function App() {
         <Route path="/admin/view-bookings" element={<ViewBookings />} />
         <Route path="/create-invoice" element={<Createinvoice />} />
         <Route path="/invoices" element={<Invoices />} />
+
+
         <Route path="/Feedback" element={<FeedbackPage />} />
         <Route path="/adminFeedback" element={<AdminFeedbackPage />} />
         <Route path="/admin/deleted-users" element={<AdminDeletedUsers />} />
         <Route path="/purchases" element={<PurchaseList />} />
+        <Route path="/SalesReport" element={<SalesReport />} />      
+
+        
         <Route path="/purchases/create" element={<CreatePurchase />} />
         <Route path="/admin/view-profile" element={<AdminProfile />} />
 
@@ -89,7 +98,12 @@ function App() {
         <Route path="/user/booking-list" element={<UserBookingList />} />
         
       <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+      <Route path="/ChatPage" element={<ChatPage />} />
+      <Route path="/AdminChatPage" element={<AdminChatPage />} />
 
+    
+
+      
       </Routes>
     </Router>
   );

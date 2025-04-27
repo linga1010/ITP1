@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/AdminUser.css';
-import "../styles/Body.css";
+//import "../styles/Body.css";
 import Adminnaviagtion from "../Component/Adminnavigation"; 
 
 const defaultProfilePicUrl = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
@@ -143,8 +143,8 @@ const AdminManageUsers = () => {
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
 
-      <div className="main-content">
-        <h2>Manage Users</h2>
+      <div className="maincontent">
+        <h1>Manage Users</h1>
         {/* summary counts */}
         <div className="summary">
           <p>Total Admins: {admins.length}</p>
@@ -197,7 +197,7 @@ const AdminManageUsers = () => {
                 <td>{u.address || '—'}</td>
                 <td>
                   <button className="admin-user-btn" onClick={() => viewUserDetails(u)}>View</button>
-                  <button className="admin-user-btn cancel" onClick={() => handleDeleteUser(u._id)}>Delete</button>
+                  <button className="admin-user-btn cancel" onClick={() => handleDeleteUser(u._id)}>Remove</button>
                 </td>
               </tr>
             ))}
@@ -206,7 +206,7 @@ const AdminManageUsers = () => {
 
         {/* User Details Modal */}
         {showUserModal && selectedUser && (
-          <div className="modal">
+          <div className="modal" style={{marginTop: '80px'}}>
             <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => setShowUserModal(false)}>×</span>
               <h3>User Details</h3>
@@ -271,7 +271,7 @@ const AdminManageUsers = () => {
           <div className="modal">
             <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => setShowDeleteModal(false)}>×</span>
-              <h3>Confirm Delete</h3>
+              <h3>Confirm Remove</h3>
               <textarea
                 placeholder="Reason for deletion"
                 value={deletionReason}

@@ -30,17 +30,31 @@ const EditProduct = () => {
       setCostPrice(editProduct.costPrice);
       setQuantity(editProduct.quantity);
       setUnit(editProduct.unit);
-      setPreviewImage(editProduct.image ? `http://localhost:5000/${editProduct.image}` : null);
+      setPreviewImage(editProduct.image ? editProduct.image : null); 
     }
   }, [editProduct]);
 
+ 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const fileType = file.type;
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+  
+      if (!allowedTypes.includes(fileType)) {
+        setErrorMessage("Only JPG, JPEG, and PNG files are allowed.");
+        setImage(null);
+        setPreviewImage(null);
+        return;
+      }
+  
       setImage(file);
       setPreviewImage(URL.createObjectURL(file));
+      setErrorMessage(""); // Clear error if valid
     }
   };
+  
+
 
   const doublevalue = (setter) => (e) => {
     const value = e.target.value;
@@ -77,10 +91,20 @@ const EditProduct = () => {
     e.preventDefault();
     setErrorMessage("");
 
+    
+    if (name.length < 4 || name.length > 25) {
+      setErrorMessage("Product name must be between 4 and 25 characters.");
+      return; 
+    }
+  
+   
+
     if (parseFloat(sellingPrice) <= parseFloat(costPrice)) {
       setErrorMessage("Selling price must be greater than cost price.");
       return;
     }
+
+
 
     const formData = new FormData();
     formData.append("name", name);
@@ -108,12 +132,15 @@ const EditProduct = () => {
 
   return (
     <div className="admin-dashboard-container">
-    <Adminnaviagtion /> {/* Add the Admin navigation component here */}
+    <Adminnaviagtion /> 
+    <p><br></br></p>  <p><br></br></p> 
 
     <div className="main-content">
 
     <div className="form-container">
-      <h2>Edit Product</h2>
+    <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+    Edit Product</p>
+   
       {errorMessage && <p className="error-message">{errorMessage}</p>}
 
       <div className="form-content">

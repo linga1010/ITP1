@@ -1,3 +1,4 @@
+// src/pages/ForgotPassword.jsx
 import { useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -21,11 +22,10 @@ const ForgotPassword = () => {
     uppercase: false,
     specialChar: false,
   });
-  const [isResendDisabled, setIsResendDisabled] = useState(false);  // Track if Resend OTP button should be disabled
+  const [isResendDisabled, setIsResendDisabled] = useState(false);
   const navigate = useNavigate();
   const messageRef = useRef(null);
 
-  // Function to scroll to the message container
   const scrollToMessage = () => {
     if (messageRef.current) {
       messageRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -34,7 +34,6 @@ const ForgotPassword = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-
     if (e.target.name === "newPassword") {
       validatePassword(e.target.value);
     }
@@ -50,21 +49,16 @@ const ForgotPassword = () => {
     });
   };
 
-  // Step 1: Check if Email Exists (Move to OTP Section if Exists)
   const checkForgotPasswordEmail = async () => {
     if (!formData.email) return setError("❌ Please enter an email.");
 
-    setMessage("");
-    setError("");
-    setLoading(true);
-
+    setMessage(""); setError(""); setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/api/users/check-forgot-password-email", {
-        email: formData.email,
-      });
-
+      const res = await axios.post(
+        "http://localhost:5000/api/users/check-forgot-password-email",
+        { email: formData.email }
+      );
       if (res.data.exists) {
-        console.log("Email found, proceeding to send OTP...");
         await sendForgotPasswordOTP();
       } else {
         setError("❌ Email not found. Please register first.");
@@ -78,16 +72,14 @@ const ForgotPassword = () => {
     }
   };
 
-  // Step 2: Send OTP if Email Exists
   const sendForgotPasswordOTP = async () => {
-    setMessage("");
-    setError("");
-    setLoading(true);
-    setIsResendDisabled(true); // Disable the button once OTP is being sent
-
+    setMessage(""); setError(""); setLoading(true);
+    setIsResendDisabled(true);
     try {
-      console.log("Sending OTP...");
-      await axios.post("http://localhost:5000/api/users/send-forgot-password-otp", { email: formData.email });
+      await axios.post(
+        "http://localhost:5000/api/users/send-forgot-password-otp",
+        { email: formData.email }
+      );
       setMessage("✅ OTP sent to your email!");
       setStep(2);
       scrollToMessage();
@@ -96,24 +88,19 @@ const ForgotPassword = () => {
       scrollToMessage();
     } finally {
       setLoading(false);
-      setIsResendDisabled(false); // Re-enable the button after process completes
+      setIsResendDisabled(false);
     }
   };
 
-  // Step 2: Verify OTP
   const verifyOTP = async () => {
     if (!formData.otp) return setError("❌ Please enter OTP.");
 
-    setMessage("");
-    setError("");
-    setLoading(true);
-
+    setMessage(""); setError(""); setLoading(true);
     try {
       await axios.post("http://localhost:5000/api/users/verify-otp", {
         email: formData.email,
         otp: formData.otp,
       });
-
       setMessage("✅ OTP Verified!");
       setStep(3);
       scrollToMessage();
@@ -125,13 +112,9 @@ const ForgotPassword = () => {
     }
   };
 
-  // Step 3: Reset Password
   const handleReset = async (e) => {
     e.preventDefault();
-
-    // Clear previous messages and scroll to the message container
-    setMessage("");
-    setError("");
+    setMessage(""); setError("");
     scrollToMessage();
 
     if (!formData.newPassword || !formData.confirmPassword) {
@@ -144,7 +127,6 @@ const ForgotPassword = () => {
       scrollToMessage();
       return;
     }
-
     if (!Object.values(passwordCriteria).every(Boolean)) {
       setError("❌ Password does not meet all security requirements.");
       scrollToMessage();
@@ -152,15 +134,16 @@ const ForgotPassword = () => {
     }
 
     setLoading(true);
-
     try {
-      const res = await axios.post("http://localhost:5000/api/users/request-forgot-password", {
-        email: formData.email,
-        otp: formData.otp,
-        newPassword: formData.newPassword,
-        confirmPassword: formData.confirmPassword,
-      });
-
+      const res = await axios.post(
+        "http://localhost:5000/api/users/request-forgot-password",
+        {
+          email: formData.email,
+          otp: formData.otp,
+          newPassword: formData.newPassword,
+          confirmPassword: formData.confirmPassword,
+        }
+      );
       setMessage(res.data.message);
       scrollToMessage();
       setTimeout(() => navigate("/login"), 2000);
@@ -173,15 +156,14 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="forgot-password-container">
-      <div className="forgot-password-content">
-        <div className="forgot-password-box">
+    <div className="vkfp-container">
+      <div className="vkfp-content">
+        <div className="vkfp-box">
           <h2>Forgot Password</h2>
 
-          {/* Message container with ref */}
           <div ref={messageRef}>
-            {message && <p className="message success">{message}</p>}
-            {error && <p className="message error">{error}</p>}
+            {message && <p className="vk-success-message ">{message}</p>}
+            {error   && <p className="vk-error-message ">{error}</p>}
           </div>
 
           {step === 1 && (
@@ -189,17 +171,22 @@ const ForgotPassword = () => {
               <input
                 type="email"
                 name="email"
-                className="input-field"
+                className="vkfp-input-field"
                 placeholder="Enter your registered email"
                 value={formData.email}
                 onChange={handleChange}
                 required
               />
-              <button type="button" className="btn" onClick={checkForgotPasswordEmail} disabled={loading}>
+              <button
+                type="button"
+                className="vkfp-btn"
+                onClick={checkForgotPasswordEmail}
+                disabled={loading}
+              >
                 {loading ? "Checking..." : "Next"}
               </button>
-              <p className="step-container">
-                Don't have an account? <a href="/signup">Signup here</a>
+              <p className="vkfp-step-container">
+                Don't have an account? <a href="/signup">Signup</a>
               </p>
             </>
           )}
@@ -209,22 +196,25 @@ const ForgotPassword = () => {
               <input
                 type="number"
                 name="otp"
-                className="input-field"
+                className="vkfp-input-field"
                 placeholder="Enter OTP"
                 value={formData.otp}
                 onChange={handleChange}
                 required
               />
-              <button type="button" className="btn" onClick={verifyOTP} disabled={loading}>
-                {loading ? "Verifying..." : "Verify OTP"}
-              </button>
-
-              {/* Resend OTP Button (Same class name 'btn') */}
               <button
                 type="button"
-                className="btn resend-otp-btn"
+                className="vkfp-btn"
+                onClick={verifyOTP}
+                disabled={loading}
+              >
+                {loading ? "Verifying..." : "Verify OTP"}
+              </button>
+              <button
+                type="button"
+                className="vkfp-btn vkfp-resend-otp-btn"
                 onClick={sendForgotPasswordOTP}
-                disabled={isResendDisabled || loading} // Disable button when OTP is being sent
+                disabled={isResendDisabled || loading}
               >
                 {loading ? "Resending..." : "Resend OTP"}
               </button>
@@ -232,33 +222,42 @@ const ForgotPassword = () => {
           )}
 
           {step === 3 && (
-            <form className="registration-form" onSubmit={handleReset}>
+            <form
+              className="vkfp-registration-form"
+              onSubmit={handleReset}
+            >
               <input
                 type="password"
                 name="newPassword"
-                className="input-field"
+                className="vkfp-input-field"
                 placeholder="New Password"
                 value={formData.newPassword}
                 onChange={handleChange}
                 required
               />
-              <div className="password-criteria">
-                <p>{passwordCriteria.length ? "✅" : "❌"} At least 8 characters</p>
-                <p>{passwordCriteria.number ? "✅" : "❌"} At least 1 number (0-9)</p>
+              <div className="vkfp-password-criteria">
+                <p>{passwordCriteria.length    ? "✅" : "❌"} At least 8 characters</p>
+                <p>{passwordCriteria.number    ? "✅" : "❌"} At least 1 number (0-9)</p>
                 <p>{passwordCriteria.lowercase ? "✅" : "❌"} At least 1 lowercase letter (a-z)</p>
                 <p>{passwordCriteria.uppercase ? "✅" : "❌"} At least 1 uppercase letter (A-Z)</p>
-                <p>{passwordCriteria.specialChar ? "✅" : "❌"} At least 1 special symbol (!@#$%^&*)</p>
+                <p>{passwordCriteria.specialChar
+                    ? "✅"
+                    : "❌"} At least 1 special symbol (!@#$%^&*)</p>
               </div>
               <input
                 type="password"
                 name="confirmPassword"
-                className="input-field"
+                className="vkfp-input-field"
                 placeholder="Confirm New Password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
               />
-              <button type="submit" className="btn" disabled={loading}>
+              <button
+                type="submit"
+                className="vkfp-btn"
+                disabled={loading}
+              >
                 {loading ? "Resetting..." : "Reset Password"}
               </button>
             </form>

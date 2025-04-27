@@ -104,7 +104,169 @@ const InvoiceList = ({ onSalesUpdate }) => {
     }
   };
   
-
+  const handlePrint = (invoice) => {
+    const logoURL = "/logo.jpeg"; // Your uploaded logo
+  
+    const newWindow = window.open('', '_blank');
+  
+    const invoiceHTML = `
+      <html>
+        <head>
+          <title>Invoice - ${invoice.invoiceNumber}</title>
+          <style>
+            body {
+              font-family: 'Arial', sans-serif;
+              padding: 40px;
+              background-color: #f2f2f2;
+              display: flex;
+              justify-content: center;
+            }
+            .container {
+              background-color: #ffffff;
+              border: 2px solid #ccc;
+              box-shadow: 0 0 10px rgba(0,0,0,0.1);
+              padding: 30px;
+              max-width: 850px;
+              width: 100%;
+              margin: auto;
+            }
+            .company-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 30px;
+            }
+            .company-header img {
+              width: 100px;
+              height: auto;
+              border: 1px solid #ccc;
+              padding: 5px;
+            }
+            .company-header h1 {
+              font-size: 28px;
+              margin: 0;
+            }
+            .invoice-details {
+              display: flex;
+              justify-content: space-between;
+              font-size: 18px;
+              margin-bottom: 20px;
+              border-top: 2px solid #333;
+              padding-top: 15px;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 20px;
+            }
+            table, th, td {
+              border: 1px solid #333;
+            }
+            th, td {
+              padding: 12px;
+              text-align: center;
+            }
+            .totals {
+              text-align: right;
+              font-size: 18px;
+              margin-top: 20px;
+            }
+            .button-group {
+              display: flex;
+              justify-content: center;
+              gap: 20px;
+              margin-top: 40px;
+            }
+            .print-btn, .cancel-btn, .download-btn {
+              padding: 10px 25px;
+              font-size: 18px;
+              border: none;
+              border-radius: 6px;
+              cursor: pointer;
+            }
+            .print-btn {
+              background-color: #4CAF50;
+              color: white;
+            }
+            .cancel-btn {
+              background-color: #f44336;
+              color: white;
+            }
+            .download-btn {
+              background-color: #2196F3;
+              color: white;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container" id="invoice-content">
+            <div class="company-header">
+              <h1>Vk Aura</h1>
+              <img src="${logoURL}" alt="Company Logo" />
+            </div>
+  
+            <div class="invoice-details">
+              <p><strong>Customer Name:</strong> ${invoice.customerName}</p>
+              <p><strong>Invoice Date:</strong> ${new Date(invoice.invoiceDate).toLocaleDateString()}</p>
+              <p><strong>Invoice Number:</strong> ${invoice.invoiceNumber}</p>
+            </div>
+  
+            <table>
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Rate (₹)</th>
+                  <th>Quantity</th>
+                  <th>Total (₹)</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${invoice.items.map(item => `
+                  <tr>
+                    <td>${item.productName}</td>
+                    <td>${item.rate.toFixed(2)}</td>
+                    <td>${item.quantity}</td>
+                    <td>${(item.rate * item.quantity).toFixed(2)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+  
+            <div class="totals">
+              <p><strong>Discount Applied:</strong> ${invoice.discount || 0}%</p>
+              <p><strong>Total After Discount:</strong> ₹${invoice.amountAfterDiscount?.toFixed(2)}</p>
+            </div>
+  
+            <div class="button-group">
+              <button class="cancel-btn" onclick="window.close()">Cancel</button>
+              <button class="download-btn" onclick="downloadHTML()">Download</button>
+              <button class="print-btn" onclick="window.print()">Print Invoice</button>
+            </div>
+          </div>
+  
+          <script>
+            function downloadHTML() {
+              const element = document.getElementById('invoice-content');
+              const htmlContent = '<html><head><title>Invoice</title></head><body>' + element.outerHTML + '</body></html>';
+              const blob = new Blob([htmlContent], { type: 'text/html' });
+              const link = document.createElement('a');
+              link.href = URL.createObjectURL(blob);
+              link.download = 'invoice.html';
+              link.click();
+            }
+          </script>
+        </body>
+      </html>
+    `;
+  
+    newWindow.document.write(invoiceHTML);
+    newWindow.document.close();
+  };
+  
+  
+  
+  
+  
 
   const calculateTotalSales = () => {
     return filteredInvoices.reduce(
@@ -143,12 +305,17 @@ const InvoiceList = ({ onSalesUpdate }) => {
   return (
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
-      <div className="main-content">
-        <h2>Invoice List</h2>
+      <p><br></br></p> 
+      <p><br></br></p> 
 
-        <div className="create-invoice-container">
-          <button onClick={() => navigate('/invoices/create')}>Create Invoice</button>
-          <div className="search-container">
+
+        <div className="main-content">
+        <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>Invoice List </p>
+
+      
+
+        <div className="filter-container">
+        <div className="search-container" style={{ display: 'flex', gap: '10px' }}>
             <input
               type="text"
               value={searchQuery}
@@ -156,19 +323,17 @@ const InvoiceList = ({ onSalesUpdate }) => {
               placeholder="Search by Invoice Number"
             />
           </div>
-        </div>
 
-        <div className="filter-container">
           <div className="date-container">
           <input
-  type="date"
-  value={startDate}
-  onChange={(e) => {
-    setStartDate(e.target.value);
-    setEndDate(""); // Reset end date to prevent conflicts
-  }}
-  placeholder="Start Date"
-/>
+              type="date"
+              value={startDate}
+              onChange={(e) => {
+             setStartDate(e.target.value);
+             setEndDate(""); // Reset end date to prevent conflicts
+             }}
+             placeholder="Start Date"
+         />
 
 <input
   type="date"
@@ -177,24 +342,32 @@ const InvoiceList = ({ onSalesUpdate }) => {
   min={startDate} // Prevents selecting an earlier date
   placeholder="End Date"
 />
-            <button onClick={handleDateFilter}>Filter by Date</button>
           </div>
         </div>
 
-        <div className="totals-section">
-          <h3>Total Sales: ₹{totalSales.toFixed(2)}</h3>
-          <h3>Total Discount: ₹{totalDiscount.toFixed(2)}</h3>
-          <h3>Total Profit: ₹{totalProfit.toFixed(2)}</h3>
-        </div>
+        <div className="totals-container">
+  <div className="totals-box">
+    <h3>Total Sales</h3>
+    <p>LKR{totalSales.toFixed(2)}</p>
+  </div>
+  <div className="totals-box">
+    <h3>Total Discount</h3>
+    <p>LKR{totalDiscount.toFixed(2)}</p>
+  </div>
+  <div className="totals-box">
+    <h3>Total Profit</h3>
+    <p>LKR{totalProfit.toFixed(2)}</p>
+  </div>
+</div>
 
-        <div>
+      <div style={{ width: '100%', backgroundColor: 'white' }}>
           <table>
             <thead>
               <tr>
                 <th>Invoice Number</th>
                 <th>Invoice Date</th>
                 <th>Customer Name</th>
-                <th>Amount After Discount</th>
+                <th>Amount</th>
                 <th>Products</th>
                 <th>Actions</th>
               </tr>
@@ -214,8 +387,8 @@ const InvoiceList = ({ onSalesUpdate }) => {
                           {invoice.items && invoice.items.length > 0 ? (
                             invoice.items.map((item, index) => (
                               <li key={index}>
-                                {item.productName} - {item.rate} x {item.quantity} {item.unit}
-                                {` (Cost: ₹${(item.costPrice).toFixed(2)})`}
+                                {item.productName} -  {item.quantity} {item.unit} 
+                                
                               </li>
                             ))
                           ) : (
@@ -223,14 +396,29 @@ const InvoiceList = ({ onSalesUpdate }) => {
                           )}
                         </ul>
                       </td>
+                      
+
+
+
                       <td>
-                        <button
-                          onClick={() => handleDelete(invoice.invoiceNumber)}
-                          className="Delete"
-                        >
-                          Delete
-                        </button>
-                      </td>
+  <div style={{ display: 'flex', gap: '8px' }}>
+    <button
+      onClick={() => handlePrint(invoice)}
+      className="Print"
+      style={{ backgroundColor: '#4CAF50', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}
+    >
+      Print
+    </button>
+
+    <button
+      onClick={() => handleDelete(invoice.invoiceNumber)}
+      className="Delete"
+      style={{ backgroundColor: '#f44336', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}
+    >
+      Delete
+    </button>
+  </div>
+</td>
                     </tr>
                   );
                 })

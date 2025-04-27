@@ -122,8 +122,11 @@ const CreateInvoice = () => {
   return (
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
+      <p><br></br></p>  <p><br></br></p>
       <div className="main-content">
-        <h2>Create Invoice</h2>
+      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+      Create Invoice </p>
+       
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item
             label="Customer Name"
