@@ -86,8 +86,8 @@
   margin-bottom: 1rem;
 }
 .user-profile-pic-large {
-  width: 100px; height: 100px;
-  border-radius: 50%;
+  width: 200px; height: 200px;
+  border-radius: 100%;
   margin-right: 16px;
 }
 .user-fields p {
@@ -155,32 +155,32 @@
 
 .status-pending {
   color: #f4a261; /* Soft orange */
-  font-weight: 600;
+  font-weight: bold;
 }
 
 .status-shipped {
   color: #4a90e2; /* Medium calm blue */
-  font-weight: 600;
+  font-weight: bold;
 }
 
 .status-delivered {
   color: #2a9d8f; /* Gentle teal green */
-  font-weight: 600;
+  font-weight: bold;
 }
 
 .status-removed {
-  color: #e76f51; /* Muted coral red */
+  color: #eb0a33; /* Muted coral red */
   font-weight: bold;
 }
 
 .status-canceled {
   color: #b00020; /* Softer deep red, less intense than pure red */
-  font-weight: 600;
+  font-weight: bold;
 }
 
 .status-success {
   color: #70e000; /* Soft lime green */
-  font-weight: 600;
+  font-weight: bold;
 }
 /* Scope to the admin manage users page */
 

@@ -1,3 +1,4 @@
+// src/pages/ProfilePage.js
 import '../styles/Profile.css';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
@@ -109,7 +110,6 @@ const ProfilePage = () => {
       .then(() => {
         setMessage(`✅ ${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully.`);
         fetchProfile();
-        // Reset edit state and clear form data for that field
         setIsEditing((prev) => ({ ...prev, [field]: false }));
         setFormData((prev) => ({ ...prev, [field]: '' }));
       })
@@ -162,18 +162,18 @@ const ProfilePage = () => {
             src={user.profilePic ? getCroppedImageUrl(user.profilePic) : defaultProfilePicUrl}
             alt="Profile"
             className="profile-pic"
-            style={{ width: '150px', height: '150px', borderRadius: '50%' }}
           />
           {isEditing.profilePic ? (
             <div>
               <input type="file" accept="image/*" onChange={handleFileChange} />
               {uploading && <p>Uploading image...</p>}
               {formData.profilePic && formData.profilePic !== user.profilePic && (
-                <button onClick={() => handleUpdate('profilePic')}>
+                <button className="action-btn" onClick={() => handleUpdate('profilePic')}>
                   Confirm
                 </button>
               )}
               <button
+                className="cancelremove"
                 onClick={() => {
                   setIsEditing((prev) => ({ ...prev, profilePic: false }));
                   setFormData((prev) => ({ ...prev, profilePic: '' }));
@@ -184,15 +184,18 @@ const ProfilePage = () => {
             </div>
           ) : (
             <div>
-              <button onClick={() => setIsEditing((prev) => ({ ...prev, profilePic: true }))}>
+              <button className="action-btn" onClick={() => setIsEditing((prev) => ({ ...prev, profilePic: true }))}>
                 Change Profile Pic
               </button>
               {user.profilePic && user.profilePic !== defaultProfilePicUrl && (
-                <button onClick={handleRemoveProfilePic}>Remove</button>
+                <button className="cancelremove" onClick={handleRemoveProfilePic}>
+                  Remove
+                </button>
               )}
             </div>
           )}
         </div>
+
         <p>
           <strong>Email:</strong> {user.email}
         </p>
@@ -208,11 +211,13 @@ const ProfilePage = () => {
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, name: e.target.value }))
               }
+              className="profile-input"
             />
             {formData.name.trim() !== '' && formData.name !== user.name && (
-              <button onClick={() => handleUpdate('name')}>Confirm</button>
+              <button className="action-btn" onClick={() => handleUpdate('name')}>Confirm</button>
             )}
             <button
+              className="cancelremove"
               onClick={() => {
                 setIsEditing((prev) => ({ ...prev, name: false }));
                 setFormData((prev) => ({ ...prev, name: '' }));
@@ -223,6 +228,7 @@ const ProfilePage = () => {
           </div>
         ) : (
           <button
+            className="action-btn"
             onClick={() => {
               setFormData((prev) => ({ ...prev, name: user.name || '' }));
               setIsEditing((prev) => ({ ...prev, name: true }));
@@ -232,7 +238,6 @@ const ProfilePage = () => {
           </button>
         )}
 
-     
         <p>
           <strong>Address:</strong> {user.address}
         </p>
@@ -244,11 +249,13 @@ const ProfilePage = () => {
               onChange={(e) =>
                 setFormData((prev) => ({ ...prev, address: e.target.value }))
               }
+              className="profile-input"
             />
             {formData.address.trim() !== '' && formData.address !== user.address && (
-              <button onClick={() => handleUpdate('address')}>Confirm</button>
+              <button className="action-btn" onClick={() => handleUpdate('address')}>Confirm</button>
             )}
             <button
+              className="cancelremove"
               onClick={() => {
                 setIsEditing((prev) => ({ ...prev, address: false }));
                 setFormData((prev) => ({ ...prev, address: '' }));
@@ -259,6 +266,7 @@ const ProfilePage = () => {
           </div>
         ) : (
           <button
+            className="action-btn"
             onClick={() => {
               setFormData((prev) => ({ ...prev, address: user.address || '' }));
               setIsEditing((prev) => ({ ...prev, address: true }));
@@ -273,25 +281,26 @@ const ProfilePage = () => {
         </p>
         {isEditing.phone ? (
           <div>
-           <input
-  type="tel"
-  value={formData.phone}
-  onChange={(e) =>
-    setFormData((prev) => ({ ...prev, phone: e.target.value }))
-  }
-  pattern="\d*"
-  inputMode="numeric"
-  onKeyDown={(e) => {
-    if (!/^\d$/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-      e.preventDefault();
-    }
-  }}
-/>
-
+            <input
+              type="tel"
+              value={formData.phone}
+              onChange={(e) =>
+                setFormData((prev) => ({ ...prev, phone: e.target.value }))
+              }
+              pattern="\d*"
+              inputMode="numeric"
+              onKeyDown={(e) => {
+                if (!/^\d$/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                  e.preventDefault();
+                }
+              }}
+              className="profile-input"
+            />
             {formData.phone.trim() !== '' && formData.phone !== user.phone && (
-              <button onClick={() => handleUpdate('phone')}>Confirm</button>
+              <button className="action-btn" onClick={() => handleUpdate('phone')}>Confirm</button>
             )}
             <button
+              className="cancelremove"
               onClick={() => {
                 setIsEditing((prev) => ({ ...prev, phone: false }));
                 setFormData((prev) => ({ ...prev, phone: '' }));
@@ -302,6 +311,7 @@ const ProfilePage = () => {
           </div>
         ) : (
           <button
+            className="action-btn"
             onClick={() => {
               setFormData((prev) => ({ ...prev, phone: user.phone || '' }));
               setIsEditing((prev) => ({ ...prev, phone: true }));
@@ -312,7 +322,7 @@ const ProfilePage = () => {
         )}
       </div>
 
-      <button className="profile-btn back-btn" onClick={handleBackToProfile}>
+      <button className="action-btn" onClick={handleBackToProfile}>
         ⬅ Back to Profile
       </button>
     </div>
