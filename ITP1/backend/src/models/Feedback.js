@@ -10,10 +10,16 @@ const feedbackSchema = new mongoose.Schema({
   comment: {
     type: String,
     required: true,
-    minlength: [25, 'Comment must be at least 25 characters long'] // Added minimum length validation
+    minlength: [25, 'Comment must be at least 25 characters long'],
+    maxlength: [80, 'Comment must be less than 80 characters long']
   },
-  photo: {
-    type: String  // Stores the filename of the uploaded photo
+  userEmail: {
+    type: String,
+    required: true
+  },
+  likes: {
+    type: [String], // Array of user emails who liked
+    default: []
   }
 }, { timestamps: true });
 

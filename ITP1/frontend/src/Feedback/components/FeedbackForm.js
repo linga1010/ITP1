@@ -1,40 +1,17 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import "./FeedbackForm.css";
 
 const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
-  const [photo, setPhoto] = useState(null);
-  const [photoError, setPhotoError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const fileInputRef = useRef(null);
 
   useEffect(() => {
     if (editFeedback) {
       setRating(editFeedback.rating);
       setComment(editFeedback.comment);
-      setPhoto(null);
-      setPhotoError("");
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
     }
   }, [editFeedback]);
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-
-    if (file) {
-      const maxSize = 2 * 1024 * 1024;
-      if (file.size > maxSize) {
-        setPhotoError("File size exceeds 2MB. Please upload a smaller file.");
-        setPhoto(null);
-        return;
-      }
-      setPhotoError("");
-      setPhoto(file);
-    }
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -52,12 +29,10 @@ const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("rating", rating);
-    formData.append("comment", comment);
-    if (photo) {
-      formData.append("photo", photo);
-    }
+    const formData = {
+      rating,
+      comment
+    };
 
     if (editFeedback) {
       onEdit(editFeedback._id, formData);
@@ -67,14 +42,10 @@ const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
 
     setSuccessMessage("Thank you for your feedback!");
 
+    // Reset form
     setRating(0);
     setComment("");
-    setPhoto(null);
     setEditing(null);
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
 
     setTimeout(() => setSuccessMessage(""), 3000);
   };
@@ -104,10 +75,17 @@ const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
         placeholder="Enter your feedback"
         rows="4"
         required
+        style={{
+          width: "100%",
+          padding: "10px",
+          marginBottom: "10px",
+          borderRadius: "4px",
+          border: "1px solid #ccc",
+        }}
       ></textarea>
 
-      {/* Star Rating and Emoji Display on the Same Line */}
-      <div className="rating-container">
+      {/* Star Rating and Emoji Display */}
+      <div className="rating-container" style={{ marginBottom: "10px" }}>
         <div className="star-rating">
           {[1, 2, 3, 4, 5].map((star) => (
             <span
@@ -123,31 +101,32 @@ const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
             </span>
           ))}
         </div>
-        {rating > 0 && <span className="emoji">{getEmoji(rating)}</span>}
+        {rating > 0 && <span className="emoji" style={{ marginLeft: "10px", fontSize: "24px" }}>{getEmoji(rating)}</span>}
       </div>
 
-      <div>
-        <label htmlFor="photo">If You have any issues Upload Photo:</label>
-        <input
-          type="file"
-          id="photo"
-          name="photo"
-          accept="image/*"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-        />
-        {photoError && <p style={{ color: "red", fontSize: "12px" }}>{photoError}</p>}
-      </div>
-
-      <button type="submit">
+      <button
+        type="submit"
+        style={{
+          padding: "10px 20px",
+          backgroundColor: "#4CAF50",
+          color: "white",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
+      >
         {editFeedback ? "Update Feedback" : "Submit Feedback"}
       </button>
 
       {successMessage && (
-        <div className="success-popup">
-          <div className="popup-content">
-            <p>{successMessage}</p>
-          </div>
+        <div className="success-popup" style={{
+          marginTop: "10px",
+          backgroundColor: "#dff0d8",
+          color: "#3c763d",
+          padding: "10px",
+          borderRadius: "4px",
+        }}>
+          <p>{successMessage}</p>
         </div>
       )}
     </form>
