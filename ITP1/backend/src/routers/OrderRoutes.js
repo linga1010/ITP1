@@ -6,25 +6,22 @@ import Product from "../models/Product.js";
 
 const router = express.Router();
 // Place an order
+// Place an order
 router.post("/", async (req, res) => {
   try {
-    // 🔥 pull location out of the body
-    const { user, userName, items, total, location } = req.body;
+    const { user, userName, userPhone, items, total, location } = req.body;
 
-    // 🔥 validate that location is present
-    if (!user || !items || items.length === 0 || !total || !location) {
-      return res
-        .status(400)
-        .json({ message: "Invalid order data! All fields (including location) are required." });
+    if (!user || !items || items.length === 0 || !total || !location || !userPhone) {
+      return res.status(400).json({ message: "Invalid order data! All fields (including location and phone) are required." });
     }
 
-    // 🔥 include location when creating the order
     const newOrder = new Order({
       user,
       userName,
+      userPhone,    // ✨ Save phone
       items,
       total,
-      location,        // ← store location
+      location,
       status: "pending",
       createdAt: new Date(),
     });
@@ -36,6 +33,7 @@ router.post("/", async (req, res) => {
     res.status(500).json({ message: "❌ Server Error", error: error.message });
   }
 });
+
 
 
 // Fetch all orders (Admin View)

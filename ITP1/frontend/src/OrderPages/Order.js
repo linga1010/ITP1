@@ -12,11 +12,13 @@ const OrderPage = () => {
   const [isAgreed, setIsAgreed] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [location, setLocation] = useState("");
+  const [phone, setPhone] = useState(user?.phone || "");  // ✨ ADD THIS
 
   useEffect(() => {
     if (!user) return;
     const storedCart = JSON.parse(localStorage.getItem(`cart_user_${user._id}`)) || [];
     setCart(storedCart);
+    setPhone(user?.phone || ""); // ✨ Set initial phone
   }, [user]);
 
   const getTotalPrice = () =>
@@ -57,24 +59,40 @@ const OrderPage = () => {
 
   const handleConfirmLocation = () => {
     const txt = location.trim();
+    const phoneTrimmed = phone.trim();
+  
     if (!txt) {
       message.error("Please enter your location.");
       return;
     }
+  
+    // 📌 Validate Phone Number
+    const phoneRegex = /^0\d{9}$/; // Must start with 0 and have 10 digits
+    if (!phoneRegex.test(phoneTrimmed)) {
+      message.error("Please enter a valid 10-digit phone number starting with 0.");
+      return;
+    }
+  
+    // 📌 Validate Location
     const coordRegex = /^Lat: [-+]?[0-9]*\.?[0-9]+, Long: [-+]?[0-9]*\.?[0-9]+$/;
     const addrRegex = /^[a-zA-Z0-9\s,.-]{5,}$/;
     if (coordRegex.test(txt) || addrRegex.test(txt)) {
-      proceedToPayment(); // 👉 Go to payment
+      proceedToPayment();
     } else {
       message.error("Please enter a valid address (min 5 characters) or click ‘Share My Location’.");
     }
   };
+  
+  
 
   const proceedToPayment = () => {
     try {
-      // Save cart, total and location to localStorage
+      // Save cart, total, location, and phone to localStorage
       localStorage.setItem(`location_user_${user._id}`, location);
+      localStorage.setItem(`phone_user_${user._id}`, phone);  // ✨ Save phone
       localStorage.setItem(`total_price_user_${user._id}`, getTotalPrice());
+      
+      
 
       message.success("✅ Location saved. Proceeding to payment...");
       setModalVisible(false);
@@ -122,6 +140,7 @@ const OrderPage = () => {
   return (
     <div className="containerorder">
       <h2>Package Order Summary</h2>
+
       <Button
         className="backbutton"
         onClick={() => navigate("/view-package")}
@@ -132,8 +151,6 @@ const OrderPage = () => {
           right: "20px",
           zIndex: 1000,
           padding: "10px 15px",
-          minWidth: "auto",
-          height: "auto",
           backgroundColor: "#007bff",
           color: "white",
         }}
@@ -158,11 +175,7 @@ const OrderPage = () => {
                   if (!e.target.value) handleQuantityChange(item._id, "1");
                 }}
               />
-              <Button
-                id="b3"
-                onClick={() => handleRemoveFromCart(item._id)}
-                type="danger"
-              >
+              <Button id="b3" onClick={() => handleRemoveFromCart(item._id)} type="danger">
                 Remove
               </Button>
             </div>
@@ -198,7 +211,7 @@ const OrderPage = () => {
       </Button>
 
       <Modal
-        title="Enter Your Location"
+        title="Enter Your Location & Phone"
         open={modalVisible}
         onOk={handleConfirmLocation}
         onCancel={() => setModalVisible(false)}
@@ -208,14 +221,17 @@ const OrderPage = () => {
           placeholder="Enter your location"
           value={location}
           onChange={e => setLocation(e.target.value)}
+          style={{ marginBottom: "10px" }}
         />
-        <Button
-          onClick={getUserLocation}
-          type="default"
-          style={{ marginTop: 10 }}
-        >
+        <Button onClick={getUserLocation} type="default" style={{ marginBottom: "10px" }}>
           Share My Location
         </Button>
+        <Input
+          placeholder="Enter your Phone Number"
+          value={phone}
+          onChange={e => setPhone(e.target.value)}
+          maxLength={15}
+        />
       </Modal>
     </div>
   );

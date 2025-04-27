@@ -22,6 +22,7 @@ const Payment = () => {
   const totalPrice = storedPrice ? parseFloat(storedPrice) : 0;
   const cart = JSON.parse(localStorage.getItem(`cart_user_${user?._id}`)) || [];
   const location = localStorage.getItem(`location_user_${user?._id}`) || "";
+  const storedPhone = localStorage.getItem(`phone_user_${user?._id}`) || "";
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,8 +52,8 @@ const Payment = () => {
         errors.expiryDate = "Expiry date cannot be in the past.";
       }
     }
-    if (!/^\d{3,4}$/.test(paymentData.cvv)) {
-      errors.cvv = "CVV must be 3 or 4 digits.";
+    if (!/^\d{3}$/.test(paymentData.cvv)) {  // ✅ ONLY allow exactly 3 digits
+      errors.cvv = "CVV must be exactly 3 digits.";
     }
 
     return errors;
@@ -83,10 +84,10 @@ const Payment = () => {
     }
 
     try {
-      // 1. Submit payment details first
       const paymentResponse = await axios.post("http://localhost:5000/api/payment", {
         userId: user._id,
         userName: user.name,
+        userPhone: storedPhone,
         items: cart,
         totalPrice: totalPrice,
         paymentMethod: "Card",
@@ -97,27 +98,23 @@ const Payment = () => {
       });
 
       if (paymentResponse.data.success) {
-        // 2. Now save the Order separately
-        const orderData = {
+        message.success("✅ Payment successful!");
+
+        await axios.post("http://localhost:5000/api/orders", {
           user: user.email,
           userName: user.name,
-          location: location,
+          userPhone: storedPhone,
           items: cart,
-          total: parseFloat(totalPrice),
-        };
+          total: totalPrice,
+          location,
+        });
 
-        const orderResponse = await axios.post("http://localhost:5000/api/orders", orderData);
+        message.success("✅ Order placed successfully!");
 
-        if (orderResponse.data.message) {
-          message.success("✅ Payment & Order successful!");
-        } else {
-          message.warning("⚠️ Payment done, but order not saved properly.");
-        }
-
-        // 3. Clean up localStorage
         localStorage.removeItem(`cart_user_${user._id}`);
         localStorage.removeItem(`total_price_user_${user._id}`);
         localStorage.removeItem(`location_user_${user._id}`);
+        localStorage.removeItem(`phone_user_${user._id}`);
 
         navigate("/OrderHistoryDetails");
       } else {
@@ -175,12 +172,12 @@ const Payment = () => {
 
         <label>CVV</label>
         <input
-          type="password"
+          type="text"   // ✨ text instead of password so users can see
           name="cvv"
           value={paymentData.cvv}
           onChange={handleChange}
-          placeholder="3 or 4 digit CVV"
-          maxLength="4"
+          placeholder="3-digit CVV"
+          maxLength="3"  // ✨ Only allow max 3 digits
           required
         />
 
