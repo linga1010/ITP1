@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../styles/UserHome.css";
+import "../styles/Home.css";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 const BASE_URL = "http://localhost:5000";
@@ -77,7 +77,19 @@ const HomePage = () => {
       <main className="dashboard-content">
 
         <section className="carousel-section">
-        <p className="carousel-heading">Welcome to Vk Aura</p>
+        <p className="welcome-heading">
+  {"WELCOME TO VK AURA".split("").map((char, idx) => (
+    char === " " ? (
+      <span key={idx} style={{ width: "20px", display: "inline-block" }}></span>
+    ) : (
+      <span key={idx} style={{ animationDelay: `${idx * 0.3}s` }}>
+        {char}
+      </span>
+    )
+  ))}
+</p>
+
+
         <br></br>
           <p className="carousel-heading">Packages</p>
           <div className="carousel-container">
