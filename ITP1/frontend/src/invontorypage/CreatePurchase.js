@@ -120,10 +120,10 @@ const CreatePurchase = () => {
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
       <p><br></br></p>  <p><br></br></p> 
-      <div className="main-content">
+      <div className="main-content" style={{width:'600px'}}>
       <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
        Create Purchase </p>
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+        <Form form={form} layout="vertical" onFinish={handleSubmit} style={{width:'600px'}}>
           <Form.Item label="Supplier Name" name="supplierName" rules={[{ required: true, message: 'Supplier name is required' }]} >
             <Input placeholder="Enter supplier name" />
           </Form.Item>
@@ -133,7 +133,7 @@ const CreatePurchase = () => {
           </Form.Item>
 
           
-          <Button style={{ backgroundColor: "#ffcc00", color: "black" }} type="dashed" onClick={addProductRow}>
+          <Button style={{ backgroundColor: "#1E88E5", color: "white" }} type="dashed" onClick={addProductRow}>
                     + Add Product
                   </Button>
           
@@ -178,7 +178,7 @@ const CreatePurchase = () => {
             <Input type="number" min="0" max="100" value={discount} onChange={(e) => handleDiscountChange(Number(e.target.value))} />
           </Form.Item>
 
-          <Button   style={{ backgroundColor: "#ffcc00", color: "black" }} type="primary" htmlType="submit">
+          <Button   style={{ backgroundColor: "#1E88E5", color: "white" }} type="primary" htmlType="submit">
             Create Purchase
           </Button>
         </Form>

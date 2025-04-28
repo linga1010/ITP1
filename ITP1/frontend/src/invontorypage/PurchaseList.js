@@ -18,6 +18,11 @@ const PurchaseList = ({ onPurchasesUpdate }) => {
   }, []);
 
   useEffect(() => {
+    handleDateFilter();
+  }, [startDate, endDate]);
+  
+
+  useEffect(() => {
     // When purchases are filtered, update the total purchases value
     const totalPurchases = calculateTotalPurchases();
     if (typeof onPurchasesUpdate === 'function') {
@@ -251,7 +256,8 @@ const PurchaseList = ({ onPurchasesUpdate }) => {
       <div className="main-content">
       <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
       Purchase Orders List</p>
-        
+
+      <div className="filter-container">
         <div className="create-purchase-container">
           <p></p>
           <div className="search-container" >
@@ -264,27 +270,50 @@ const PurchaseList = ({ onPurchasesUpdate }) => {
             />
           </div>
         </div>
-        <div className="filter-container">
-          <div className="date-container">
-          <input
-  type="date"
-  value={startDate}
-  onChange={(e) => {
-    setStartDate(e.target.value);
-    setEndDate("");
-  }}
-  placeholder="Start Date"
-/>
+        
 
-<input
-  type="date"
-  value={endDate}
-  onChange={(e) => setEndDate(e.target.value)}
-  min={startDate} 
-  placeholder="End Date"
-/>
-            <button onClick={handleDateFilter}>Filter</button>
-          </div>
+
+        <div className="date-container">
+  <input
+    type="date"
+    value={startDate}
+    onChange={(e) => {
+      setStartDate(e.target.value);
+      setEndDate(""); 
+    }}
+    max={new Date().toISOString().split('T')[0]} 
+    placeholder="Start Date"
+    style={{marginTop:'15px'}}
+  />
+
+  <input
+    type="date"
+    value={endDate}
+    onChange={(e) => setEndDate(e.target.value)}
+    min={startDate} 
+    max={new Date().toISOString().split('T')[0]} 
+    placeholder="End Date"
+    disabled={!startDate} 
+    style={{marginTop:'15px'}}
+  />
+
+  <div>
+    <button 
+      onClick={() => {
+        setStartDate('');
+        setEndDate('');
+        setSearchQuery('');
+        setFilteredPurchases(purchases); // Reset all
+      }}
+      style={{ padding: "10px", width: "100px" }}
+    >
+      All
+    </button>
+  </div>
+</div>
+
+
+
         </div>
         <div className="total-sales">
           <h3>Total Purchases: ₹{calculateTotalPurchases().toFixed(2)}</h3>

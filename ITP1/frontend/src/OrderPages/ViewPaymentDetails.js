@@ -54,10 +54,12 @@ const ViewPayments = () => {
   return (
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
-      
-      <div className="main-content">
+      <p><br></br></p>   <p><br></br></p>
+      <div className="main-content" style={{width:'100%'}}>
         <div className="admin-payments-container">
-          <h2>💵 Payment Details</h2>
+        <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+        💵 Payment Details</p>
+         
           {loading ? (
             <Spin size="large" />
           ) : (
