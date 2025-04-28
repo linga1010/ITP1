@@ -15,6 +15,18 @@ const statusClassMap = {
   success: 'status-success',
 };
 
+// ✅ Emoji function
+const getEmoji = (rating) => {
+  switch (rating) {
+    case 1: return "😞";
+    case 2: return "😐";
+    case 3: return "🙂";
+    case 4: return "😃";
+    case 5: return "😍";
+    default: return "";
+  }
+};
+
 const AdminManageUsers = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
@@ -31,14 +43,12 @@ const AdminManageUsers = () => {
 
   useEffect(() => {
     verifyAdminAndFetchUsers();
-
     const handleClickOutside = (e) => {
       if (modalRef.current && !modalRef.current.contains(e.target)) {
         setShowUserModal(false);
         setShowDeleteModal(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -131,10 +141,8 @@ const AdminManageUsers = () => {
         axios.get('http://localhost:5000/api/orders'),
         axios.get('http://localhost:5000/api/feedback'),
       ]);
-
       const orderHistory = ordersRes.data.filter(o => o.user === user.email);
       const feedbackHistory = feedbacksRes.data.filter(fb => fb.userEmail === user.email);
-
       setSelectedUser({ ...user, orderHistory, feedbackHistory });
       setShowUserModal(true);
     } catch (err) {
@@ -253,14 +261,33 @@ const AdminManageUsers = () => {
                 {selectedUser.feedbackHistory.length > 0 ? selectedUser.feedbackHistory.map(fb => (
                   <div className="order-card" key={fb._id}>
                     <div className="order-header">
-                      <span className="order-id">Rating: {fb.rating}⭐</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '20px', fontWeight: 'bold' }}>
+                        {Array.from({ length: fb.rating }, (_, i) => (
+                          <span key={i} style={{ color: 'gold' }}>★</span>
+                        ))}
+                        <span>{getEmoji(fb.rating)}</span>
+                      </div>
                       <span className="order-date">{new Date(fb.createdAt).toLocaleDateString()}</span>
                     </div>
                     <p className="feedback-comment">"{fb.comment}"</p>
-<p className="feedback-likes">
-  Likes: {fb.likes.length} {fb.likes.length > 0 && `(${fb.likes.join(', ')})`}
-</p>
-                    </div>
+                    <p className="feedback-likes">
+                      Likes: {fb.likes.length}
+                      {fb.likes.length > 0 && (
+                        <span>
+                          (
+                          {fb.likes.map((like, idx) => (
+                            <span key={idx}>
+                              <span style={{ color: like.includes('#admin') ? 'red' : 'black', fontWeight: like.includes('#admin') ? 'bold' : 'normal' }}>
+                                {like}
+                              </span>
+                              {idx < fb.likes.length - 1 && ', '}
+                            </span>
+                          ))}
+                          )
+                        </span>
+                      )}
+                    </p>
+                  </div>
                 )) : <p className="no-orders">No feedback found.</p>}
               </div>
             </div>
@@ -294,3 +321,5 @@ const AdminManageUsers = () => {
 };
 
 export default AdminManageUsers;
+
+
