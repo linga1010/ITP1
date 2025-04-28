@@ -1,39 +1,36 @@
-/* General Page Styling */
-.dashboard-container {
+/* Home Page Styles */
+.home-page .dashboard-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
   background: none !important;
   font-family: "Poppins", "Segoe UI", sans-serif;
   backdrop-filter: blur(5px); /* ✨ Glass effect background */
 }
 
-
 /* Main Welcome Heading */
-/* Main Welcome Heading */
-.welcome-heading {
+.home-page .welcome-heading {
   font-size: 4.5rem;
   font-weight: 800;
   text-align: center;
   margin-top: 10px;
   letter-spacing: 5px;
-  
 }
-.welcome-heading span {
+
+.home-page .welcome-heading span {
   display: inline-block;
   opacity: 0;
   animation: fadeInUp 1s forwards, colorWave 5s linear infinite;
 }
 
-
 /* Each Letter */
-.welcome-heading span {
+.home-page .welcome-heading span {
   display: inline-block;
   color: #4d4041; /* Base starting color */
   opacity: 0;
   transform: translateY(0px);
   animation: colorWave 4s infinite alternate, fadeInUp 1s forwards;
-  
 }
 
 /* Color Changing */
@@ -45,7 +42,6 @@
   100% { color: #1a55d3; }
 }
 
-
 /* Fade In + Move Up */
 @keyframes fadeInUp {
   to {
@@ -54,9 +50,8 @@
   }
 }
 
-
 /* Section Headings */
-.carousel-heading {
+.home-page .carousel-heading {
   position: relative;
   font-size: 3.5rem;
   font-weight: 700;
@@ -86,12 +81,12 @@
 }
 
 /* Carousel Section */
-.carousel-section {
+.home-page .carousel-section {
   padding: 20px;
 }
 
 /* Carousel Container */
-.carousel-container {
+.home-page .carousel-container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -99,7 +94,7 @@
 }
 
 /* Arrow Buttons */
-.arrow-button {
+.home-page .arrow-button {
   background-color: #007bff;
   border: none;
   color: white;
@@ -111,18 +106,18 @@
   transition: background-color 0.3s ease;
 }
 
-.arrow-button:hover {
+.home-page .arrow-button:hover {
   background-color: #0056b3;
 }
 
 /* Package and Priest Sections */
-.package-section, .priest-section {
+.home-page .package-section, .home-page .priest-section {
   display: flex;
   gap: 20px;
 }
 
 /* Cards */
-.package-card, .priest-card {
+.home-page .package-card, .home-page .priest-card {
   background: rgba(255, 255, 255, 0.8); /* ✨ Semi-transparent white */
   border-radius: 14px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -134,68 +129,68 @@
   cursor: pointer;
 }
 
-.package-card:hover, .priest-card:hover {
+.home-page .package-card:hover, .home-page .priest-card:hover {
   transform: translateY(-8px);
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
 /* Images */
-.package-image, .priest-image {
+.home-page .package-image, .home-page .priest-image {
   width: 100%;
   height: 180px;
   object-fit: cover;
 }
 
 /* Card Text */
-.package-card h3, .priest-card h3 {
+.home-page .package-card h3, .home-page .priest-card h3 {
   margin: 10px 0 5px;
   font-size: 1.2rem;
   color: #333;
 }
 
-.package-card p, .priest-card p {
+.home-page .package-card p, .home-page .priest-card p {
   margin-bottom: 10px;
   color: #777;
 }
 
 /* Footer */
-.footer {
+.home-page .footer {
   margin-top: auto;
   padding: 20px;
-  background-color: #222;
+  background-color:  rgba(43, 42, 42, 0.5);
   color: white;
   text-align: center;
 }
 
-.footer-content {
+.home-page .footer-content {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.footer-content p {
+.home-page .footer-content p {
   margin: 10px 0;
 }
 
-.social-media {
+.home-page .social-media {
   display: flex;
   gap: 15px;
   margin-top: 10px;
 }
 
-.social-media a {
+.home-page .social-media a {
   color: white;
   font-size: 1.5rem;
   transition: transform 0.3s ease, color 0.3s ease;
 }
 
-.social-media a:hover {
+.home-page .social-media a:hover {
   transform: scale(1.2);
   color: #00aced;
 }
 
 /* Animations */
-@keyframes fadeInDown {
+ @keyframes fadeInDown {
   0% {
     opacity: 0;
     transform: translateY(-50px);
@@ -205,12 +200,10 @@
     transform: translateY(0);
   }
 }
+
 /* Gradient Left-Right Movement */
-@keyframes gradientMove {
+ @keyframes gradientMove {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-
-
-
