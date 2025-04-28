@@ -34,6 +34,10 @@ const InvoiceList = ({ onSalesUpdate }) => {
     }
   }, [filteredInvoices, onSalesUpdate]);
 
+  useEffect(() => {
+    handleDateFilter();
+  }, [startDate, endDate]);
+
   const fetchInvoices = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/invoices');
@@ -330,8 +334,9 @@ const InvoiceList = ({ onSalesUpdate }) => {
               value={startDate}
               onChange={(e) => {
              setStartDate(e.target.value);
-             setEndDate(""); // Reset end date to prevent conflicts
+             setEndDate("");
              }}
+             max={new Date().toISOString().split('T')[0]}
              placeholder="Start Date"
          />
 
@@ -339,10 +344,27 @@ const InvoiceList = ({ onSalesUpdate }) => {
   type="date"
   value={endDate}
   onChange={(e) => setEndDate(e.target.value)}
-  min={startDate} // Prevents selecting an earlier date
+  min={startDate} 
+  max={new Date().toISOString().split('T')[0]}
   placeholder="End Date"
 />
+<div>
+  <button 
+    onClick={() => {
+      setStartDate('');
+      setEndDate('');
+      setSearchQuery('');
+      setFilteredInvoices(invoices); 
+    }}
+    style={{ padding: "10px", width: '100px' }}
+  >
+    All
+  </button>
+</div>
+
+
           </div>
+         
         </div>
 
         <div className="totals-container">
@@ -405,7 +427,7 @@ const InvoiceList = ({ onSalesUpdate }) => {
     <button
       onClick={() => handlePrint(invoice)}
       className="Print"
-      style={{ backgroundColor: '#4CAF50', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}
+      style={{ backgroundColor: "#1E88E5", color: 'white', border: 'none', padding: '5px 10px', borderRadius: '5px', cursor: 'pointer' }}
     >
       Print
     </button>

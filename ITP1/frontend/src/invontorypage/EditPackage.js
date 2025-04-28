@@ -216,7 +216,7 @@ const EditPackage = () => {
           <Input />
         </Form.Item>
 
-        <Button type="dashed" onClick={addProductRow} style={{ marginBottom: 20, backgroundColor: "#ffcc00", color: "black" }}>
+        <Button type="dashed" onClick={addProductRow} style={{ marginBottom: 20,backgroundColor: "#1E88E5", color: "white" }}>
           + Add Product
         </Button>
 
@@ -299,7 +299,7 @@ const EditPackage = () => {
     }}
     showUploadList={false}
   >
-    <Button>Upload Image</Button>
+    <Button >Upload Image</Button>
   </Upload>
 
   {preview && (
@@ -308,8 +308,9 @@ const EditPackage = () => {
       alt="Preview"
       style={{
         marginTop: "10px",
-        maxWidth: "200px",
+        maxWidth: "600px",
         borderRadius: "8px",
+        marginBottom:"50px",
         boxShadow: "0px 4px 8px rgba(0,0,0,0.2)", // small glow effect
       }}
     />
@@ -319,7 +320,7 @@ const EditPackage = () => {
 
 
         <Form.Item>
-          <Button style={{ backgroundColor: "#ffcc00", color: "black" }} type="primary" htmlType="submit">
+          <Button style={{ backgroundColor: "#1E88E5", color: "white",width:'100%'}} type="primary" htmlType="submit">
             Update Package
           </Button>
         </Form.Item>

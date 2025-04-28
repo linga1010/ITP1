@@ -53,18 +53,20 @@ const AdminFeedbackPage = () => {
       padding: "20px",
       fontFamily: "Arial, sans-serif"
     }}>
-      <div className="admin-dashboard-container" style={{ maxWidth: "1300px", margin: "0 auto" }}>
+      <div className="admin-dashboard-container" style={{ maxWidth: "1000px", margin: "0 auto" }}>
         <Adminnaviagtion />
-
-        <div className="main-content" style={{
+        <p><br></br></p><p><br></br></p>
+      <div className="main-content" style={{
           background: "rgba(255,255,255,0.85)",
           padding: "30px",
           borderRadius: "12px",
           marginTop: "20px",
           boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
         }}>
-          <h2 style={{ marginBottom: "20px", marginLeft:"350px", color: "#333", textAlign: "center" }}>All Users's Feedbacks</h2>
-
+        
+          <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+            All Users's Feedbacks</p> 
+            
           {feedbacks.length === 0 ? (
             <p style={{ textAlign: "center" }}>No feedback available.</p>
           ) : (
@@ -72,6 +74,7 @@ const AdminFeedbackPage = () => {
               display: "grid",
               gridTemplateColumns: "repeat(2, 1fr)",    // 🌟 2 Cards per row
               gap: "50px",
+             marginRight:"80px",
               justifyContent: "center",
               alignItems: "start",
             }}>
@@ -101,7 +104,7 @@ const AdminFeedbackPage = () => {
                   >
                     {/* User Email */}
                     <p style={{ margin: 0, fontWeight: "bold", color: "#555" }}>
-                      <span style={{ color: "#999" }}>User Email:</span> {feedback.userEmail}
+                      <span style={{ color: "#333"}}>User Email:</span> {feedback.userEmail}
                     </p>
 
                     {/* Rating and Emoji */}
