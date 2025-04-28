@@ -13,7 +13,7 @@ const FeedbackPage = () => {
   const { user, loading: authLoading } = useAuth();
   const [feedbacks, setFeedbacks] = useState([]);
   const [editing, setEditing] = useState(null);
-  const [isFeedbackVisible, setIsFeedbackVisible] = useState(true);
+  const [isFeedbackVisible, setIsFeedbackVisible] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
