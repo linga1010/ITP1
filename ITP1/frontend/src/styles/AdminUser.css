@@ -88,7 +88,11 @@
 /* User info inside modal */
 .user-info {
   display: flex;
+  font-weight: bold;
   align-items: center;
+  font-size: 1.3rem;
+  color: #131212;
+  
   margin-bottom: 1rem;
 }
 .user-profile-pic-large {
@@ -115,11 +119,12 @@
 }
 .order-header {
   display: flex;
+  font-weight: 1.2rem;
   justify-content: space-between;
   margin-bottom: 12px;
 }
-.order-id { font-weight: 600; }
-.order-date { color: #666; font-size: 0.9rem; }
+.order-id { font-weight: 600; font-size: 1.2rem;}
+.order-date { color: #666; font-size: 1.2rem; font-weight: bold;}
 
 .items-table {
   width: 100%;
@@ -131,6 +136,9 @@
   border: 1px solid #ddd;
   padding: 6px 10px;
   text-align: center;
+  font-size: 1.1rem;
+
+  
 }
 .items-table th {
   background: #f2f2f2;
@@ -154,39 +162,52 @@
   padding: 12px;
   text-align: center;
   color: #777;
+  font-weight: bold;
 }
  td {
-  font-weight: bold;
+  font-weight: bolder;
+
 }
 
 .status-pending {
   color: #f4a261; /* Soft orange */
   font-weight: bold;
+  font-size: 1.3rem;
 }
 
 .status-shipped {
   color: #4a90e2; /* Medium calm blue */
   font-weight: bold;
+  font-size: 1.3rem;
+
 }
 
 .status-delivered {
   color: #2a9d8f; /* Gentle teal green */
   font-weight: bold;
+  font-size: 1.3rem;
+
 }
 
 .status-removed {
   color: #eb0a33; /* Muted coral red */
   font-weight: bold;
+  font-size: 1.3rem;
+
 }
 
 .status-canceled {
   color: #b00020; /* Softer deep red, less intense than pure red */
   font-weight: bold;
+  font-size: 1.3rem;
+
 }
 
 .status-success {
   color: #70e000; /* Soft lime green */
   font-weight: bold;
+  font-size: 1.3rem;
+
 }
 /* Scope to the admin manage users page */
 
@@ -261,8 +282,8 @@ h1 {
   margin-top: 10px;
   font-style: italic;
   font-weight: bold;
-  font-size: 1rem;
-  color: #333;
+  font-size: 1.3rem;
+  color: #111010;
   padding-left: 10px;
   padding-right: 10px;
   word-wrap: break-word;
@@ -271,8 +292,8 @@ h1 {
 
 .feedback-likes {
   margin-top: 6px;
-  font-size: 0.9rem;
-  color: #555;
-  font-weight: 500;
+  font-size: 1.0rem;
+  color: #111111;
+  font-weight:bold;
   padding-left: 10px;
 }

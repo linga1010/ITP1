@@ -208,7 +208,7 @@ const AdminManageUsers = () => {
           <div className="modal" style={{ marginTop: '80px' }}>
             <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => setShowUserModal(false)}>×</span>
-              <h3>User Details</h3>
+              <h2 >User Details</h2>
               <div className="user-info">
                 <img src={selectedUser.profilePic || defaultProfilePicUrl} alt={selectedUser.name} className="user-profile-pic-large" />
                 <div className="user-fields">
@@ -220,7 +220,7 @@ const AdminManageUsers = () => {
               </div>
 
               {/* Order History */}
-              <h3>Order History</h3>
+              <h2>Order History</h2>
               <div className="order-history">
                 {selectedUser.orderHistory.length > 0 ? selectedUser.orderHistory.map(order => {
                   const computedTotal = order.items.reduce(
@@ -256,12 +256,12 @@ const AdminManageUsers = () => {
               </div>
 
               {/* Feedback History */}
-              <h3>Feedback History</h3>
+              <h2>Feedback History</h2>
               <div className="order-history">
                 {selectedUser.feedbackHistory.length > 0 ? selectedUser.feedbackHistory.map(fb => (
                   <div className="order-card" key={fb._id}>
                     <div className="order-header">
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '20px', fontWeight: 'bold' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '40px', fontWeight: 'bold' }}>
                         {Array.from({ length: fb.rating }, (_, i) => (
                           <span key={i} style={{ color: 'gold' }}>★</span>
                         ))}
@@ -277,7 +277,7 @@ const AdminManageUsers = () => {
                           (
                           {fb.likes.map((like, idx) => (
                             <span key={idx}>
-                              <span style={{ color: like.includes('#admin') ? 'red' : 'black', fontWeight: like.includes('#admin') ? 'bold' : 'normal' }}>
+                              <span style={{ color: like.includes('#admin') ? 'red' : 'black', fontWeight: like.includes('#admin') ? 'bold' : 'bold' }}>
                                 {like}
                               </span>
                               {idx < fb.likes.length - 1 && ', '}
