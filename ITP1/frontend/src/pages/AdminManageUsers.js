@@ -6,7 +6,6 @@ import Adminnaviagtion from "../Component/Adminnavigation";
 
 const defaultProfilePicUrl = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
-// map statuses to CSS class names
 const statusClassMap = {
   pending: 'status-pending',
   shipped: 'status-shipped',
@@ -27,7 +26,7 @@ const AdminManageUsers = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [userToDelete, setUserToDelete] = useState(null);
   const [deletionReason, setDeletionReason] = useState('');
-  const [searchTerm, setSearchTerm] = useState(''); // search query state
+  const [searchTerm, setSearchTerm] = useState('');
   const modalRef = useRef();
 
   useEffect(() => {
@@ -46,7 +45,6 @@ const AdminManageUsers = () => {
     };
   }, []);
 
-  // filtered lists based on search query (ignore case)
   const filteredAdmins = admins.filter(a => {
     const term = searchTerm.toLowerCase();
     return (
@@ -129,28 +127,30 @@ const AdminManageUsers = () => {
 
   const viewUserDetails = async (user) => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/orders`);
-      const orderHistory = res.data.filter(o => o.user === user.email);
-      setSelectedUser({ ...user, orderHistory });
+      const [ordersRes, feedbacksRes] = await Promise.all([
+        axios.get('http://localhost:5000/api/orders'),
+        axios.get('http://localhost:5000/api/feedback'),
+      ]);
+
+      const orderHistory = ordersRes.data.filter(o => o.user === user.email);
+      const feedbackHistory = feedbacksRes.data.filter(fb => fb.userEmail === user.email);
+
+      setSelectedUser({ ...user, orderHistory, feedbackHistory });
       setShowUserModal(true);
     } catch (err) {
-      alert('❌ Error fetching user order details');
+      alert('❌ Error fetching user order or feedback details');
     }
   };
 
   return (
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
-      <p><br></br></p>  
-      <div className="maincontent" >
-      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '0px',marginBottom:'30PX', textAlign: 'center',letterSpacing: '1px' }}>
-       Manage Users</p>
-      
+      <div className="maincontent">
+        <h1>Manage Users</h1>
         <div className="summary">
           <p>Total Admins: {admins.length}</p>
           <p>Total Users: {users.length}</p>
         </div>
-        {/* search box */}
         <div className="search-box">
           <input
             type="text"
@@ -162,40 +162,31 @@ const AdminManageUsers = () => {
         </div>
         {error && <p className="error-text">{error}</p>}
 
-      
-       
-        <h3 style={{color: '#374495',fontSize:'30px'}}>Admins</h3>
+        <h3>Admins</h3>
         <table className="standard-table">
           <thead>
-            <tr>
-              <th>Profile</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th>
-            </tr>
+            <tr><th>Profile</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th></tr>
           </thead>
           <tbody>
             {filteredAdmins.map(a => (
               <tr key={a._id}>
                 <td><img src={a.profilePic || defaultProfilePicUrl} alt={a.name} className="user-profile-pic" /></td>
-                <td>{a.name}</td><td>{a.email}</td><td>{a.phone}</td>
-                <td>{a.address || '—'}</td>
+                <td>{a.name}</td><td>{a.email}</td><td>{a.phone}</td><td>{a.address || '—'}</td>
               </tr>
             ))}
           </tbody>
         </table>
 
-        
-        <h3 style={{color: '#374495',fontSize:'30px'}}>Users</h3>
+        <h3>Users</h3>
         <table className="standard-table">
           <thead>
-            <tr>
-              <th>Profile</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Actions</th>
-            </tr>
+            <tr><th>Profile</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Actions</th></tr>
           </thead>
           <tbody>
             {filteredUsers.map(u => (
               <tr key={u._id}>
                 <td><img src={u.profilePic || defaultProfilePicUrl} alt={u.name} className="user-profile-pic" /></td>
-                <td>{u.name}</td><td>{u.email}</td><td>{u.phone}</td>
-                <td>{u.address || '—'}</td>
+                <td>{u.name}</td><td>{u.email}</td><td>{u.phone}</td><td>{u.address || '—'}</td>
                 <td>
                   <button className="admin-user-btn" onClick={() => viewUserDetails(u)}>View</button>
                   <button className="admin-user-btn cancel" onClick={() => handleDeleteUser(u._id)}>Remove</button>
@@ -205,16 +196,13 @@ const AdminManageUsers = () => {
           </tbody>
         </table>
 
-        {/* User Details Modal */}
         {showUserModal && selectedUser && (
-          <div className="modal" style={{marginTop: '80px'}}>
+          <div className="modal" style={{ marginTop: '80px' }}>
             <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => setShowUserModal(false)}>×</span>
               <h3>User Details</h3>
               <div className="user-info">
-                <img src={selectedUser.profilePic || defaultProfilePicUrl}
-                     alt={selectedUser.name}
-                     className="user-profile-pic-large" />
+                <img src={selectedUser.profilePic || defaultProfilePicUrl} alt={selectedUser.name} className="user-profile-pic-large" />
                 <div className="user-fields">
                   <p><strong>Name:</strong> {selectedUser.name}</p>
                   <p><strong>Email:</strong> {selectedUser.email}</p>
@@ -223,6 +211,7 @@ const AdminManageUsers = () => {
                 </div>
               </div>
 
+              {/* Order History */}
               <h3>Order History</h3>
               <div className="order-history">
                 {selectedUser.orderHistory.length > 0 ? selectedUser.orderHistory.map(order => {
@@ -237,11 +226,7 @@ const AdminManageUsers = () => {
                         <span className="order-date">{new Date(order.createdAt).toLocaleDateString()}</span>
                       </div>
                       <table className="items-table">
-                        <thead>
-                          <tr>
-                            <th>Name</th><th>Price</th><th>Qty</th><th>Total</th>
-                          </tr>
-                        </thead>
+                        <thead><tr><th>Name</th><th>Price</th><th>Qty</th><th>Total</th></tr></thead>
                         <tbody>
                           {order.items.map((item, i) => (
                             <tr key={i}>
@@ -259,15 +244,29 @@ const AdminManageUsers = () => {
                       </div>
                     </div>
                   );
-                }) : (
-                  <p className="no-orders">No orders found.</p>
-                )}
+                }) : <p className="no-orders">No orders found.</p>}
+              </div>
+
+              {/* Feedback History */}
+              <h3>Feedback History</h3>
+              <div className="order-history">
+                {selectedUser.feedbackHistory.length > 0 ? selectedUser.feedbackHistory.map(fb => (
+                  <div className="order-card" key={fb._id}>
+                    <div className="order-header">
+                      <span className="order-id">Rating: {fb.rating}⭐</span>
+                      <span className="order-date">{new Date(fb.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    <p className="feedback-comment">"{fb.comment}"</p>
+<p className="feedback-likes">
+  Likes: {fb.likes.length} {fb.likes.length > 0 && `(${fb.likes.join(', ')})`}
+</p>
+                    </div>
+                )) : <p className="no-orders">No feedback found.</p>}
               </div>
             </div>
           </div>
         )}
 
-        {/* Delete Confirmation Modal */}
         {showDeleteModal && (
           <div className="modal">
             <div className="modal-content" ref={modalRef}>
@@ -286,6 +285,9 @@ const AdminManageUsers = () => {
           </div>
         )}
 
+        <button className="go-back-btn" onClick={() => navigate('/admin-dashboard')}>
+          Go to Admin Dashboard
+        </button>
       </div>
     </div>
   );

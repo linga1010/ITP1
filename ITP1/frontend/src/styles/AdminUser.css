@@ -16,8 +16,10 @@
 .modal {
   position: fixed;
   top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
+  left: 130px;
+   /* Adjusted to 200px to account for the sidebar */
+  width: 100%; height: 95%;
+  background: rgba(114, 95, 95, 0.6);
   display: flex; justify-content: center; align-items: center;
   z-index: 1000;
 }
@@ -26,12 +28,16 @@
   border-radius: 8px;
   width: 90%;
   max-width: 800px;
-  max-height: 90vh;
+  max-height: 88vh;
+
   overflow-y: auto;
-  padding: 20px;
+  scroll-behavior: smooth;
+
+  padding: 20px 20px 40px 20px; /* 🛠 ADD EXTRA bottom padding (40px) */
   position: relative;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
+
 .close {
   position: absolute;
   top: 12px; right: 16px;
@@ -250,4 +256,23 @@ h1 {
   text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
   margin-bottom: 10px;
   margin-top: 45px; /* Added this line to move the header slightly down */
+}
+.feedback-comment {
+  margin-top: 10px;
+  font-style: italic;
+  font-weight: bold;
+  font-size: 1rem;
+  color: #333;
+  padding-left: 10px;
+  padding-right: 10px;
+  word-wrap: break-word;
+  line-height: 1.5;
+}
+
+.feedback-likes {
+  margin-top: 6px;
+  font-size: 0.9rem;
+  color: #555;
+  font-weight: 500;
+  padding-left: 10px;
 }
