@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../styles/Home.css";
+import "../styles/Home.css"; // Ensure this is the correct path
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 const BASE_URL = "http://localhost:5000";
@@ -70,53 +70,31 @@ const HomePage = () => {
   const displayedPriests = getSlidingWindow(priests, priestIndex);
 
   return (
-    <div className="dashboard-container">
-
-
-      
+    <div className="home-page">
       <main className="dashboard-content">
-
         <section className="carousel-section">
-        <p className="welcome-heading">
-  {"WELCOME TO VK AURA".split("").map((char, idx) => (
-    char === " " ? (
-      <span key={idx} style={{ width: "20px", display: "inline-block" }}></span>
-    ) : (
-      <span key={idx} style={{ animationDelay: `${idx * 0.3}s` }}>
-        {char}
-      </span>
-    )
-  ))}
-</p>
-
-
-        <br></br>
+          <p className="welcome-heading">
+            {"WELCOME TO VK AURA".split("").map((char, idx) => (
+              char === " " ? (
+                <span key={idx} style={{ width: "20px", display: "inline-block" }}></span>
+              ) : (
+                <span key={idx} style={{ animationDelay: `${idx * 0.3}s` }}>
+                  {char}
+                </span>
+              )
+            ))}
+          </p>
+          <br />
           <p className="carousel-heading">Packages</p>
           <div className="carousel-container">
-            <button
-              className="arrow-button"
-              onClick={() =>
-                setPackageIndex((prevIndex) =>
-                  packages.length ? (prevIndex - 1 + packages.length) % packages.length : 0
-                )
-              }
-            >
+            <button className="arrow-button" onClick={() => setPackageIndex((prevIndex) => (prevIndex - 1 + packages.length) % packages.length)}>
               &#8249;
             </button>
             <div className="package-section">
               {displayedPackages.length > 0 ? (
                 displayedPackages.map((pkg, idx) => (
-                  <div
-                    key={pkg?._id || idx}
-                    className="package-card"
-                    onClick={() => navigate("/Login")}
-                  >
-                    <img
-                    src={pkg?.image ? pkg.image : "#"}
-                     alt={pkg?.name || "Package"}
-                  className="package-image"
-                    />
-                    
+                  <div key={pkg?._id || idx} className="package-card" onClick={() => navigate("/Login")}>
+                    <img src={pkg?.image || "#"} alt={pkg?.name || "Package"} className="package-image" />
                     <h3>{pkg?.name || "Package Name"}</h3>
                     <p>Price: Rs. {pkg?.totalPrice || "0"}</p>
                   </div>
@@ -125,45 +103,23 @@ const HomePage = () => {
                 <p>Loading packages...</p>
               )}
             </div>
-            <button
-              className="arrow-button"
-              onClick={() =>
-                setPackageIndex((prevIndex) =>
-                  packages.length ? (prevIndex + 1) % packages.length : 0
-                )
-              }
-            >
+            <button className="arrow-button" onClick={() => setPackageIndex((prevIndex) => (prevIndex + 1) % packages.length)}>
               &#8250;
             </button>
           </div>
         </section>
 
         <section className="carousel-section">
-        <p className="carousel-heading" >Priests</p>
+          <p className="carousel-heading">Priests</p>
           <div className="carousel-container">
-            <button
-              className="arrow-button"
-              onClick={() =>
-                setPriestIndex((prevIndex) =>
-                  priests.length ? (prevIndex - 1 + priests.length) % priests.length : 0
-                )
-              }
-            >
+            <button className="arrow-button" onClick={() => setPriestIndex((prevIndex) => (prevIndex - 1 + priests.length) % priests.length)}>
               &#8249;
             </button>
             <div className="priest-section">
               {displayedPriests.length > 0 ? (
                 displayedPriests.map((priest, idx) => (
-                  <div
-                    key={priest?._id || idx}
-                    className="priest-card"
-                    onClick={() => navigate("/Login")}
-                  >
-                    <img
-                      src={priest?.photo ? `${BASE_URL}${priest.photo}` : "#"}
-                      alt={priest?.name || "Priest"}
-                      className="priest-image"
-                    />
+                  <div key={priest?._id || idx} className="priest-card" onClick={() => navigate("/Login")}>
+                    <img src={priest?.photo ? `${BASE_URL}${priest.photo}` : "#"} alt={priest?.name || "Priest"} className="priest-image" />
                     <h3>{priest?.name || "Priest Name"}</h3>
                     <p>Daily Charge: Rs. {priest?.dailyCharge || "0"}</p>
                   </div>
@@ -172,14 +128,7 @@ const HomePage = () => {
                 <p>Loading priests...</p>
               )}
             </div>
-            <button
-              className="arrow-button"
-              onClick={() =>
-                setPriestIndex((prevIndex) =>
-                  priests.length ? (prevIndex + 1) % priests.length : 0
-                )
-              }
-            >
+            <button className="arrow-button" onClick={() => setPriestIndex((prevIndex) => (prevIndex + 1) % priests.length)}>
               &#8250;
             </button>
           </div>

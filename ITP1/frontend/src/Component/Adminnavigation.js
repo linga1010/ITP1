@@ -105,8 +105,8 @@ const Adminnaviagtion = () => {
     {
       title: 'Orders',
       links: [
-        { to: '/admin/view-bookings', label: 'View Order Bookings' },
-        { to: '/admin/viewPayment', label: 'View Order Payments' },
+        { to: '/admin/view-bookings', label: 'Order Bookings' },
+        { to: '/admin/viewPayment', label: 'Order Payments' },
       ],
     },
     {
