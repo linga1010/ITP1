@@ -1,33 +1,48 @@
 import Payment from '../models/Payment.js';
+import User from '../models/user.model.js'; // Import User model
 
+// Process Payment
 export const processPayment = async (req, res) => {
   try {
     const { cardNumber, holderName, expiryDate, cvv, totalPrice, userId } = req.body;
 
-    // Validate required fields
     if (!cardNumber || !holderName || !expiryDate || !cvv || totalPrice === undefined || !userId) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Create a new payment instance
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     const newPayment = new Payment({
-      userId,         // User who made the payment
-      cardNumber,     // Card number (Note: Don't store sensitive data in production!)
-      holderName,     // Cardholder name
-      expiryDate,     // Card expiry date
-      cvv,            // CVV (Consider removing for security reasons in production)
-      totalPrice,     // Total price of the order
-      paymentStatus: "pending",  // Default status is "pending"
+      userId,
+      userName: user.name,    // Save user name directly
+      userPhone: user.phone,  // Save user phone directly
+      cardNumber,
+      holderName,
+      expiryDate,
+      cvv,
+      totalPrice,
+      paymentStatus: "pending",
     });
 
-    // Save the payment to the database
     await newPayment.save();
 
-    // Respond with success message
     res.json({ success: true, message: "Payment processed and stored successfully!" });
   } catch (error) {
-    // Handle errors
     console.error(error);
     res.status(500).json({ message: "Server error. Please try again." });
+  }
+};
+
+// Get All Payments
+export const getAllPayments = async (req, res) => {
+  try {
+    const payments = await Payment.find(); // No populate needed!
+    res.json(payments);
+  } catch (error) {
+    console.error('Error fetching payments:', error);
+    res.status(500).json({ message: 'Failed to load payments' });
   }
 };

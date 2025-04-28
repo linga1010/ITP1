@@ -17,6 +17,7 @@ const ViewBookings = () => {
   const [totalSales, setTotalSales] = useState(0);
   const [totalProfit, setTotalProfit] = useState(0);
   const navigate = useNavigate();
+  const [ratings, setRatings] = useState([]);
 
   const [orderCounts, setOrderCounts] = useState({
     totalOrders: 0,
@@ -46,6 +47,13 @@ const ViewBookings = () => {
           axios.get("http://localhost:5000/api/products"),
           axios.get("http://localhost:5000/api/packages")
         ]);
+
+        const [ratingsRes] = await Promise.all([
+          axios.get("http://localhost:5000/api/order-rating") // 👈 API to get all ratings
+        ]);
+        
+        setRatings(ratingsRes.data);
+        
 
         const sorted = bookingsRes.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setBookings(sorted);
@@ -218,6 +226,36 @@ const ViewBookings = () => {
     );
   });
 
+  const findOrderRating = (orderId) => {
+    const orderRating = ratings.find(r => r.orderId === orderId); // 👈 match by order ID
+    
+    if (!orderRating) return "N/A";
+  
+    const rating = orderRating.rating;
+  
+    const emojis = {
+      1: "😡",
+      2: "😕",
+      3: "😐",
+      4: "😊",
+      5: "😍"
+    };
+  
+    const emoji = emojis[rating] || "";
+  
+    return (
+      <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+        <span>{rating}</span>
+        <span style={{ fontSize: "28px" }}>{emoji}</span> {/* ⭐️ Big Emoji */}
+      </div>
+    );
+  };
+  
+  
+  
+  
+  
+
   return (
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
@@ -269,19 +307,20 @@ const ViewBookings = () => {
               <table>
                 <thead>
   <tr>
-    <th>User Details</th> {/* 🔥 Changed column name */}
+    <th>User Details</th>
     <th>Location</th>
     <th>Items</th>
     <th>Total + Profit</th>
     <th>Status</th>
     <th>Created At</th>
     <th>Action</th>
+    <th>Rating</th>
   </tr>
 </thead>
 <tbody>
   {filteredBookings.map(order => (
     <tr key={order._id}>
-      <td>
+      <td >
         <div><b>Email:</b> {order.user || "N/A"}</div>
         <div><b>Name:</b> {order.userName || "N/A"}</div>
         <div><b>Phone:</b> {order.userPhone || "N/A"}</div>
@@ -305,7 +344,7 @@ const ViewBookings = () => {
       </td>
       <td>{order.status}</td>
       <td className="datetime">{new Date(order.createdAt).toLocaleString()}</td>
-      <td>
+      <td className="actionbtns">
         {order.status === "pending" ? (
           <>
             <button className="confirm-btn" onClick={() => {
@@ -341,6 +380,8 @@ const ViewBookings = () => {
           <span>✔ Confirmed</span>
         )}
       </td>
+      <td>{findOrderRating(order._id)}</td>
+
     </tr>
   ))}
 </tbody>
