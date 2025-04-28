@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { getFeedbacks, deleteFeedback, toggleLikeFeedback } from "../api";
 import Adminnaviagtion from "../../Component/Adminnavigation";
+import { useAuth } from "../../hooks/useAuth"; // ✅ Import useAuth to get logged-in user info
 
 const AdminFeedbackPage = () => {
   const [feedbacks, setFeedbacks] = useState([]);
+  const { user } = useAuth(); // ✅ Get user from Auth Context
 
   useEffect(() => {
     const fetchFeedbacks = async () => {
@@ -17,14 +19,24 @@ const AdminFeedbackPage = () => {
     const confirmDelete = window.confirm("Are you sure you want to delete this feedback?");
     if (!confirmDelete) return;
 
-    const result = await deleteFeedback(id, "admin@admin.com");
+    if (!user?.email) {
+      alert("User email not found. Cannot perform delete.");
+      return;
+    }
+
+    const result = await deleteFeedback(id, user.email); // ✅ Use dynamic logged-in user email
     if (result) {
       setFeedbacks((prev) => prev.filter((fb) => fb._id !== id));
     }
   };
 
   const handleLike = async (id) => {
-    const updated = await toggleLikeFeedback(id, "admin@admin.com");
+    if (!user?.email) {
+      alert("User email not found. Cannot perform like/unlike.");
+      return;
+    }
+
+    const updated = await toggleLikeFeedback(id, user.email + '#admin');
     if (updated) {
       setFeedbacks((prev) =>
         prev.map((fb) => (fb._id === id ? updated : fb))
@@ -45,7 +57,7 @@ const AdminFeedbackPage = () => {
 
   return (
     <div className="admin-feedback-page" style={{
-      backgroundImage: "url('/your-background-image.jpg')", // your background image
+      backgroundImage: "url('/your-background-image.jpg')",
       backgroundSize: "cover",
       backgroundPosition: "center",
       backgroundRepeat: "no-repeat",
@@ -63,33 +75,38 @@ const AdminFeedbackPage = () => {
           marginTop: "20px",
           boxShadow: "0 4px 12px rgba(0,0,0,0.2)"
         }}>
+
         
           <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
             All Users's Feedbacks</p> 
             
+
+          <h2 style={{ marginBottom: "20px", marginLeft: "350px", color: "#333", textAlign: "center" }}>All Users' Feedbacks</h2>
+
+
           {feedbacks.length === 0 ? (
             <p style={{ textAlign: "center" }}>No feedback available.</p>
           ) : (
             <div style={{
               display: "grid",
-              gridTemplateColumns: "repeat(2, 1fr)",    // 🌟 2 Cards per row
+              gridTemplateColumns: "repeat(2, 1fr)",
               gap: "50px",
              marginRight:"80px",
               justifyContent: "center",
               alignItems: "start",
             }}>
               {feedbacks.map((feedback) => {
-                const hasLiked = feedback.likes.includes("admin@admin.com");
+const hasLiked = feedback.likes.some(email => email.split('#')[0] === user?.email);
 
                 return (
                   <div
                     key={feedback._id}
                     style={{
-                      width: "90%",           // important: take full column space
+                      width: "90%",
                       minHeight: "400px",
                       backgroundColor: "#fff",
                       padding: "20px",
-                      marginLeft:"50px",
+                      marginLeft: "50px",
                       borderRadius: "10px",
                       boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                       display: "flex",
