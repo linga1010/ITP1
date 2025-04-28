@@ -33,8 +33,10 @@ const DeleteAccountPage = () => {
   };
 
   return (
-    <div className="dap-container">
-      <h1>Delete Account</h1>
+    <div className="dap-container" >
+      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '0px',marginBottom:'30PX', textAlign: 'center',letterSpacing: '1px' }}>
+      Delete Account </p>
+      
 
       {message && <p className="dap-success">{message}</p>}
       {error   && <p className="dap-error">{error}</p>}

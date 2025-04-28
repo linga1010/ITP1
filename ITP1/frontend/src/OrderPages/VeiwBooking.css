@@ -3,7 +3,7 @@
   padding: 30px;
   background: #ffffffdd;
   border-radius: 12px;
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 50px auto;
   margin-left: 0%;
   box-shadow: 0 6px 20px rgba(0,0,0,0.1);
@@ -72,6 +72,11 @@
 .usernametable{
   max-width: 100px !important;
 }
+
+.actionbtns{
+  width: 150px !important;
+}
+
 .summary-card {
   padding: 20px;
   border-radius: 14px;

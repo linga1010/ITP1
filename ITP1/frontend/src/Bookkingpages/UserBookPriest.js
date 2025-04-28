@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
+import UserDashboard from '../Component/Usercomponent';
 
 const UserBookPriest = () => {
   const [event, setEvent] = useState('');
@@ -105,6 +106,11 @@ const UserBookPriest = () => {
   if (!user) return <p>Please log in to book a priest.</p>;
 
   return (
+
+    <div>
+
+      <UserDashboard /> {/* Include the UserDashboard component */}
+    
     <div
       className="user-book-priest-container"
       style={{
@@ -207,6 +213,7 @@ const UserBookPriest = () => {
       >
         ⬅ Back to Home
       </button>
+    </div>
     </div>
   );
 };

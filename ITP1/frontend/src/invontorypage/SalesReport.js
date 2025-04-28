@@ -41,20 +41,27 @@ const SalesReport = () => {
     }
   };
 
+
   const isWithinRange = (dateStr) => {
     const date = new Date(dateStr);
     const start = startDate ? new Date(startDate) : null;
     const end = endDate ? new Date(endDate) : null;
     const month = selectedMonth ? parseInt(selectedMonth) : null;
     const year = selectedYear ? parseInt(selectedYear) : null;
+  
 
-    if (start && end) {
-      return date >= start && date <= end;
+    const itemDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const startOnly = start ? new Date(start.getFullYear(), start.getMonth(), start.getDate()) : null;
+    const endOnly = end ? new Date(end.getFullYear(), end.getMonth(), end.getDate()) : null;
+  
+    if (startOnly && endOnly) {
+      return itemDate >= startOnly && itemDate <= endOnly;
     } else if (month !== null && year !== null) {
-      return date.getMonth() === month && date.getFullYear() === year;
+      return itemDate.getMonth() === month && itemDate.getFullYear() === year;
     }
     return true;
   };
+  
 
   const filteredInvoices = invoices.filter(inv => isWithinRange(inv.invoiceDate));
   const deliveredOrders = orders.filter(o => o.status === 'delivered' && isWithinRange(o.createdAt));
@@ -331,7 +338,7 @@ const SalesReport = () => {
       type="date" 
       value={endDate} 
       onChange={e => { setEndDate(e.target.value); setSelectedMonth(''); setSelectedYear(''); }} 
-      max={today} 
+      max={today}  min={startDate}
       style={{ padding: '10px', minWidth: '120px' }}
     />
   </div>

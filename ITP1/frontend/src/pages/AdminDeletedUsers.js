@@ -58,7 +58,9 @@ const AdminDeletedUsers = () => {
 
       <div className="maincontent">
     <div>
-      <h1>Deleted Users</h1>
+    <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '0px',marginBottom:'30PX', textAlign: 'center',letterSpacing: '1px' }}>
+    Deleted Users</p>
+    
       {error && <p>{error}</p>}
 
       <table>
@@ -85,8 +87,6 @@ const AdminDeletedUsers = () => {
           ))}
         </tbody>
       </table>
-
-      <button className="go-back-btn" onClick={() => navigate('/admin-dashboard')}>Back to Admin Dashboard</button>
     </div>
     </div>
     </div>

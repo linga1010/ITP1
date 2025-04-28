@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { message, Spin } from "antd";
 import "./Payment.css";
+import RatingModal from "./RatingModal";
 
 const Payment = () => {
   const [paymentData, setPaymentData] = useState({
@@ -14,6 +15,8 @@ const Payment = () => {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [ratingModalVisible, setRatingModalVisible] = useState(false);
+  const [createdOrderId, setCreatedOrderId] = useState(null);
   const navigate = useNavigate();
   const { user } = useAuth();
   const errorRef = useRef(null);
@@ -34,7 +37,6 @@ const Payment = () => {
 
   const validate = () => {
     const errors = {};
-
     if (!/^\d{16}$/.test(paymentData.cardNumber)) {
       errors.cardNumber = "Card number must be exactly 16 digits.";
     }
@@ -52,10 +54,9 @@ const Payment = () => {
         errors.expiryDate = "Expiry date cannot be in the past.";
       }
     }
-    if (!/^\d{3}$/.test(paymentData.cvv)) {  // ✅ ONLY allow exactly 3 digits
+    if (!/^\d{3}$/.test(paymentData.cvv)) {
       errors.cvv = "CVV must be exactly 3 digits.";
     }
-
     return errors;
   };
 
@@ -84,12 +85,13 @@ const Payment = () => {
     }
 
     try {
+      // 1. Payment API
       const paymentResponse = await axios.post("http://localhost:5000/api/payment", {
         userId: user._id,
         userName: user.name,
         userPhone: storedPhone,
         items: cart,
-        totalPrice: totalPrice,
+        totalPrice,
         paymentMethod: "Card",
         cardNumber: paymentData.cardNumber,
         holderName: paymentData.holderName,
@@ -98,9 +100,8 @@ const Payment = () => {
       });
 
       if (paymentResponse.data.success) {
-        message.success("✅ Payment successful!");
-
-        await axios.post("http://localhost:5000/api/orders", {
+        // 2. Place Order after successful payment
+        const orderResponse = await axios.post("http://localhost:5000/api/orders", {
           user: user.email,
           userName: user.name,
           userPhone: storedPhone,
@@ -109,14 +110,19 @@ const Payment = () => {
           location,
         });
 
-        message.success("✅ Order placed successfully!");
+        const newOrderId = orderResponse.data.order._id;
+        setCreatedOrderId(newOrderId);
 
+        // Clear cart from localStorage
         localStorage.removeItem(`cart_user_${user._id}`);
         localStorage.removeItem(`total_price_user_${user._id}`);
         localStorage.removeItem(`location_user_${user._id}`);
         localStorage.removeItem(`phone_user_${user._id}`);
 
-        navigate("/OrderHistoryDetails");
+        // ✅ Only one success message after both Payment and Order
+        message.success("✅ Payment and Order placed successfully!");
+
+        setRatingModalVisible(true); // Show Rating Modal
       } else {
         message.error(paymentResponse.data.message || "❌ Payment failed. Try again.");
       }
@@ -172,12 +178,12 @@ const Payment = () => {
 
         <label>CVV</label>
         <input
-          type="text"   // ✨ text instead of password so users can see
+          type="text"
           name="cvv"
           value={paymentData.cvv}
           onChange={handleChange}
           placeholder="3-digit CVV"
-          maxLength="3"  // ✨ Only allow max 3 digits
+          maxLength="3"
           required
         />
 
@@ -188,6 +194,19 @@ const Payment = () => {
           {loading ? <Spin size="small" /> : "🛒 Pay Now"}
         </button>
       </form>
+
+      {/* 🎯 Rating Modal */}
+      {user && (
+        <RatingModal
+          visible={ratingModalVisible}
+          onClose={() => {
+            setRatingModalVisible(false);
+            navigate("/OrderHistoryDetails");
+          }}
+          userEmail={user.email}
+          orderId={createdOrderId}
+        />
+      )}
     </div>
   );
 };

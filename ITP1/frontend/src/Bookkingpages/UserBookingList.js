@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
-import { useNavigate } from 'react-router-dom';  // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
+import UserDashboard from '../Component/Usercomponent';
+
 
 const UserBookingList = () => {
   const [bookings, setBookings] = useState([]);
@@ -48,6 +50,10 @@ const UserBookingList = () => {
   if (!user) return <p>Please log in to view your bookings.</p>;
 
   return (
+    <div>
+
+      <UserDashboard /> 
+    
     <div style={{ backgroundColor: 'rgba(250, 243, 243, 0.5)', padding: '20px' }}>
       <h2>Your Bookings</h2>
       <button 
@@ -88,7 +94,11 @@ const UserBookingList = () => {
         </div>
       ))}
     </div>
+    </div>
   );
 };
 
 export default UserBookingList;
+
+
+//C:\Destop\it90\ITP1\ITP1\frontend\src\Bookkingpages\UserBookingList.js
