@@ -268,47 +268,83 @@ const ViewBookings = () => {
             ) : (
               <table>
                 <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>UserName</th>
-                    <th>Phone</th>
-                    <th>Location</th>
-                    <th>Items</th>
-                    <th>Total + Profit</th>
-                    <th>Status</th>
-                    <th>Created At</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredBookings.map(order => (
-                    <tr key={order._id}>
-                      <td>{order.user}</td>
-                      <td>{order.userName}</td>
-                      <td>{order.userPhone || "N/A"}</td>
-                      <td>{order.location || "N/A"}</td>
-                      <td>
-                        <ul>
-                          {order.items.map((item, index) => (
-                            <li key={index}>
-                              {item.name} (x{item.quantity}) – Rs. {item.finalPrice || item.price}
-                            </li>
-                          ))}
-                        </ul>
-                      </td>
-                      <td>
-                        Rs. {order.total}
-                        <br />
-                        <span style={{ color: "green", fontSize: "0.9em" }}>
-                          Profit: Rs {calculateOrderProfit(order)}
-                        </span>
-                      </td>
-                      <td>{order.status}</td>
-                      <td>{new Date(order.createdAt).toLocaleString()}</td>
-                      <td> {/* your status button code remains here */} </td>
-                    </tr>
-                  ))}
-                </tbody>
+  <tr>
+    <th>User Details</th> {/* 🔥 Changed column name */}
+    <th>Location</th>
+    <th>Items</th>
+    <th>Total + Profit</th>
+    <th>Status</th>
+    <th>Created At</th>
+    <th>Action</th>
+  </tr>
+</thead>
+<tbody>
+  {filteredBookings.map(order => (
+    <tr key={order._id}>
+      <td>
+        <div><b>Email:</b> {order.user || "N/A"}</div>
+        <div><b>Name:</b> {order.userName || "N/A"}</div>
+        <div><b>Phone:</b> {order.userPhone || "N/A"}</div>
+      </td>
+      <td>{order.location || "N/A"}</td>
+      <td>
+        <ul>
+          {order.items.map((item, index) => (
+            <li key={index}>
+              {item.name} (x{item.quantity}) – Rs. {item.finalPrice || item.price}
+            </li>
+          ))}
+        </ul>
+      </td>
+      <td>
+        Rs. {order.total}
+        <br />
+        <span style={{ color: "green", fontSize: "0.9em" }}>
+          Profit: Rs {calculateOrderProfit(order)}
+        </span>
+      </td>
+      <td>{order.status}</td>
+      <td className="datetime">{new Date(order.createdAt).toLocaleString()}</td>
+      <td>
+        {order.status === "pending" ? (
+          <>
+            <button className="confirm-btn" onClick={() => {
+              if (window.confirm("Are you sure you want to confirm this order?")) {
+                updateOrderStatus(order._id, "confirm");
+              }
+            }}>✅ Confirm Order</button>
+            <button className="remove-btn" onClick={() => {
+              if (window.confirm("Are you sure you want to remove this order?")) {
+                updateOrderStatus(order._id, "remove");
+              }
+            }}>❌ Remove Order</button>
+          </>
+        ) : order.status === "success" ? (
+          <button className="ship-btn" onClick={() => {
+            if (window.confirm("Are you sure you want to ship this order?")) {
+              updateOrderStatus(order._id, "ship");
+            }
+          }}>🚚 Ship Order</button>
+        ) : order.status === "shipped" ? (
+          <button className="deliver-btn" onClick={() => {
+            if (window.confirm("Are you sure you want to deliver this order?")) {
+              updateOrderStatus(order._id, "deliver");
+            }
+          }}>📦 Deliver Order</button>
+        ) : order.status === "delivered" ? (
+          <span className="delivered-tag">✅ Delivered</span>
+        ) : order.status === "removed" ? (
+          <span className="removed-tag">❌ Removed</span>
+        ) : order.status === "canceled" ? (
+          <span className="canceled-tag">❌ Canceled</span>
+        ) : (
+          <span>✔ Confirmed</span>
+        )}
+      </td>
+    </tr>
+  ))}
+</tbody>
+
               </table>
             )}
           </div>
