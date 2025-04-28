@@ -207,11 +207,12 @@ const EditProduct = () => {
           <div className="form-group">
             <label>Quantity</label>
             <Input
-              type="text"
-              value={quantity}
-              onChange={(doublevalue(setQuantity))}
-              placeholder="Quantity"
-            />
+  type="text"
+  value={quantity ? parseFloat(quantity).toFixed(2) : ""}
+  onChange={doublevalue(setQuantity)}
+  placeholder="Quantity"
+/>
+
           </div>
 
           <div className="form-group">
@@ -222,7 +223,7 @@ const EditProduct = () => {
             </select>
           </div>
 
-          <button style={{ backgroundColor: "#ffcc00", color: "black" }} type="submit" className="submit-button">
+          <button style={{ backgroundColor: "#1E88E5", color: "white" }} type="submit" className="submit-button">
             Update Product
           </button>
         </form>

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/AdminUser.css';
-//import "../styles/Body.css";
 import Adminnaviagtion from "../Component/Adminnavigation"; 
 
 const defaultProfilePicUrl = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
@@ -142,10 +141,11 @@ const AdminManageUsers = () => {
   return (
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
-
-      <div className="maincontent">
-        <h1>Manage Users</h1>
-        {/* summary counts */}
+      <p><br></br></p>  
+      <div className="maincontent" >
+      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '0px',marginBottom:'30PX', textAlign: 'center',letterSpacing: '1px' }}>
+       Manage Users</p>
+      
         <div className="summary">
           <p>Total Admins: {admins.length}</p>
           <p>Total Users: {users.length}</p>
@@ -162,8 +162,9 @@ const AdminManageUsers = () => {
         </div>
         {error && <p className="error-text">{error}</p>}
 
-        {/* Admins */}
-        <h3>Admins</h3>
+      
+       
+        <h3 style={{color: '#374495',fontSize:'30px'}}>Admins</h3>
         <table className="standard-table">
           <thead>
             <tr>
@@ -181,8 +182,8 @@ const AdminManageUsers = () => {
           </tbody>
         </table>
 
-        {/* Users */}
-        <h3>Users</h3>
+        
+        <h3 style={{color: '#374495',fontSize:'30px'}}>Users</h3>
         <table className="standard-table">
           <thead>
             <tr>
@@ -285,9 +286,6 @@ const AdminManageUsers = () => {
           </div>
         )}
 
-        <button className="go-back-btn" onClick={() => navigate('/admin-dashboard')}>
-          Go to Admin Dashboard
-        </button>
       </div>
     </div>
   );

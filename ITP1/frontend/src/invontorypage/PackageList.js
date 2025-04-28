@@ -106,7 +106,7 @@ const PackageList = () => {
                 <td>Rs. {pkg.finalPrice}</td>
                 <td>
                   <button onClick={() => handleEdit(pkg._id)} className="edit"
-                    style={{ backgroundColor: "#ffcc00", color: "black" }}
+                    style={{backgroundColor: "#1E88E5", color: "white"}}
                     >Edit</button>
                   <button onClick={() => handleDelete(pkg._id)} className="Delete">Delete</button>
                 </td>

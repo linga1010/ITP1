@@ -75,7 +75,7 @@ const PurchaseList = ({ onPurchasesUpdate }) => {
 
 
   const handlePrint = (purchase) => {
-    const logoURL = "/logo.jpeg"; // Your uploaded logo path
+    const logoURL = "/logo.jpeg"; 
   
     const newWindow = window.open('', '_blank');
   
@@ -155,7 +155,7 @@ const PurchaseList = ({ onPurchasesUpdate }) => {
               cursor: pointer;
             }
             .print-btn {
-              background-color: #4CAF50;
+              background-color: #1E88E5;
               color: white;
             }
             .cancel-btn {
@@ -253,10 +253,10 @@ const PurchaseList = ({ onPurchasesUpdate }) => {
       Purchase Orders List</p>
         
         <div className="create-purchase-container">
-          <button onClick={() => navigate('/purchases/create')}>Create Purchase Order</button>
           <p></p>
-          <div className="search-container">
+          <div className="search-container" >
             <input
+            style={{width: "400px"}}
               type="text"
               value={searchQuery}
               onChange={handleSearch}
@@ -332,7 +332,7 @@ const PurchaseList = ({ onPurchasesUpdate }) => {
     <button
       onClick={() => handlePrint(purchase)}
       style={{
-        backgroundColor: "#4CAF50",
+        backgroundColor: "#1E88E5",
         color: "white",
         border: "none",
         padding: "5px 10px",

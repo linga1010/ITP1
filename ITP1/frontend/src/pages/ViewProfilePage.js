@@ -43,8 +43,10 @@ const ViewProfilePage = () => {
     url.replace('/upload/', '/upload/c_fill,w_150,h_150,g_face/');
 
   return (
-    <div className="view-profile-container">
-      <h1 className="view-profile-title">Your Profile</h1>
+    <div className="view-profile-container" style={{ width: '900px', height: '800px', backgroundColor: '#f0f0f0' }}>
+      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '0px',marginBottom:'30PX', textAlign: 'center',letterSpacing: '1px' }}>
+      Your Profile</p>
+      
 
       {error && <p className="view-error-message">{error}</p>}
 

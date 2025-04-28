@@ -155,7 +155,7 @@ const AddPackage = () => {
   };
 
   return (
-    <div className="admin-dashboard-container">
+    <div className="admin-dashboard-container" style={{width:'600px'}}>
       <Adminnaviagtion />
       <p><br></br></p>  <p><br></br></p>
       <div className="main-content">
@@ -163,7 +163,7 @@ const AddPackage = () => {
       Add Package</p>
         
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item
+          <Form.Item  style={{width:'600px'}}
             name="name"
             label="Package Name"
             rules={[{ required: true, message: "Enter package name" },
@@ -177,7 +177,7 @@ const AddPackage = () => {
           <Button
   type="dashed"
   onClick={addProductRow}
-  style={{ marginBottom: 20 , backgroundColor: "#ffcc00", color: "black"}}
+  style={{ marginBottom: 20 , backgroundColor: "#1E88E5", color: "white"}}
 >
   + Add Product
 </Button>
@@ -282,7 +282,7 @@ const AddPackage = () => {
     }}
     showUploadList={false}
   >
-    <Button>Browse Image</Button>
+    <Button style={{width:'600px'}}>Browse Image</Button>
   </Upload>
 
   {preview && (
@@ -291,7 +291,7 @@ const AddPackage = () => {
       alt="Preview"
       style={{
         marginLeft: "10px",
-        maxWidth: "200px",
+        maxWidth: "600px",
         marginTop: "10px",
         display: "block",
         borderRadius: "8px",
@@ -302,8 +302,8 @@ const AddPackage = () => {
 
           
 
-          <Form.Item>
-          <Button style={{ backgroundColor: "#ffcc00", color: "black" }} type="primary" htmlType="submit">
+          <Form.Item >
+          <Button style={{ backgroundColor: "#1E88E5", color: "white",width:'600px'}} type="primary" htmlType="submit">
            Add Package
           </Button>
           </Form.Item>

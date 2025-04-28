@@ -1,0 +1,115 @@
+import React, { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
+import "../styles/UserHome.css";
+import { useAuth } from "../hooks/useAuth";
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaComments, FaBars, FaTimes } from "react-icons/fa";
+
+const BASE_URL = "http://localhost:5000";
+
+const UserDashboard = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const confirmLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
+  const handleProfileClick = () => {
+    navigate("/view-profile");
+  };
+
+  const handleChatClick = () => {
+    navigate("/ChatPage");
+  };
+
+  const defaultProfilePicUrl = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+
+  return (
+    <div className="dashboard-container">
+      {/* Sidebar */}
+      <div
+        className={`sidebar ${sidebarOpen ? "open" : ""}`}
+        onMouseEnter={() => setSidebarOpen(true)}
+        onMouseLeave={() => setSidebarOpen(false)}
+      >
+        <button className="close-btn" onClick={() => setSidebarOpen(false)}>
+          <FaTimes />
+        </button>
+        <Link to="/view-package" onClick={() => setSidebarOpen(false)}>Packages</Link>
+        <Link to="/OrderHistoryDetails" onClick={() => setSidebarOpen(false)}>Order History</Link>
+        <Link to="/Feedback" onClick={() => setSidebarOpen(false)}>Feedbacks</Link>
+        <Link to="/about-us" onClick={() => setSidebarOpen(false)}>About Us</Link>
+        <Link to="/user/booking-list" onClick={() => setSidebarOpen(false)}>Booking Details</Link>
+        <Link to="/user/book-priest" onClick={() => setSidebarOpen(false)}>Book Priest</Link>
+      </div>
+
+      {/* Navbar */}
+      <header className="dashboard-header">
+        <nav className="navbar">
+          <div className="nav-left">
+            <FaBars className="menu-icon" onClick={() => setSidebarOpen(true)} />
+          </div>
+          <div className="nav-center">
+            <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '20px 0', textAlign: 'center', letterSpacing: '1px' }}>
+              WELCOME TO VK AURA, {user?.name?.toUpperCase() || "USER"}
+            </p>
+          </div>
+          <div className="nav-right">
+            <FaComments className="chat-icon" onClick={handleChatClick} />
+            <div className="profile-wrapper" onClick={handleProfileClick}>
+              <img
+                src={user?.profilePic ? user.profilePic : defaultProfilePicUrl}
+                alt="Profile"
+                className="profile-photo"
+              />
+            </div>
+            <button className="nav-btn logout-btn" onClick={() => setShowLogoutModal(true)}>
+              Logout
+            </button>
+          </div>
+        </nav>
+      </header>
+
+      {/* Footer */}
+      <footer className="footer">
+        <div className="footer-content">
+          <p>&copy; 2025 VK Aura. All rights reserved.</p>
+          <div className="social-media">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><FaFacebook /></a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"><FaLinkedin /></a>
+          </div>
+        </div>
+      </footer>
+
+      {/* Logout Modal */}
+      {showLogoutModal && (
+        <div className="admin-logout-modal-overlay" onClick={() => setShowLogoutModal(false)}>
+          <div className="admin-logout-modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-logout-emoji-animation">
+              <img src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif" alt="Sad Emoji" className="admin-logout-animated-emoji" />
+            </div>
+            <p>Are you sure you want to logout?</p>
+            <div className="admin-logout-modal-buttons">
+              <button className="admin-logout-yes-btn" onClick={confirmLogout}>Yes</button>
+              <button className="admin-logout-no-btn" onClick={() => setShowLogoutModal(false)}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default UserDashboard;
+
+
+
+
+
