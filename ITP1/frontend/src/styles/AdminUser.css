@@ -16,8 +16,10 @@
 .modal {
   position: fixed;
   top: 0; left: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
+  left: 130px;
+   /* Adjusted to 200px to account for the sidebar */
+  width: 100%; height: 95%;
+  background: rgba(114, 95, 95, 0.6);
   display: flex; justify-content: center; align-items: center;
   z-index: 1000;
 }
@@ -26,12 +28,16 @@
   border-radius: 8px;
   width: 90%;
   max-width: 800px;
-  max-height: 90vh;
+  max-height: 88vh;
+
   overflow-y: auto;
-  padding: 20px;
+  scroll-behavior: smooth;
+
+  padding: 20px 20px 40px 20px; /* 🛠 ADD EXTRA bottom padding (40px) */
   position: relative;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
+
 .close {
   position: absolute;
   top: 12px; right: 16px;
@@ -82,7 +88,11 @@
 /* User info inside modal */
 .user-info {
   display: flex;
+  font-weight: bold;
   align-items: center;
+  font-size: 1.3rem;
+  color: #131212;
+  
   margin-bottom: 1rem;
 }
 .user-profile-pic-large {
@@ -109,11 +119,12 @@
 }
 .order-header {
   display: flex;
+  font-weight: 1.2rem;
   justify-content: space-between;
   margin-bottom: 12px;
 }
-.order-id { font-weight: 600; }
-.order-date { color: #666; font-size: 0.9rem; }
+.order-id { font-weight: 600; font-size: 1.2rem;}
+.order-date { color: #666; font-size: 1.2rem; font-weight: bold;}
 
 .items-table {
   width: 100%;
@@ -125,6 +136,9 @@
   border: 1px solid #ddd;
   padding: 6px 10px;
   text-align: center;
+  font-size: 1.1rem;
+
+  
 }
 .items-table th {
   background: #f2f2f2;
@@ -148,39 +162,52 @@
   padding: 12px;
   text-align: center;
   color: #777;
+  font-weight: bold;
 }
  td {
-  font-weight: bold;
+  font-weight: bolder;
+
 }
 
 .status-pending {
   color: #f4a261; /* Soft orange */
   font-weight: bold;
+  font-size: 1.3rem;
 }
 
 .status-shipped {
   color: #4a90e2; /* Medium calm blue */
   font-weight: bold;
+  font-size: 1.3rem;
+
 }
 
 .status-delivered {
   color: #2a9d8f; /* Gentle teal green */
   font-weight: bold;
+  font-size: 1.3rem;
+
 }
 
 .status-removed {
   color: #eb0a33; /* Muted coral red */
   font-weight: bold;
+  font-size: 1.3rem;
+
 }
 
 .status-canceled {
   color: #b00020; /* Softer deep red, less intense than pure red */
   font-weight: bold;
+  font-size: 1.3rem;
+
 }
 
 .status-success {
   color: #70e000; /* Soft lime green */
   font-weight: bold;
+  font-size: 1.3rem;
+
 }
 /* Scope to the admin manage users page */
 
@@ -250,4 +277,23 @@ h1 {
   text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
   margin-bottom: 10px;
   margin-top: 45px; /* Added this line to move the header slightly down */
+}
+.feedback-comment {
+  margin-top: 10px;
+  font-style: italic;
+  font-weight: bold;
+  font-size: 1.3rem;
+  color: #111010;
+  padding-left: 10px;
+  padding-right: 10px;
+  word-wrap: break-word;
+  line-height: 1.5;
+}
+
+.feedback-likes {
+  margin-top: 6px;
+  font-size: 1.0rem;
+  color: #111111;
+  font-weight:bold;
+  padding-left: 10px;
 }

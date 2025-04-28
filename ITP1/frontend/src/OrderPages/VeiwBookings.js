@@ -70,9 +70,14 @@ const ViewBookings = () => {
     fetchData();
   }, [navigate]);
 
+
+
   useEffect(() => {
-    calculateSalesAndProfit(bookings, products, packages);
-  }, [startDate, endDate]);
+    const filteredOrders = bookings.filter(order => {
+      return order.status === "delivered" && isInDateRange(order.createdAt);
+    });
+    calculateSalesAndProfit(filteredOrders, products, packages);
+  }, [startDate, endDate, bookings, products, packages]);
 
   const updateOrderCounts = (orders) => {
     setOrderCounts({
@@ -86,37 +91,42 @@ const ViewBookings = () => {
   };
 
   const isInDateRange = (dateStr) => {
-    const date = new Date(dateStr);
+    const orderDate = new Date(dateStr);
     const start = startDate ? new Date(startDate) : null;
     const end = endDate ? new Date(endDate) : null;
-    return (!start || date >= start) && (!end || date <= end);
+  
+    // Remove time part
+    orderDate.setHours(0, 0, 0, 0);
+    if (start) start.setHours(0, 0, 0, 0);
+    if (end) end.setHours(23, 59, 59, 999); // end of the day
+  
+    return (!start || orderDate >= start) && (!end || orderDate <= end);
   };
+  
 
   const calculateSalesAndProfit = (orders, productList, packageList) => {
     let sales = 0;
     let profit = 0;
 
     orders.forEach(order => {
-      if (order.status === "delivered" && isInDateRange(order.createdAt)) {
-        sales += order.total;
-        order.items.forEach(item => {
-          const pack = packageList.find(p => p.name === item.name);
-          if (pack) {
-            let itemProfit = 0;
-            pack.products.forEach(({ productId, quantity }) => {
-              const prod = productList.find(p => p._id === productId._id);
-              if (prod) {
-                const unitsSold = quantity * item.quantity;
-                itemProfit += (prod.sellingPrice - prod.costPrice) * unitsSold;
-              }
-            });
-            const discount = (pack.totalPrice - pack.finalPrice) * item.quantity;
-            profit += itemProfit - discount;
-          }
-        });
-      }
+      sales += order.total;
+      order.items.forEach(item => {
+        const pack = packageList.find(p => p.name === item.name);
+        if (pack) {
+          let itemProfit = 0;
+          pack.products.forEach(({ productId, quantity }) => {
+            const prod = productList.find(p => p._id === productId._id);
+            if (prod) {
+              const unitsSold = quantity * item.quantity;
+              itemProfit += (prod.sellingPrice - prod.costPrice) * unitsSold;
+            }
+          });
+          const discount = (pack.totalPrice - pack.finalPrice) * item.quantity;
+          profit += itemProfit - discount;
+        }
+      });
     });
-
+    
     setTotalSales(sales);
     setTotalProfit(profit);
   };
@@ -203,28 +213,35 @@ const ViewBookings = () => {
 
   const filteredBookings = bookings.filter(order => {
     const dt = new Date(order.createdAt);
+    const orderDateOnly = new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()); // Remove time
+  
     let start = startDate ? new Date(startDate) : null;
-    if (start && dt < start) return false;
-
     let end = endDate ? new Date(endDate) : null;
-    if (end) {
-      end.setHours(23, 59, 59, 999);
-      if (dt > end) return false;
-    }
-
+  
+    if (start) start.setHours(0, 0, 0, 0);
+    if (end) end.setHours(23, 59, 59, 999);
+  
     const s = searchTerm.toLowerCase();
     const monthName = dt.toLocaleString("default", { month: "long" }).toLowerCase();
     const monthIdx = dt.getMonth() + 1;
-
+  
     return (
-      (order.user && order.user.toLowerCase().includes(s)) ||
-      (order.userName && order.userName.toLowerCase().includes(s)) ||
-      (order.status && order.status.toLowerCase().includes(s)) ||
-      dt.toLocaleDateString().includes(s) ||
-      monthName.includes(s) ||
-      (!isNaN(s) && parseInt(s) === monthIdx)
+      (!start || orderDateOnly >= start) &&
+      (!end || orderDateOnly <= end) &&
+      (
+        (order.user && order.user.toLowerCase().includes(s)) ||
+        (order.userName && order.userName.toLowerCase().includes(s)) ||
+        (order.status && order.status.toLowerCase().includes(s)) ||
+        dt.toLocaleDateString().includes(s) ||
+        monthName.includes(s) ||
+        (!isNaN(s) && parseInt(s) === monthIdx)
+      )
     );
   });
+  
+
+
+
 
   const findOrderRating = (orderId) => {
     const orderRating = ratings.find(r => r.orderId === orderId); // 👈 match by order ID
@@ -259,11 +276,14 @@ const ViewBookings = () => {
   return (
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
+      <p><br></br></p>  <p><br></br></p>
       <div className="main-content">
         <div className="view-bookings-container">
-          <h2 className="booking-title">📋 All Order Booking Details</h2>
+        <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+        📋 All Order Booking Details </p>
+         
 
-          <h4 className="summary-heading">📦 Order Summary</h4>
+          <h4 className="summary-heading" style={{ fontSize: '24px', fontWeight: 'bold', color: '#374495'}}>📦 Order Summary</h4>
           <div className="status-box-row">
             <div className="status-box">Total: {orderCounts.totalOrders}</div>
             <div className="status-box">Pending: {orderCounts.pendingOrders}</div>
@@ -273,11 +293,21 @@ const ViewBookings = () => {
             <div className="status-box">Canceled: {orderCounts.canceledOrders}</div>
           </div>
 
-          <h4 className="summary-heading">💰 Sales & Profit</h4>
-          <div className="card summary-card gradient-green">
+          <h4 className="summary-heading" style={{ fontSize: '24px', fontWeight: 'bold', color: '#374495'}}>💰 Sales & Profit</h4>
+
+          <div className="totals-container" style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+          <div className="totals-box" style={{marginLeft:'50px',width:'450px'}}>
+            <h3 style={{ fontSize: '24px', fontWeight: 'bold'}}>Total Sales</h3>
             <p>Total Sales: Rs {totalSales}</p>
+          </div>
+          <div className="totals-box" style={{width:'450px'}}>
+            <h3 style={{ fontSize: '24px', fontWeight: 'bold'}}>Profit</h3>
             <p>Total Profit: Rs {totalProfit.toFixed(2)}</p>
           </div>
+        </div>
+
+          
+          
 
           <div className="filters-row">
             <input
@@ -312,8 +342,7 @@ const ViewBookings = () => {
     <th>Items</th>
     <th>Total + Profit</th>
     <th>Status</th>
-    <th>Created At</th>
-    <th>Action</th>
+    <th style={{width:"100px"}}>Action</th>
     <th>Rating</th>
   </tr>
 </thead>
@@ -342,42 +371,41 @@ const ViewBookings = () => {
           Profit: Rs {calculateOrderProfit(order)}
         </span>
       </td>
-      <td>{order.status}</td>
-      <td className="datetime">{new Date(order.createdAt).toLocaleString()}</td>
-      <td className="actionbtns">
+      <td className="datetime">{order.status}<br></br> {new Date(order.createdAt).toLocaleString()}</td>
+      <td className="actionbtns"  style={{width:"100px"}} >
         {order.status === "pending" ? (
           <>
-            <button className="confirm-btn" onClick={() => {
+            <button  className="confirm-btn" onClick={() => {
               if (window.confirm("Are you sure you want to confirm this order?")) {
                 updateOrderStatus(order._id, "confirm");
               }
-            }}>✅ Confirm Order</button>
+            }}  style={{width:"100px"}}>✅Confirm</button>
             <button className="remove-btn" onClick={() => {
               if (window.confirm("Are you sure you want to remove this order?")) {
                 updateOrderStatus(order._id, "remove");
               }
-            }}>❌ Remove Order</button>
+            }}  style={{width:"100px"}}>❌Remove</button>
           </>
         ) : order.status === "success" ? (
           <button className="ship-btn" onClick={() => {
             if (window.confirm("Are you sure you want to ship this order?")) {
               updateOrderStatus(order._id, "ship");
             }
-          }}>🚚 Ship Order</button>
+          }}style={{width:"100px"}}>🚚Ship</button>
         ) : order.status === "shipped" ? (
           <button className="deliver-btn" onClick={() => {
             if (window.confirm("Are you sure you want to deliver this order?")) {
               updateOrderStatus(order._id, "deliver");
             }
-          }}>📦 Deliver Order</button>
+          }}style={{width:"100px"}}>📦Deliver</button>
         ) : order.status === "delivered" ? (
-          <span className="delivered-tag">✅ Delivered</span>
+          <span className="delivered-tag">✅Delivered</span>
         ) : order.status === "removed" ? (
-          <span className="removed-tag">❌ Removed</span>
+          <span className="removed-tag">❌Removed</span>
         ) : order.status === "canceled" ? (
-          <span className="canceled-tag">❌ Canceled</span>
+          <span className="canceled-tag">❌Canceled</span>
         ) : (
-          <span>✔ Confirmed</span>
+          <span>✔Confirmed</span>
         )}
       </td>
       <td>{findOrderRating(order._id)}</td>

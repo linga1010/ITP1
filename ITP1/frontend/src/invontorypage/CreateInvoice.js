@@ -123,11 +123,11 @@ const CreateInvoice = () => {
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
       <p><br></br></p>  <p><br></br></p>
-      <div className="main-content">
+      <div className="main-content" style={{width:'600px'}}>
       <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
       Create Invoice </p>
        
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+        <Form form={form} layout="vertical" onFinish={handleSubmit} style={{width:'600px'}}>
           <Form.Item
             label="Customer Name"
             name="customerName"
@@ -146,7 +146,7 @@ const CreateInvoice = () => {
           </Form.Item>
 
           <Button
-            style={{ backgroundColor: "#ffcc00", color: "black" }}
+            style={{ backgroundColor: "#1E88E5", color: "white"}}
             type="dashed"
             onClick={addProductRow}
           >
@@ -210,7 +210,7 @@ const CreateInvoice = () => {
 
           <Form.Item>
             <Button
-              style={{ backgroundColor: "#ffcc00", color: "black" }}
+              style={{backgroundColor: "#1E88E5", color: "white",width:'600px' }}
               type="primary"
               htmlType="submit"
             >

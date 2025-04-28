@@ -141,9 +141,14 @@ const AdminDashboard = () => {
   const filterByDate = (arr, field) => {
     const start = startDate ? new Date(startDate) : null;
     const end = endDate ? new Date(endDate) : null;
+  
     return arr.filter(item => {
       const d = new Date(item[field]);
-      return (!start || d >= start) && (!end || d <= end);
+      const itemDate = new Date(d.getFullYear(), d.getMonth(), d.getDate()); // Only date part
+      const startOnly = start ? new Date(start.getFullYear(), start.getMonth(), start.getDate()) : null;
+      const endOnly = end ? new Date(end.getFullYear(), end.getMonth(), end.getDate()) : null;
+  
+      return (!startOnly || itemDate >= startOnly) && (!endOnly || itemDate <= endOnly);
     });
   };
 
@@ -190,45 +195,53 @@ const AdminDashboard = () => {
   return (
     <>
       <Navbar onSidebarToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
-      <div className="admin-dashboard" style={{ marginTop: '80px' }}>
-        <h2 className="dashboard-title">WELCOME TO THE ADMIN DASHBOARD</h2>
+      <div className="admin-dashboard" style={{ marginTop: '100px',marginLeft:'400px' }}>
+      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+       WELCOME TO THE ADMIN DASHBOARD </p>
+        
 
-        <div className="date-filter-row">
+        <div className="date-filter-row" style={{ gap: '100px'}}>
           <div className="date-field">
             <label><strong>Start Date:</strong></label>
             <input type="date" value={startDate} max={today} onChange={e => handleStartDateChange(e.target.value)} />
-            {startDateError && <p style={{ color: 'red' }}>{startDateError}</p>}
+            
           </div>
 
           <div className="date-field">
             <label><strong>End Date:</strong></label>
-            <input type="date" value={endDate} max={today} onChange={e => handleEndDateChange(e.target.value)} />
-            {endDateError && <p style={{ color: 'red' }}>{endDateError}</p>}
+            <input type="date" value={endDate} min={startDate} max={today} onChange={e => handleEndDateChange(e.target.value)} />
+            
           </div>
 
-          <button onClick={clearFilters} className="clear-btn">Clear Data</button>
+          <button onClick={clearFilters} className="clear-btn">All Data</button>
         </div>
 
         <div className="summary-row">
-          <div className="summary-box gradient-blue">
-            <h4>Invoice Summary</h4>
-            <p>Total Invoice Sales: Rs {invoiceSales.toFixed(2)}</p>
-            <p>Total Invoice Profit: Rs {invoiceProfit.toFixed(2)}</p>
+
+        <div className="totals-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+          <div className="totals-box">
+            <h3 style={{fontSize: '30px'}}>Invoice Summary</h3>
+            <p style={{fontSize: '15px',marginTop:'30px'}}>Total Invoice Sales: Rs {invoiceSales.toFixed(2)}</p>
+            <p style={{fontSize: '15px',marginTop:'30px'}}>Total Invoice Profit: Rs {invoiceProfit.toFixed(2)}</p>
           </div>
-          <div className="summary-box gradient-green">
-            <h4>Package Summary</h4>
-            <p>Total Package Sales: Rs {packageSales.toFixed(2)}</p>
-            <p>Total Package Profit: Rs {packageProfit.toFixed(2)}</p>
+
+          <div className="totals-box">
+            <h3 style={{fontSize: '30px'}}>Package Summary</h3>
+            <p style={{fontSize: '15px',marginTop:'30px'}}>Total Package Sales: Rs {packageSales.toFixed(2)}</p>
+            <p style={{fontSize: '15px',marginTop:'30px'}}>Total Package Profit: Rs {packageProfit.toFixed(2)}</p>
           </div>
-          <div className="summary-box gradient-orange">
-            <h4>Total Summary</h4>
-            <p>Total Sales: Rs {(invoiceSales + packageSales).toFixed(2)}</p>
-            <p>Total Profit: Rs {(invoiceProfit + packageProfit).toFixed(2)}</p>
+
+          <div className="totals-box">
+            <h3 style={{fontSize: '30px'}}>Total Summary</h3>
+            <p style={{fontSize: '15px',marginTop:'30px'}}>Total Sales: Rs {(invoiceSales + packageSales).toFixed(2)}</p>
+            <p style={{fontSize: '15px',marginTop:'30px'}}>Total Profit: Rs {(invoiceProfit + packageProfit).toFixed(2)}</p>
           </div>
+        </div>
         </div>
 
         <div className="chart-box full-width">
-          <h4>Sales & Profit Comparison</h4>
+        <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+        Sales & Profit Comparison</p>
           <Bar data={barChartData} options={barChartOptions} />
         </div>
       </div>

@@ -239,8 +239,8 @@ const [audioChunks, setAudioChunks] = useState([]);
   return (
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
-      <p><br></br></p>   <p><br></br></p>  <p><br></br></p>
-      <div style={{ display: 'flex', height: '100vh', marginTop: '20px' }}>
+      <p><br></br></p>   <p><br></br></p>  
+      <div style={{ display: 'flex', height: '80vh', marginTop: '20px' }}>
         {/* Users List */}
         <div style={{ width: '350px', background: '#f0f2f5', overflowY: 'auto', borderRight: '1px solid #ddd' }}>
           {users.map((user) => (

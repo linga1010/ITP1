@@ -44,7 +44,7 @@
 
 .clear-btn {
   padding: 8px 16px;
-  background-color: #e74c3c;
+  background-color: #3ccde7;
   color: white;
   border: none;
   border-radius: 6px;
@@ -57,7 +57,7 @@
 }
 
 .clear-btn:hover {
-  background-color: #c0392b;
+  background-color: #532bc0;
 }
 
 .chart-row {
