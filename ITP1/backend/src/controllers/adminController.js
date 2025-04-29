@@ -68,3 +68,32 @@ export const getDeletedUsers = async (req, res) => {
     res.status(500).json({ error: 'Error fetching deleted users' });
   }
 };
+
+// Get user summary by date (join date count)
+export const getUserSummary = async (req, res) => {
+  try {
+    // Group users by date (joined on that date)
+    const userSummary = await User.aggregate([
+      {
+        $project: {
+          date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          name: 1,
+          email: 1,
+        }
+      },
+      {
+        $group: {
+          _id: "$date", // Group by date
+          totalUsers: { $sum: 1 },
+          users: { $push: { name: "$name", email: "$email" } }
+        }
+      },
+      { $sort: { _id: -1 } } // Sort by date, latest first
+    ]);
+
+    res.status(200).json(userSummary);
+  } catch (error) {
+    console.error("Error fetching user summary:", error);
+    res.status(500).json({ error: 'Failed to fetch user summary' });
+  }
+};
