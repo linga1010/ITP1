@@ -1,0 +1,81 @@
+.admin-summary-container {
+  margin-top: 100px;
+  margin-bottom: 40px;
+  margin-left: 10%;
+  margin-right: -15%;
+  padding: 100px;
+  background-color: #ffffff; /* Solid white */
+  border: 10px solid #000000; /* Solid black */
+  color: #000000; /* Solid black text */
+   min-height: 50vh; /* Ensures minimum height */
+  overflow-y: auto; /* Only vertical scrolling if needed */
+  transition: margin-left 0.1s ease;
+  }
+  
+  /* Title Styling */
+  .admin-summary-title {
+    text-align: center;
+    font-size: 36px;
+    font-weight: bold;
+    color: #374495;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+  }
+  
+  /* User Details Section */
+  .admin-summary-user-details {
+    margin-bottom: 40px;
+    font-weight: 500;
+    font-size: 18px;
+  }
+  
+  /* Table Styling */
+  .admin-summary-user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    background-color: #f9f9f9; /* Light background for the table */
+    border-radius: 8px; /* Rounded corners for the table */
+    overflow: hidden; /* Ensure rounded corners are not clipped */
+  }
+  
+  .admin-summary-user-table th,
+  .admin-summary-user-table td {
+    border: 1px solid #ddd;
+    padding: 12px 15px; /* Add padding to make the content spacious */
+    text-align: left;
+    font-size: 14px; /* Adjusted font size for better readability */
+  }
+  
+  .admin-summary-user-table th {
+    background-color: #4b6cb7;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .admin-summary-user-table tr:nth-child(even) {
+    background-color: #f4f4f4;
+  }
+  
+  .admin-summary-user-table tr:hover {
+    background-color: #e2e8f0; /* Hover effect for table rows */
+  }
+  
+  .admin-summary-user-table ul {
+    list-style: none;
+    padding-left: 0;
+    font-size: 14px;
+  }
+  
+  /* Chart Container */
+  .admin-summary-chart-container {
+    width: 90%;
+    margin: 40px auto 0;
+    font-weight: bold;
+  }
+  
+  .admin-summary-chart-container canvas {
+    max-width: 100%;
+    height: 400px;
+    font-weight: bold;
+  }

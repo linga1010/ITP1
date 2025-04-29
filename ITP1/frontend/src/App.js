@@ -9,6 +9,7 @@ import AdminManageUsers from './pages/AdminManageUsers';
 import UserHomePage from './pages/UserHomePage';
 import DeleteAccountPage from './pages/DeleteAccountPage';
 import ChangePasswordPage from './pages/ChangePasswordPage';
+import AdminSummary from './pages/AdminSummaryPage';
 import AddProduct from './invontorypage/AddProduct';
 import ProductList from './invontorypage/ProductList';
 import HomePage from './pages/HomePage';
@@ -100,6 +101,8 @@ function App() {
       <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
       <Route path="/ChatPage" element={<ChatPage />} />
       <Route path="/AdminChatPage" element={<AdminChatPage />} />
+      <Route path="/admin/view-summary" element={<AdminSummary/>} />
+
 
     
 
