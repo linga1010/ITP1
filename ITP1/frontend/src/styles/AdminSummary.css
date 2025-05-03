@@ -42,10 +42,12 @@
   .admin-summary-user-table th,
   .admin-summary-user-table td {
     border: 1px solid #ddd;
-    padding: 12px 15px; /* Add padding to make the content spacious */
+    padding: 12px 15px;
     text-align: left;
-    font-size: 14px; /* Adjusted font size for better readability */
+    font-size: 14px;
+    color: #000000; /* 👈 Force solid black text */
   }
+  
   
   .admin-summary-user-table th {
     background-color: #4b6cb7;
