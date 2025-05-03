@@ -1,35 +1,44 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import "../styles/Login.css"; // or VkLogin.css if you renamed it
+import "../styles/Login.css"; // or "../styles/VkLogin.css"
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [expanded, setExpanded] = useState(false);
+  const boxRef = useRef(null);
+
   const { login, user } = useAuth();
   const navigate = useNavigate();
 
-  // Redirect already-logged-in users
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token && user) {
-      if (user.isAdmin) {
-        navigate("/admin-dashboard");
-      } else {
-        navigate("/user-home");
-      }
+      navigate(user.isAdmin ? "/admin-dashboard" : "/user-home");
     }
   }, [navigate, user]);
 
-  // Auto-clear error messages after 3 seconds
   useEffect(() => {
     if (!error) return;
-    const timer = setTimeout(() => {
-      setError("");
-    }, 3000);
+    const timer = setTimeout(() => setError(""), 3000);
     return () => clearTimeout(timer);
   }, [error]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (boxRef.current && !boxRef.current.contains(e.target)) {
+        setExpanded(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleMouseEnter = () => {
+    if (!expanded) setExpanded(true);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,7 +51,6 @@ const Login = () => {
 
     try {
       const loggedInUser = await login(email, password);
-
       if (loggedInUser) {
         if (loggedInUser.isAdmin) {
           navigate("/admin/view-profile");
@@ -58,7 +66,11 @@ const Login = () => {
   };
 
   return (
-    <div className="vk-box">
+    <div
+      ref={boxRef}
+      className={`vk-box ${expanded ? "expanded" : ""}`}
+      onMouseEnter={handleMouseEnter}
+    >
       <div className="vk-login">
         <div className="vk-loginBx">
           <h2>

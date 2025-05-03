@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/Signup.css";
@@ -18,7 +18,7 @@ const Signup = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [otpLoading, setOtpLoading] = useState(false); // State for OTP loading
+  const [otpLoading, setOtpLoading] = useState(false);
   const [passwordCriteria, setPasswordCriteria] = useState({
     length: false,
     number: false,
@@ -26,8 +26,25 @@ const Signup = () => {
     uppercase: false,
     specialChar: false,
   });
+  const [expanded, setExpanded] = useState(false);
+
   const navigate = useNavigate();
   const messageRef = useRef(null);
+  const boxRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (boxRef.current && !boxRef.current.contains(e.target)) {
+        setExpanded(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleMouseEnter = () => {
+    if (!expanded) setExpanded(true);
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -84,17 +101,17 @@ const Signup = () => {
   };
 
   const resendOTP = async () => {
-    setOtpLoading(true); // Set OTP loading state to true
-    setMessage(""); // Clear any previous messages
-    setError(""); // Clear any previous errors
+    setOtpLoading(true);
+    setMessage("");
+    setError("");
 
     try {
       await axios.post("http://localhost:5000/api/users/send-otp", { email: formData.email });
       setMessage("✅ OTP resent to your email!");
-      setOtpLoading(false); // Reset OTP loading state
+      setOtpLoading(false);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to resend OTP.");
-      setOtpLoading(false); // Reset OTP loading state
+      setOtpLoading(false);
     }
   };
 
@@ -158,7 +175,11 @@ const Signup = () => {
   };
 
   return (
-    <div className="signup-box">
+    <div
+      className={`signup-box ${expanded ? "expanded" : ""}`}
+      onMouseEnter={handleMouseEnter}
+      ref={boxRef}
+    >
       <div className="signup">
         <div className="signupBx">
           <h2>Signup</h2>

@@ -1,6 +1,19 @@
 @import url("https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap");
 @import url("https://use.fontawesome.com/releases/v6.5.1/css/all.css");
 
+.signup-box.expanded {
+  width: 550px;
+  height: 700px;
+}
+
+.signup-box.expanded .signup {
+  inset: 40px;
+}
+
+.signup-box.expanded .signupBx {
+  transform: translateY(0px);
+}
+
 body {
   display: flex;
   justify-content: center;
@@ -77,18 +90,7 @@ body {
   border: 8px solid #eaeaea;
 }
 
-.signup-box:hover {
-  width: 450px;
-  height: 600px;
-}
 
-.signup-box:hover .signup {
-  inset: 40px;
-}
-
-.signup-box:hover .signupBx {
-  transform: translateY(0px);
-}
 
 .signup {
   position: absolute;
@@ -147,7 +149,7 @@ h2 i {
 }
 
 .input-field {
-  width: 250px;
+  width: 340px;
   padding: 10px 20px;
   outline: none;
   border: 2px solid #ccc;
@@ -164,7 +166,7 @@ h2 i {
 }
 
 .btn {
-  width: 95%;
+  width: 75%;
   padding: 10px 20px;
   background: #ff8c42;
   border: none;

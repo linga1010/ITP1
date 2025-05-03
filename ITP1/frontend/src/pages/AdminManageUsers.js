@@ -156,8 +156,8 @@ const AdminManageUsers = () => {
       <div className="maincontent">
         <h1>Manage Users</h1>
         <div className="summary">
-          <p>Total Admins: {admins.length}</p>
-          <p>Total Users: {users.length}</p>
+          <h2>Total Admins: {admins.length}</h2>
+          <h2>Total Users: {users.length}</h2>
         </div>
         <div className="search-box">
           <input
@@ -170,7 +170,7 @@ const AdminManageUsers = () => {
         </div>
         {error && <p className="error-text">{error}</p>}
 
-        <h3>Admins</h3>
+        <h1>Admins</h1>
         <table className="standard-table">
           <thead>
             <tr><th>Profile</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th></tr>
@@ -185,7 +185,7 @@ const AdminManageUsers = () => {
           </tbody>
         </table>
 
-        <h3>Users</h3>
+        <h1>Users</h1>
         <table className="standard-table">
           <thead>
             <tr><th>Profile</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Actions</th></tr>
