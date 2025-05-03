@@ -53,8 +53,10 @@
   border-collapse: collapse;
   margin-bottom: 1.5rem;
 }
+
 .standard-table th,
 .standard-table td {
+  
   border: 1px solid #ddd;
   padding: 8px;
   font-size: 0.9rem;
@@ -63,7 +65,9 @@
   color: #000000;
 }
 .standard-table th {
-  background: #f0f0f0;
+  background-color: #4b6cb7;
+    color: white;
+    font-weight: bold;
 }
 
 /* Buttons */
@@ -225,7 +229,7 @@
   font-size: 1.3rem;
 
 }
-/* Scope to the admin manage users page */
+
 
 
 /* Summary counts */
@@ -247,6 +251,7 @@
   margin-bottom: 1.5rem;
 
 }
+
 .admin-dashboard-container tr:hover {
   background-color: #e2e8f0; /* Hover effect for table rows */
 }
