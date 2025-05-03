@@ -59,7 +59,7 @@ const AdminDeletedUsers = () => {
       <div className="maincontent">
     <div>
     <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '0px',marginBottom:'30PX', textAlign: 'center',letterSpacing: '1px' }}>
-    Deleted Users</p>
+    Removed Users</p>
     
       {error && <p>{error}</p>}
 
@@ -71,7 +71,7 @@ const AdminDeletedUsers = () => {
             <th>Phone</th>
             <th>Address</th>
             <th>Reason</th>
-            <th>Deleted At</th>
+            <th>Removed At</th>
           </tr>
         </thead>
         <tbody>
