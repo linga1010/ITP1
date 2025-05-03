@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/Profile.css';
+import '../styles/ViewProfilePage.css';
 //import "../styles/Body.css";
 import Adminnaviagtion from "../Component/Adminnavigation"; 
 
@@ -65,17 +65,18 @@ const AdminProfile = () => {
           className="view-profile-pic"
         />
         <p className="view-profile-field">
-          <strong>Name:</strong> {user.name}
-        </p>
-        <p className="view-profile-field">
-          <strong>Email:</strong> {user.email}
-        </p>
-        <p className="view-profile-field">
-          <strong>Address:</strong> {user.address}
-        </p>
-        <p className="view-profile-field">
-          <strong>Phone:</strong> {user.phone}
-        </p>
+  📛 <strong>Name:</strong> {user.name}
+</p>
+<p className="view-profile-field">
+  📧 <strong>Email:</strong> {user.email}
+</p>
+<p className="view-profile-field">
+  📍 <strong>Address:</strong> {user.address}
+</p>
+<p className="view-profile-field">
+  📞 <strong>Phone:</strong> {user.phone}
+</p>
+
       </div>
 
       <div className="view-profile-actions">
