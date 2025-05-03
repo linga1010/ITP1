@@ -168,6 +168,14 @@ const AdminManageUsers = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
+        {searchTerm && (
+  <div className="search-result-count">
+    <p>
+      🔍 {filteredAdmins.length + filteredUsers.length} result{(filteredAdmins.length + filteredUsers.length) !== 1 ? 's' : ''} found
+    </p>
+  </div>
+)}
+
         {error && <p className="error-text">{error}</p>}
 
         <h1>Admins</h1>
