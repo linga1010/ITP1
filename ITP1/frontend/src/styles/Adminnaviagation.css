@@ -1,4 +1,4 @@
-/* Overall container for the admin dashboard */
+/* General Setup */
 body, html {
   margin: 0;
   padding: 0;
@@ -7,77 +7,108 @@ body, html {
   overflow-x: hidden; /* Prevents horizontal scroll */
 }
 
-/* Navbar styling */
+/* Navbar */
 .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #2c3e50; /* Dark blue navbar */
-  color: white;
-  padding: 10px 20px;
   position: fixed;
   top: 0;
-  right: 0;
-  width: 100%; /* Takes up 80% of the page width */
-  height: 10%; /* Takes up 10% of the viewport height */
-  z-index: 100; /* Ensures navbar is above other content */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Slight shadow for depth */
+  left: 0;
+  width: 100%;
+  height: 70px;
+  background-color: #2c3e50;
+  z-index: 1000;
 }
 
-/* Navbar right section: Back button, Welcome message, Logout button */
+
+/* Navbar Sections */
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar-center {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+}
+
 .navbar-right {
   display: flex;
   align-items: center;
-  width: 100%;
-  justify-content: space-between; /* Space between buttons and message */
-  display: 'flex', 
+  gap: 20px;
 }
 
-/* Back and Logout button styling */
-.back-btn, .logout-btn {
+/* Welcome Text */
+.admin-welcome-text {
+  font-size: 50px;
+  font-weight: bold;
+  color: white;
+  margin-right: 120px;
+  margin: 10px 195px 20px 200px;
+  white-space: nowrap;
+}
+
+/* Profile Section */
+.admin-profile-section {
   display: flex;
   align-items: center;
-  gap: 5px; /* Space between icon and text */
+  gap: 20px;
+}
+
+.admin-profile-wrapper {
+  cursor: pointer;
+}
+
+.admin-profile-photo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid white;
+}
+
+/* Buttons */
+.back-btn,
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
   padding: 8px 16px;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
   transition: background 0.3s ease;
+  color: white;
 }
 
-/* Back button - Left aligned */
 .back-btn {
-  background-color: #4CAF50 !important; /* Green color */
-  color: white;
+  background-color: #4CAF50;
 }
 
 .back-btn:hover {
-  background-color: #45a049; /* Darker green on hover */
+  background-color: #45a049;
 }
 
-
-
-/* Welcome message - Center aligned */
-.navbar-right p {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 500;
-  flex: 1; /* Allows the message to grow and center */
-  text-align: center; /* Centers the text */
-}
-
-/* Logout button - Right aligned */
 .logout-btn {
-  background-color: #f44336; /* Red color */
-  color: white;
+  background-color: #f44336;
 }
 
 .logout-btn:hover {
-  background-color: #e53935; /* Darker red on hover */
+  background-color: #e53935;
 }
 
-/* Sidebar styling */
+/* Hamburger Icon */
+.hamburger-icon {
+  background: none;
+  border: none;
+  margin-left: 30px;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Sidebar */
 .sidebar {
   width: 250px;
   height: 100%;
@@ -87,10 +118,10 @@ body, html {
   position: fixed;
   top: 0;
   left: 0;
-  transition: transform 0.3s ease, width 0.3s ease;
   transform: translateX(-100%);
+  transition: transform 0.3s ease, width 0.3s ease;
   z-index: 10;
-  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-y: auto;
 }
 
 .sidebar.open {
@@ -101,7 +132,7 @@ body, html {
   margin-left: 250px;
 }
 
-/* Sidebar menu styling */
+/* Sidebar Menu */
 .sidebar-menu {
   list-style-type: none;
   padding: 0;
@@ -115,7 +146,7 @@ body, html {
 .sidebar-toggle {
   background: none;
   border: none;
-  color: rgb(10, 9, 9);
+  color: #0a0909;
   font-size: 18px;
   width: 100%;
   text-align: left;
@@ -128,61 +159,27 @@ body, html {
   background-color: #bebebe;
 }
 
+/* Nested Menu */
 .nested-menu {
   padding-left: 20px;
-  display: none; /* Initially hide the nested menu */
 }
 
 .nested-menu li {
-background-color: #bebebe;
+  background-color: #bebebe;
   margin-bottom: 5px;
 }
 
 .nested-menu li a {
-
   text-decoration: none;
-  color: rgb(1, 1, 1);
+  color: #010101;
   font-size: 16px;
 }
 
 .nested-menu li a:hover {
-
   color: #3498db;
 }
 
-/* Show nested menu when parent toggle is active */
-.sidebar-toggle + .nested-menu {
-  display: block;
+/* Custom class for spacing */
+.Admin {
+  margin-top: 110px;
 }
-
-/* Styling for back button, navbar-right, and logout button */
-.navbar-right {
-  display: flex;
-  align-items: center;
-}
-
-.logout-btn, .back-btn {
-  color: white;
-  background: none;
-  border: none;
-  cursor: pointer;
-  margin-left: 10px;
-}
-
-.logout-btn:hover, .back-btn:hover {
-  color: #3498db;
-}
-
-/* Hamburger icon styling */
-.hamburger-icon {
-  background: none;
-  border: none;
-  margin-left: 30px;
-  color: white;
-  font-size: 24px;
-  cursor: pointer;
-}
-.Admin{
-margin-top: 110px;
-}
-

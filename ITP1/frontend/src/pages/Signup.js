@@ -184,7 +184,7 @@ const Signup = () => {
         <div className="signupBx">
           <h2>Signup</h2>
           <div ref={messageRef}>
-            {message && <p className="message success">{message}</p>}
+            {message && <p className="message-success">{message}</p>}
             {error && <p className="message error">{error}</p>}
           </div>
 
