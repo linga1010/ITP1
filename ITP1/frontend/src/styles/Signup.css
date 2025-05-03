@@ -152,7 +152,7 @@ h2 i {
   width: 340px;
   padding: 10px 20px;
   outline: none;
-  border: 2px solid #ccc;
+  border: 3px solid #ccc;
   border-radius: 30px;
   font-size: 1em;
   margin-bottom: 15px;
@@ -160,6 +160,12 @@ h2 i {
   background: rgba(255, 255, 255, 0.8);
   transition: border-color 0.3s ease;
 }
+.input-field::placeholder {
+  color: #000000;
+  font-weight: 400;
+  opacity: 1;
+}
+
 
 .input-field:focus {
   border-color: #4caf50;
@@ -200,6 +206,12 @@ h2 i {
   color: #388e3c;
   background: rgba(200, 230, 201, 0.8);
 }
+.message-success {
+  color: #388e3c;
+  font-weight: bold;
+  background: rgba(200, 230, 201, 0.8);
+}
+
 
 .error {
   color: #d32f2f;
@@ -242,7 +254,9 @@ h2 i {
 
 .password-criteria p {
   margin-bottom: 5px;
-  font-size: 14px;
+  font-size: 1.0rem;
+  color: #000000;
+  font-weight: 500;
 }
 
 @media (max-width: 480px) {
