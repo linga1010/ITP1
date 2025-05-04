@@ -130,7 +130,7 @@ const AdminDeletedUsers = () => {
                 <td>{user.email}</td>
                 <td>{user.phone}</td>
                 <td>{user.address || 'No address available'}</td>
-                <td>{user.reason}</td>
+                <td style={{ color: 'red', fontWeight: 'bold' }}>{user.reason}</td>
                 <td>{new Date(user.deletedAt).toLocaleString()}</td>
               </tr>
             ))}
