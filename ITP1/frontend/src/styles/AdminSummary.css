@@ -1,9 +1,29 @@
+.admin-summary-table-wrapper {
+  display: flex;
+  margin-left: 88px;
+  justify-content: center;
+  width: 100%;
+}
+
+.admin-summary-user-table {
+  width: auto; /* ✅ Let the table shrink to content size */
+  min-width: 800px; /* Optional: to keep it readable */
+  border-collapse: collapse;
+  margin-bottom: 30px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1); /* Optional: adds better visibility */
+}
 .admin-summary-container {
+  
   margin-top: 100px;
   margin-bottom: 40px;
   margin-left: 10%;
   margin-right: -15%;
   padding: 100px;
+  align-items: center;
+  min-width: 1000px; /* Minimum width for the container */
   background-color: #ffffff; /* Solid white */
   border: 10px solid #000000; /* Solid black */
   color: #000000; /* Solid black text */
@@ -16,6 +36,7 @@
   .admin-summary-title {
     text-align: center;
     font-size: 36px;
+    margin-left: 380px;
     font-weight: bold;
     color: #374495;
     letter-spacing: 1px;
@@ -71,7 +92,10 @@
   
   /* Chart Container */
   .admin-summary-chart-container {
-    width: 90%;
+    margin-top: 10px;
+    width: 100%;
+    margin-left: 0;
+    width: 80%;
     margin: 40px auto 0;
     font-weight: bold;
     min-height: 400px;
@@ -81,7 +105,23 @@
     background-color: #f5f5f5; /* Optional: to visualize the space */
     border-radius: 10px;
   }
+  .admin-summary-heading {
+    margin-top: 40px;
+    font-size: 1.5rem;
+    font-weight: bolder;
+    color: #374495;
+
+    text-align: center;
+    width: 100%; /* ensures full-width so text can center */
+  }
   
+  
+  .admin-summary-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
   .admin-summary-chart-container canvas {
     max-width: 100%;
     height: 400px !important; 
@@ -90,6 +130,7 @@
   
   .admin-summary-search-box {
     margin: 20px 0;
+    margin-left: 80px;
   }
   
   .admin-summary-search-input {
