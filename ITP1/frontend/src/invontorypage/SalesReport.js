@@ -73,21 +73,30 @@ const SalesReport = () => {
 
   const calculateOrderProfit = (order) => {
     let profit = 0;
+  
     (order.items || []).forEach(item => {
-      const pack = packages.find(p => p._id === item.packageId || p.name === item.name);
-      if (!pack) return;
-      (pack.products || []).forEach(({ productId, quantity }) => {
-        const prod = products.find(p => p._id === productId._id);
-        if (prod) {
-          const unitsSold = (quantity || 0) * (item.quantity || 0);
-          profit += (prod.sellingPrice - prod.costPrice) * unitsSold;
-        }
+      // 🛑 Skip legacy orders without historical prices
+      if (!item.products || item.products.length === 0) {
+        return;
+      }
+  
+      // ✅ Use historical prices from the order itself
+      item.products.forEach(prod => {
+        const quantity = Number(prod.quantity || 0);
+        const cost = Number(prod.costPriceAtOrder || 0);
+        const sell = Number(prod.sellingPriceAtOrder || 0);
+        const unitsSold = quantity * (item.quantity || 1);
+        profit += (sell - cost) * unitsSold;
       });
-      const discountPerPack = (pack.totalPrice || 0) - (pack.finalPrice || 0);
-      profit -= discountPerPack * (item.quantity || 0);
+  
+      // ✅ Apply historical discount if present
+      const discount = ((item.price || 0) - (item.finalPrice || 0)) * (item.quantity || 1);
+      profit -= discount;
     });
+  
     return profit;
   };
+  
 
 
   const getReportPeriod = () => {
