@@ -153,7 +153,6 @@ const ForgotPassword = () => {
     }
   };
 
-  // Animation behavior
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (boxRef.current && !boxRef.current.contains(e.target)) {
@@ -185,6 +184,10 @@ const ForgotPassword = () => {
 
           {step === 1 && (
             <>
+              {/* Autofill prevention fields */}
+              <input type="text" name="fake-user" autoComplete="username" style={{ display: "none" }} />
+              <input type="password" name="fake-pass" autoComplete="current-password" style={{ display: "none" }} />
+
               <input
                 type="email"
                 name="email"
@@ -193,6 +196,7 @@ const ForgotPassword = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
+                autoComplete="off"
               />
               <button
                 type="button"
@@ -218,6 +222,7 @@ const ForgotPassword = () => {
                 value={formData.otp}
                 onChange={handleChange}
                 required
+                autoComplete="off"
               />
               <button
                 type="button"
@@ -239,7 +244,7 @@ const ForgotPassword = () => {
           )}
 
           {step === 3 && (
-            <form className="vkfp-registration-form" onSubmit={handleReset}>
+            <form className="vkfp-registration-form" onSubmit={handleReset} autoComplete="off">
               <input
                 type="password"
                 name="newPassword"
@@ -248,6 +253,7 @@ const ForgotPassword = () => {
                 value={formData.newPassword}
                 onChange={handleChange}
                 required
+                autoComplete="new-password"
               />
               <div className="vkfp-password-criteria">
                 <p>{passwordCriteria.length ? "✅" : "❌"} At least 8 characters</p>
@@ -264,6 +270,7 @@ const ForgotPassword = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
+                autoComplete="new-password"
               />
               <button type="submit" className="vkfp-btn" disabled={loading}>
                 {loading ? "Resetting..." : "Reset Password"}

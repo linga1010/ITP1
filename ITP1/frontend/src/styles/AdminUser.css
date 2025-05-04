@@ -21,14 +21,20 @@
 
 .modal {
   position: fixed;
-  top: 0; left: 0;
-  left: 130px;
-   /* Adjusted to 200px to account for the sidebar */
-  width: 100%; height: 95%;
-  background: rgba(114, 95, 95, 0.6);
-  display: flex; justify-content: center; align-items: center;
-  z-index: 1000;
+  top: -25px;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(114, 95, 95, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center; /* ✅ centers vertically */
+  z-index: 2000;
+  padding: 20px; /* fallback spacing for smaller screens */
 }
+
+
+
 .modal-content {
   background: #fff;
   border-radius: 8px;
@@ -274,7 +280,7 @@
 }
 .admin-dashboard-container .maincontent .search-input::placeholder {
   color: #000000;
-  font-weight: 600;
+  font-weight: 400;
   opacity: 1;
 }
 
@@ -333,4 +339,42 @@ h1 {
   color: #111111;
   font-weight:bold;
   padding-left: 10px;
+}
+/* Reduce textarea height and spacing */
+.modal-content textarea {
+  width: 100%;
+  min-height: 60px; /* ⬅️ reduced from 100px */
+  resize: vertical;
+  padding: 8px 12px;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #f60b0b;
+  background: #fdfdfd;
+  margin-top: 12px;
+  margin-bottom: 10px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  transition: border-color 0.3s ease;
+}
+
+.modal-content textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  background: #fff;
+}
+
+/* Button alignment and size */
+.modal-actions {
+  display: flex;
+  justify-content: center; /* ⬅️ center horizontally */
+  gap: 20px;
+  margin-top: 10px;
+}
+
+/* Larger buttons */
+.modal-actions .admin-user-btn {
+  padding: 14px 28px;  /* ⬅️ increased size */
+  font-size: 1rem;     /* ⬆️ larger font */
 }

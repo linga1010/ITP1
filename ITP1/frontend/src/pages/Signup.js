@@ -190,6 +190,10 @@ const Signup = () => {
 
           {step === 1 && (
             <div className="step-container">
+              {/* Autofill prevention fields */}
+              <input type="text" name="fake-user" autoComplete="username" style={{ display: "none" }} />
+              <input type="password" name="fake-pass" autoComplete="current-password" style={{ display: "none" }} />
+
               <input
                 className="input-field"
                 type="email"
@@ -199,6 +203,7 @@ const Signup = () => {
                 onChange={handleChange}
                 required
                 disabled={loading}
+                autoComplete="off"
               />
               <button className="btn" type="button" onClick={checkEmail} disabled={loading}>
                 {loading ? "Checking..." : "Next"}
@@ -219,6 +224,7 @@ const Signup = () => {
                 value={formData.otp}
                 onChange={handleChange}
                 required
+                autoComplete="off"
               />
               <button className="btn" type="button" onClick={verifyOTP}>
                 Verify OTP
@@ -230,7 +236,7 @@ const Signup = () => {
           )}
 
           {step === 3 && (
-            <form className="registration-form" onSubmit={handleRegister}>
+            <form className="registration-form" onSubmit={handleRegister} autoComplete="off">
               <input
                 className="input-field"
                 type="text"
@@ -239,6 +245,7 @@ const Signup = () => {
                 value={formData.name}
                 onChange={handleChange}
                 required
+                autoComplete="off"
               />
               <input
                 className="input-field"
@@ -249,6 +256,7 @@ const Signup = () => {
                 onChange={handleChange}
                 required
                 inputMode="numeric"
+                autoComplete="off"
                 onKeyDown={(e) => {
                   if (!/^\d$/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(e.key)) {
                     e.preventDefault();
@@ -263,6 +271,7 @@ const Signup = () => {
                 value={formData.address}
                 onChange={handleChange}
                 required
+                autoComplete="off"
               />
               <div className="gender-container">
                 <div className="gender-radio-group">
@@ -298,6 +307,7 @@ const Signup = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                autoComplete="new-password"
               />
               <div className="password-criteria">
                 <p>{passwordCriteria.length ? "✅" : "❌"} At least 8 characters</p>
@@ -314,6 +324,7 @@ const Signup = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
+                autoComplete="new-password"
               />
               <button className="btn" type="submit">Register</button>
             </form>

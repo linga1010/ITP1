@@ -78,7 +78,21 @@ const Login = () => {
             <i className="fa-solid fa-heart"></i>
           </h2>
           {error && <div className="vk-error-message">{error}</div>}
-          <form onSubmit={handleSubmit} className="vk-login-form">
+          <form onSubmit={handleSubmit} className="vk-login-form" autoComplete="off">
+            {/* Fake fields to block browser autofill */}
+            <input
+              type="text"
+              name="fake-user"
+              autoComplete="username"
+              style={{ display: "none" }}
+            />
+            <input
+              type="password"
+              name="fake-pass"
+              autoComplete="current-password"
+              style={{ display: "none" }}
+            />
+
             <div className="vk-form-field">
               <input
                 type="email"
@@ -86,6 +100,7 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
                 required
+                autoComplete="off"
               />
             </div>
             <div className="vk-form-field">
@@ -95,6 +110,7 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
                 required
+                autoComplete="new-password"
               />
             </div>
             <div className="vk-form-field">
