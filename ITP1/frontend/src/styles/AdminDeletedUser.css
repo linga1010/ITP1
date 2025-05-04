@@ -3,11 +3,21 @@
     color: white;
     font-weight: bold;
 }
+.admin-dashboard-container td {
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+  max-width: 200px; /* Optional: Limit width */
+}
+
 .admin-dashboard-container table,
 .admin-dashboard-container th,
 .admin-dashboard-container td {
   color: #000000;
   font-size: 0.9rem;
+  padding: 10px;
+  vertical-align: top;
+  text-align: left;
   
 }
 .maincontent {
