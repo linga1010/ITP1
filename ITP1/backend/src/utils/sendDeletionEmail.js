@@ -27,7 +27,7 @@ const sendDeletionEmail = async (userDetails, reason) => {
             <p style="font-size: 18px; color: #333;">We regret to inform you that your account has been deleted.</p>
             <hr style="margin: 20px 0;" />
             <p style="font-size: 16px; font-weight: bold; color: #333;">Reason for deletion:</p>
-            <p style="font-size: 16px; color: #666;">${reason}</p>
+            <p style="font-size: 20px; color: #FF0000;font-weight :bold">${reason}</p>
             <hr style="margin: 20px 0;" />
             <p style="font-size: 16px; color: #666;">If you have any questions or believe this is a mistake, please contact us.</p>
             <p style="font-size: 14px; color: #888;">Thank you for being a part of VK AURA.</p>

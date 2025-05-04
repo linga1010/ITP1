@@ -30,7 +30,7 @@ const sendSurveyEmail = async (email) => {
                 <li style="font-size: 14px; font-weight: 500; color: #333;">3. Is there anything we could have done differently?</li>
               </ul>
               <p style="font-size: 16px; color: #666;">Please reply to this email with your responses, or you can fill out our survey form here:</p>
-              <a href="https://your-survey-link.com" style="font-size: 16px; color: #4CAF50; text-decoration: none;">Take the Survey</a>
+              <a href="https://vkaura.com" style="font-size: 16px; color: #4CAF50; text-decoration: none;">Take the Survey</a>
               <hr style="margin: 20px 0;" />
               <p style="font-size: 14px; font-weight: 500; color: #888;">Thank you for your time and support!</p>
               <p style="font-size: 14px; font-weight: 600; color: #4CAF50;">– Team VK AURA 🕉️</p>

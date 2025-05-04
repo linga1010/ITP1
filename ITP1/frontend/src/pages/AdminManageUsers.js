@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/AdminUser.css';
-import Adminnaviagtion from "../Component/Adminnavigation"; 
+import Adminnaviagtion from "../Component/Adminnavigation";
 
 const defaultProfilePicUrl = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
 
@@ -15,7 +15,6 @@ const statusClassMap = {
   success: 'status-success',
 };
 
-// ✅ Emoji function
 const getEmoji = (rating) => {
   switch (rating) {
     case 1: return "😞";
@@ -39,14 +38,17 @@ const AdminManageUsers = () => {
   const [userToDelete, setUserToDelete] = useState(null);
   const [deletionReason, setDeletionReason] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isDeleting, setIsDeleting] = useState(false); // ✅ new state
   const modalRef = useRef();
 
   useEffect(() => {
     verifyAdminAndFetchUsers();
     const handleClickOutside = (e) => {
       if (modalRef.current && !modalRef.current.contains(e.target)) {
-        setShowUserModal(false);
-        setShowDeleteModal(false);
+        if (!isDeleting) {
+          setShowUserModal(false);
+          setShowDeleteModal(false);
+        }
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -112,7 +114,8 @@ const AdminManageUsers = () => {
 
   const handleDeleteUser = (userId) => {
     setUserToDelete(userId);
-    setDeletionReason(''); 
+    setDeletionReason('');
+    setIsDeleting(false);
     setShowDeleteModal(true);
   };
 
@@ -121,18 +124,20 @@ const AdminManageUsers = () => {
       alert('❌ Please provide a reason for deleting the user.');
       return;
     }
+    setIsDeleting(true);
     try {
       await axios.delete(`http://localhost:5000/api/admin/users/${userToDelete}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         data: { reason: deletionReason },
       });
-      alert('User successfully deleted');
+      alert('✅ User successfully deleted');
       setUsers(users.filter((u) => u._id !== userToDelete));
       setShowDeleteModal(false);
       setDeletionReason('');
     } catch (err) {
       alert('❌ Error deleting user');
-      setShowDeleteModal(false);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -170,12 +175,12 @@ const AdminManageUsers = () => {
           />
         </div>
         {searchTerm && (
-  <div className="search-result-count">
-    <p>
-      🔍 {filteredAdmins.length + filteredUsers.length} result{(filteredAdmins.length + filteredUsers.length) !== 1 ? 's' : ''} found
-    </p>
-  </div>
-)}
+          <div className="search-result-count">
+            <p>
+              🔍 {filteredAdmins.length + filteredUsers.length} result{(filteredAdmins.length + filteredUsers.length) !== 1 ? 's' : ''} found
+            </p>
+          </div>
+        )}
 
         {error && <p className="error-text">{error}</p>}
 
@@ -217,7 +222,7 @@ const AdminManageUsers = () => {
           <div className="modal" >
             <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => setShowUserModal(false)}>×</span>
-              <h2 >User Details</h2>
+              <h2>User Details</h2>
               <div className="user-info">
                 <img src={selectedUser.profilePic || defaultProfilePicUrl} alt={selectedUser.name} className="user-profile-pic-large" />
                 <div className="user-fields">
@@ -227,14 +232,10 @@ const AdminManageUsers = () => {
                   <p><strong>Address:</strong> {selectedUser.address || '—'}</p>
                 </div>
               </div>
-
-              {/* Order History */}
               <h2>Order History</h2>
               <div className="order-history">
                 {selectedUser.orderHistory.length > 0 ? selectedUser.orderHistory.map(order => {
-                  const computedTotal = order.items.reduce(
-                    (sum, it) => sum + it.finalPrice * it.quantity, 0
-                  );
+                  const computedTotal = order.items.reduce((sum, it) => sum + it.finalPrice * it.quantity, 0);
                   const statusClass = statusClassMap[order.status.toLowerCase()] || '';
                   return (
                     <div className="order-card" key={order._id}>
@@ -263,8 +264,6 @@ const AdminManageUsers = () => {
                   );
                 }) : <p className="no-orders">No orders found.</p>}
               </div>
-
-              {/* Feedback History */}
               <h2>Feedback History</h2>
               <div className="order-history">
                 {selectedUser.feedbackHistory.length > 0 ? selectedUser.feedbackHistory.map(fb => (
@@ -286,7 +285,7 @@ const AdminManageUsers = () => {
                           (
                           {fb.likes.map((like, idx) => (
                             <span key={idx}>
-                              <span style={{ color: like.includes('#admin') ? 'red' : 'black', fontWeight: like.includes('#admin') ? 'bold' : 'bold' }}>
+                              <span style={{ color: like.includes('#admin') ? 'red' : 'black', fontWeight: 'bold' }}>
                                 {like}
                               </span>
                               {idx < fb.likes.length - 1 && ', '}
@@ -306,16 +305,26 @@ const AdminManageUsers = () => {
         {showDeleteModal && (
           <div className="modal">
             <div className="modal-content" ref={modalRef}>
-              <span className="close" onClick={() => setShowDeleteModal(false)}>×</span>
+              <span className="close" onClick={() => !isDeleting && setShowDeleteModal(false)}>×</span>
               <h2>Confirm Remove</h2>
               <textarea
                 placeholder="Reason for deletion"
                 value={deletionReason}
                 onChange={(e) => setDeletionReason(e.target.value)}
+                disabled={isDeleting}
               />
+              {isDeleting && (
+                <p className="deleting-msg" style={{ color: 'red', fontWeight: 'bold' }}>
+                  Removing user, please wait...
+                </p>
+              )}
               <div className="modal-actions">
-                <button className="admin-user-btn" onClick={confirmDelete}>Confirm</button>
-                <button className="admin-user-btn cancel" onClick={() => setShowDeleteModal(false)}>Cancel</button>
+                <button className="admin-user-btn" onClick={confirmDelete} disabled={isDeleting}>
+                  {isDeleting ? "Removing..." : "Confirm"}
+                </button>
+                <button className="admin-user-btn cancel" onClick={() => setShowDeleteModal(false)} disabled={isDeleting}>
+                  Cancel
+                </button>
               </div>
             </div>
           </div>
@@ -330,5 +339,3 @@ const AdminManageUsers = () => {
 };
 
 export default AdminManageUsers;
-
-
