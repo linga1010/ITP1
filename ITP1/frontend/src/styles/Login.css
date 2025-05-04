@@ -141,6 +141,7 @@ h2 i {
   border-radius: 50px;
   font-size: 1em;
   color: #333;
+  
   background: rgba(255, 255, 255, 0.8);
 }
 
@@ -194,3 +195,14 @@ input::placeholder {
     font-size: 18px;
   }
 }
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  font-family: "Poppins", sans-serif !important;
+  font-weight: 400 !important;
+  -webkit-text-fill-color: #333 !important;
+  box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.8) inset !important;
+  transition: background-color 9999s ease-in-out 0s !important;
+}
+

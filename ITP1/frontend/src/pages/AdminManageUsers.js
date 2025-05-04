@@ -112,6 +112,7 @@ const AdminManageUsers = () => {
 
   const handleDeleteUser = (userId) => {
     setUserToDelete(userId);
+    setDeletionReason(''); 
     setShowDeleteModal(true);
   };
 
@@ -213,7 +214,7 @@ const AdminManageUsers = () => {
         </table>
 
         {showUserModal && selectedUser && (
-          <div className="modal" style={{ marginTop: '80px' }}>
+          <div className="modal" >
             <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => setShowUserModal(false)}>×</span>
               <h2 >User Details</h2>
@@ -306,7 +307,7 @@ const AdminManageUsers = () => {
           <div className="modal">
             <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => setShowDeleteModal(false)}>×</span>
-              <h3>Confirm Remove</h3>
+              <h2>Confirm Remove</h2>
               <textarea
                 placeholder="Reason for deletion"
                 value={deletionReason}
