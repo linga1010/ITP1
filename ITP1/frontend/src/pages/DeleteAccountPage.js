@@ -8,12 +8,14 @@ const DeleteAccountPage = () => {
   const [deletePassword, setDeletePassword] = useState('');
   const [error,          setError]          = useState('');
   const [message,        setMessage]        = useState('');
+  const [isDeleting,     setIsDeleting]     = useState(false); // ✅ NEW
   const navigate = useNavigate();
 
   const handleDeleteAccount = () => {
     if (!deletePassword) {
       return setError('❌ Please enter your password to confirm deletion');
     }
+    setIsDeleting(true); // ✅ Show progress
     const token = localStorage.getItem('token');
     axios
       .delete('http://localhost:5000/api/users/delete-account', {
@@ -29,17 +31,23 @@ const DeleteAccountPage = () => {
       .catch(err => {
         setError('❌ ' + (err.response?.data?.message || 'Error deleting account'));
         setMessage('');
+        setIsDeleting(false); // ✅ Reset on error
       });
   };
 
   return (
-    <div className="dap-container" >
-      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '0px',marginBottom:'30PX', textAlign: 'center',letterSpacing: '1px' }}>
-      Delete Account </p>
-      
+    <div className="dap-container">
+      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '0px', marginBottom: '30px', textAlign: 'center', letterSpacing: '1px' }}>
+        Delete Account
+      </p>
 
       {message && <p className="dap-success">{message}</p>}
       {error   && <p className="dap-error">{error}</p>}
+      {isDeleting && (
+        <p style={{ textAlign: 'center', fontWeight: 'bold', color: 'red' }}>
+          Deleting account... please wait
+        </p>
+      )}
 
       <input
         type="password"
@@ -47,18 +55,21 @@ const DeleteAccountPage = () => {
         placeholder="Confirm Password to Delete"
         value={deletePassword}
         onChange={e => setDeletePassword(e.target.value)}
+        disabled={isDeleting} // ✅ disable input during deletion
       />
 
       <div className="dap-button-group">
         <button
           className="dap-btn dap-delete-btn"
           onClick={handleDeleteAccount}
+          disabled={isDeleting} // ✅ disable during deletion
         >
-          ✅Delete Account
+          {isDeleting ? 'Removing...' : '✅Delete Account'}
         </button>
         <button
           className="dap-btn dap-cancel-btn"
           onClick={() => navigate('/view-profile')}
+          disabled={isDeleting} // ✅ disable during deletion
         >
           ❌Cancel
         </button>
