@@ -1,3 +1,5 @@
+// ✅ Order.js (Modified to enrich cart with current product cost/selling prices)
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -12,13 +14,13 @@ const OrderPage = () => {
   const [isAgreed, setIsAgreed] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [location, setLocation] = useState("");
-  const [phone, setPhone] = useState(user?.phone || "");  // ✨ ADD THIS
+  const [phone, setPhone] = useState(user?.phone || "");
 
   useEffect(() => {
     if (!user) return;
     const storedCart = JSON.parse(localStorage.getItem(`cart_user_${user._id}`)) || [];
     setCart(storedCart);
-    setPhone(user?.phone || ""); // ✨ Set initial phone
+    setPhone(user?.phone || "");
   }, [user]);
 
   const getTotalPrice = () =>
@@ -44,7 +46,7 @@ const OrderPage = () => {
     localStorage.setItem(`cart_user_${user._id}`, JSON.stringify(updated));
   };
 
-  const handlePay = () => {
+  const handlePay = async () => {
     if (!user) {
       message.error("❌ User not logged in! Please log in to continue.");
       navigate("/login");
@@ -54,26 +56,56 @@ const OrderPage = () => {
       message.error("Your cart is empty!");
       return;
     }
-    setModalVisible(true);
+
+    try {
+      const pkgRes = await axios.get("http://localhost:5000/api/packages");
+      const prodRes = await axios.get("http://localhost:5000/api/products");
+      const allPackages = pkgRes.data;
+      const allProducts = prodRes.data;
+
+      const enrichedCart = cart.map(item => {
+        const pkg = allPackages.find(p => p._id === item._id || p.name === item.name);
+        const enrichedProducts = pkg?.products.map(({ productId, quantity }) => {
+          const prod = allProducts.find(p => p._id === productId._id || p._id === productId);
+          return {
+            productId: prod?._id,
+            productName: prod?.name,
+            quantity,
+            costPriceAtOrder: prod?.costPrice,
+            sellingPriceAtOrder: prod?.sellingPrice
+          };
+        }) || [];
+
+        return {
+          ...item,
+          price: pkg?.totalPrice,
+        finalPrice: pkg?.finalPrice,
+        discountRate: pkg?.discount || 0, 
+        products: enrichedProducts
+        };
+      });
+
+      localStorage.setItem(`cart_user_${user._id}`, JSON.stringify(enrichedCart));
+      setModalVisible(true);
+    } catch (error) {
+      console.error("❌ Error enriching cart:", error);
+      message.error("❌ Could not prepare order. Try again.");
+    }
   };
 
   const handleConfirmLocation = () => {
     const txt = location.trim();
     const phoneTrimmed = phone.trim();
-  
+
     if (!txt) {
       message.error("Please enter your location.");
       return;
     }
-  
-    // 📌 Validate Phone Number
-    const phoneRegex = /^0\d{9}$/; // Must start with 0 and have 10 digits
+    const phoneRegex = /^0\d{9}$/;
     if (!phoneRegex.test(phoneTrimmed)) {
       message.error("Please enter a valid 10-digit phone number starting with 0.");
       return;
     }
-  
-    // 📌 Validate Location
     const coordRegex = /^Lat: [-+]?[0-9]*\.?[0-9]+, Long: [-+]?[0-9]*\.?[0-9]+$/;
     const addrRegex = /^[a-zA-Z0-9\s,.-]{5,}$/;
     if (coordRegex.test(txt) || addrRegex.test(txt)) {
@@ -82,17 +114,12 @@ const OrderPage = () => {
       message.error("Please enter a valid address (min 5 characters) or click ‘Share My Location’.");
     }
   };
-  
-  
 
   const proceedToPayment = () => {
     try {
-      // Save cart, total, location, and phone to localStorage
       localStorage.setItem(`location_user_${user._id}`, location);
-      localStorage.setItem(`phone_user_${user._id}`, phone);  // ✨ Save phone
+      localStorage.setItem(`phone_user_${user._id}`, phone);
       localStorage.setItem(`total_price_user_${user._id}`, getTotalPrice());
-      
-      
 
       message.success("✅ Location saved. Proceeding to payment...");
       setModalVisible(false);

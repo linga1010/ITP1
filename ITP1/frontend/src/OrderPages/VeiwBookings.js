@@ -49,7 +49,7 @@ const ViewBookings = () => {
         ]);
 
         const [ratingsRes] = await Promise.all([
-          axios.get("http://localhost:5000/api/order-rating") // 👈 API to get all ratings
+          axios.get("http://localhost:5000/api/order-rating") 
         ]);
         
         setRatings(ratingsRes.data);
@@ -107,51 +107,108 @@ const ViewBookings = () => {
   const calculateSalesAndProfit = (orders, productList, packageList) => {
     let sales = 0;
     let profit = 0;
-
+  
     orders.forEach(order => {
       sales += order.total;
+      let orderHasAllData = true;
+      let orderProfit = 0;
+  
       order.items.forEach(item => {
-        const pack = packageList.find(p => p.name === item.name);
-        if (pack) {
-          let itemProfit = 0;
-          pack.products.forEach(({ productId, quantity }) => {
-            const prod = productList.find(p => p._id === productId._id);
-            if (prod) {
-              const unitsSold = quantity * item.quantity;
-              itemProfit += (prod.sellingPrice - prod.costPrice) * unitsSold;
-            }
-          });
-          const discount = (pack.totalPrice - pack.finalPrice) * item.quantity;
-          profit += itemProfit - discount;
+        let itemProfit = 0;
+  
+        if (!item.products || !Array.isArray(item.products)) {
+          orderHasAllData = false;
+          return;
         }
+  
+        for (const prod of item.products) {
+          if (
+            prod.costPriceAtOrder === undefined ||
+            prod.sellingPriceAtOrder === undefined ||
+            prod.quantity === undefined
+          ) {
+            orderHasAllData = false;
+            return;
+          }
+  
+          const quantity = Number(prod.quantity || 0);
+          const cost = Number(prod.costPriceAtOrder || 0);
+          const sell = Number(prod.sellingPriceAtOrder || 0);
+          itemProfit += (sell - cost) * quantity * (item.quantity || 1);
+        }
+  
+        if (item.price === undefined || item.finalPrice === undefined) {
+          orderHasAllData = false;
+          return;
+        }
+  
+        const discount = (item.price - item.finalPrice) * (item.quantity || 1);
+        orderProfit += itemProfit - discount;
       });
+  
+      if (orderHasAllData) {
+        profit += orderProfit;
+      }
     });
-    
+  
     setTotalSales(sales);
     setTotalProfit(profit);
   };
-
+  
+  
+  
   const calculateOrderProfit = (order) => {
     if (order.status !== "delivered" || !isInDateRange(order.createdAt)) return "0.00";
-
+  
     let totalProfit = 0;
-    order.items.forEach(item => {
-      const pack = packages.find(p => p.name === item.name);
-      if (pack) {
-        let itemProfit = 0;
-        pack.products.forEach(({ productId, quantity }) => {
-          const prod = products.find(p => p._id === productId._id);
-          if (prod) {
-            const unitsSold = quantity * item.quantity;
-            itemProfit += (prod.sellingPrice - prod.costPrice) * unitsSold;
-          }
-        });
-        const discount = (pack.totalPrice - pack.finalPrice) * item.quantity;
-        totalProfit += itemProfit - discount;
+    let hasAllPricingData = true;
+  
+    for (const item of order.items) {
+      let itemProfit = 0;
+  
+      if (!item.products || !Array.isArray(item.products)) {
+        hasAllPricingData = false;
+        break;
       }
-    });
+  
+      for (const prod of item.products) {
+        if (
+          prod.costPriceAtOrder === undefined ||
+          prod.sellingPriceAtOrder === undefined ||
+          prod.quantity === undefined
+        ) {
+          hasAllPricingData = false;
+          break;
+        }
+  
+        const quantity = Number(prod.quantity || 0);
+        const cost = Number(prod.costPriceAtOrder || 0);
+        const sell = Number(prod.sellingPriceAtOrder || 0);
+        itemProfit += (sell - cost) * quantity * (item.quantity || 1);
+      }
+  
+      if (item.price === undefined || item.finalPrice === undefined) {
+        hasAllPricingData = false;
+        break;
+      }
+  
+      const discount = (item.price - item.finalPrice) * (item.quantity || 1);
+      totalProfit += itemProfit - discount;
+    }
+  
+    if (!hasAllPricingData) return "N/A";
     return totalProfit.toFixed(2);
   };
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
 
   const updateOrderStatus = async (orderId, status) => {
     const token = localStorage.getItem("token");
@@ -300,7 +357,7 @@ const ViewBookings = () => {
             <h3 style={{ fontSize: '24px', fontWeight: 'bold'}}>Total Sales</h3>
             <p>Total Sales: Rs {totalSales}</p>
           </div>
-          <div className="totals-box" style={{width:'450px'}}>
+          <div className="totals-box" style={{marginLeft:'50px',width:'450px'}}>
             <h3 style={{ fontSize: '24px', fontWeight: 'bold'}}>Profit</h3>
             <p>Total Profit: Rs {totalProfit.toFixed(2)}</p>
           </div>

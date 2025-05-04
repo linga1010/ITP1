@@ -85,7 +85,6 @@ const Payment = () => {
     }
 
     try {
-      // 1. Payment API
       const paymentResponse = await axios.post("http://localhost:5000/api/payment", {
         userId: user._id,
         userName: user.name,
@@ -100,29 +99,32 @@ const Payment = () => {
       });
 
       if (paymentResponse.data.success) {
-        // 2. Place Order after successful payment
-        const orderResponse = await axios.post("http://localhost:5000/api/orders", {
+        // ✅ Include historical prices in DB
+        const orderPayload = {
           user: user.email,
           userName: user.name,
           userPhone: storedPhone,
-          items: cart,
+          items: cart.map(item => ({
+            name: item.name,
+            price: item.price,
+            finalPrice: item.finalPrice,
+            quantity: item.quantity,
+            products: item.products || [],
+          })),
           total: totalPrice,
           location,
-        });
-
+        };        
+        const orderResponse = await axios.post("http://localhost:5000/api/orders", orderPayload);
         const newOrderId = orderResponse.data.order._id;
         setCreatedOrderId(newOrderId);
 
-        // Clear cart from localStorage
         localStorage.removeItem(`cart_user_${user._id}`);
         localStorage.removeItem(`total_price_user_${user._id}`);
         localStorage.removeItem(`location_user_${user._id}`);
         localStorage.removeItem(`phone_user_${user._id}`);
 
-        // ✅ Only one success message after both Payment and Order
         message.success("✅ Payment and Order placed successfully!");
-
-        setRatingModalVisible(true); // Show Rating Modal
+        setRatingModalVisible(true);
       } else {
         message.error(paymentResponse.data.message || "❌ Payment failed. Try again.");
       }
