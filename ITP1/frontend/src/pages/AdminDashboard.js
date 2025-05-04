@@ -97,11 +97,11 @@ const AdminDashboard = () => {
         axios.get('http://localhost:5000/api/packages', { headers }),
       ]);
 
-      const allOrders = ordersRes.data || [];
+      const orders = ordersRes.data || [];
       const products = productsRes.data || [];
       const packs = packagesRes.data || [];
 
-      calculatePackageSalesAndProfit(allOrders, products, packs);
+      calculatePackageSalesAndProfit(orders, products, packs);
     } catch (err) {
       console.error('Error fetching package data:', err);
     }
@@ -110,33 +110,36 @@ const AdminDashboard = () => {
   const calculatePackageSalesAndProfit = (orders, products, packs) => {
     let sales = 0;
     let profit = 0;
+  
     const delivered = (orders || []).filter(o => o.status === 'delivered');
     const filtered = filterByDate(delivered, 'createdAt');
-
+  
     filtered.forEach(order => {
       sales += order.total || 0;
+  
       (order.items || []).forEach(item => {
-        const pack = packs.find(p => p._id === item.packageId || p.name === item.name);
-        if (!pack) return;
-
+        // 🛑 Skip profit if no historical pricing
+        if (!item.products || item.products.length === 0) return;
+  
         let itemProfit = 0;
-        (pack.products || []).forEach(({ productId, quantity }) => {
-          const prod = products.find(p => p._id === productId._id);
-          if (prod) {
-            const unitsSold = (quantity || 0) * (item.quantity || 0);
-            itemProfit += (prod.sellingPrice - prod.costPrice) * unitsSold;
-          }
+        item.products.forEach(prod => {
+          const quantity = Number(prod.quantity || 0);
+          const cost = Number(prod.costPriceAtOrder || 0);
+          const sell = Number(prod.sellingPriceAtOrder || 0);
+          const unitProfit = (sell - cost) * quantity * (item.quantity || 1);
+          itemProfit += unitProfit;
         });
-
-        const discountPerPack = (pack.totalPrice || 0) - (pack.finalPrice || 0);
-        itemProfit -= discountPerPack * (item.quantity || 0);
-        profit += itemProfit;
+  
+        // ✅ Calculate discount from item price - finalPrice
+        const discount = ((item.price || 0) - (item.finalPrice || 0)) * (item.quantity || 1);
+        profit += itemProfit - discount;
       });
     });
-
+  
     setPackageSales(sales);
     setPackageProfit(profit);
   };
+  
 
   const filterByDate = (arr, field) => {
     const start = startDate ? new Date(startDate) : null;

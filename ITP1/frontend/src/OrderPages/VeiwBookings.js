@@ -240,27 +240,24 @@ const ViewBookings = () => {
     const sel = new Date(e.target.value);
     if (endDate) {
       const end = new Date(endDate);
-      const min = new Date(end);
-      min.setMonth(end.getMonth() - 1);
-      if (sel > end || sel < min) {
-        return alert("⚠️ Start date must be before end date .");
+      if (sel > end) {
+        return alert("⚠️ Start date must be before end date.");
       }
     }
     setStartDate(e.target.value);
   };
-
+  
   const handleEndDateChange = e => {
     const sel = new Date(e.target.value);
     if (startDate) {
-      const st = new Date(startDate);
-      const max = new Date(st);
-      max.setMonth(st.getMonth() + 1);
-      if (sel < st || sel > max) {
-        return alert("⚠️ End date must be after start date .");
+      const start = new Date(startDate);
+      if (sel < start) {
+        return alert("⚠️ End date must be after start date.");
       }
     }
     setEndDate(e.target.value);
   };
+  
 
   const clearFilters = () => {
     setStartDate("");
@@ -352,16 +349,26 @@ const ViewBookings = () => {
 
           <h4 className="summary-heading" style={{ fontSize: '24px', fontWeight: 'bold', color: '#374495'}}>💰 Sales & Profit</h4>
 
-          <div className="totals-container" style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-          <div className="totals-box" style={{marginLeft:'50px',width:'450px'}}>
-            <h3 style={{ fontSize: '24px', fontWeight: 'bold'}}>Total Sales</h3>
-            <p>Total Sales: Rs {totalSales}</p>
-          </div>
-          <div className="totals-box" style={{marginLeft:'50px',width:'450px'}}>
-            <h3 style={{ fontSize: '24px', fontWeight: 'bold'}}>Profit</h3>
-            <p>Total Profit: Rs {totalProfit.toFixed(2)}</p>
-          </div>
-        </div>
+          <div
+  className="totals-container"
+  style={{
+    display: 'flex',
+    gap: '40px',               // more spacing between the boxes
+    marginTop: '20px',
+    flexWrap: 'nowrap',        // ❗ prevents line break
+    justifyContent: 'center'   // centers the boxes nicely
+  }}
+>
+  <div className="totals-box" style={{ width: '450px' }}>
+    <h3 style={{ fontSize: '24px', fontWeight: 'bold' }}>Total Sales</h3>
+    <p>Total Sales: Rs {totalSales}</p>
+  </div>
+  <div className="totals-box" style={{ width: '450px' }}>
+    <h3 style={{ fontSize: '24px', fontWeight: 'bold' }}>Profit</h3>
+    <p>Total Profit: Rs {totalProfit.toFixed(2)}</p>
+  </div>
+</div>
+
 
           
           
