@@ -171,7 +171,7 @@ const ProfilePage = () => {
               {uploading && <p>Uploading image...</p>}
               {formData.profilePic && formData.profilePic !== user.profilePic && (
                 <button className="action-btn" onClick={() => handleUpdate('profilePic')}>
-                  Confirm
+                  ✅Confirm
                 </button>
               )}
               <button
@@ -181,17 +181,17 @@ const ProfilePage = () => {
                   setFormData((prev) => ({ ...prev, profilePic: '' }));
                 }}
               >
-                Cancel
+                ❌Cancel
               </button>
             </div>
           ) : (
             <div>
               <button className="action-btn" onClick={() => setIsEditing((prev) => ({ ...prev, profilePic: true }))} style={{width:'290PX'}}>
-                Change Profile Pic
+              🖼️Change Pic
               </button>
               {user.profilePic && user.profilePic !== defaultProfilePicUrl && (
                 <button className="cancelremove" onClick={handleRemoveProfilePic} style={{width:'200px'}}>
-                  Remove
+                  🗑️Remove
                 </button>
               )}
             </div>
@@ -225,7 +225,7 @@ const ProfilePage = () => {
           onClick={() => handleUpdate('name')}
           style={{ whiteSpace: 'nowrap' }}
         >
-          Confirm
+          ✅Confirm
         </button>
       )}
 
@@ -237,7 +237,7 @@ const ProfilePage = () => {
         }}
         style={{ whiteSpace: 'nowrap' }}
       >
-        Cancel
+        ❌Cancel
       </button>
     </div>
   ) : (
@@ -249,7 +249,7 @@ const ProfilePage = () => {
       }}
       style={{ marginTop: '10px',width: '500px' }}
     >
-      Change Name
+       ✏️Change Name
     </button>
   )}
 </div>
@@ -278,7 +278,7 @@ const ProfilePage = () => {
           onClick={() => handleUpdate('address')}
           style={{ whiteSpace: 'nowrap' }}
         >
-          Confirm
+           ✅Confirm
         </button>
       )}
 
@@ -290,7 +290,7 @@ const ProfilePage = () => {
         }}
         style={{ whiteSpace: 'nowrap' }}
       >
-        Cancel
+       ❌Cancel
       </button>
     </div>
   ) : (
@@ -302,7 +302,7 @@ const ProfilePage = () => {
       }}
       style={{ marginTop: '10px',width: '500px' }}
     >
-      Change Address
+     🏠Change Address
     </button>
   )}
 </div>
@@ -336,7 +336,7 @@ const ProfilePage = () => {
           onClick={() => handleUpdate('phone')}
           style={{ whiteSpace: 'nowrap' }}
         >
-          Confirm
+          ✅Confirm
         </button>
       )}
 
@@ -348,7 +348,7 @@ const ProfilePage = () => {
         }}
         style={{ whiteSpace: 'nowrap' }}
       >
-        Cancel
+        ❌Cancel
       </button>
     </div>
   ) : (
@@ -360,7 +360,7 @@ const ProfilePage = () => {
       }}
       style={{ marginTop: '10px' ,width: '500px'}}
     >
-      Change Phone
+      📞Change Phone
     </button>
   )}
 </div>
@@ -370,7 +370,7 @@ const ProfilePage = () => {
       </div>
 
       <button className="action-btn" onClick={handleBackToProfile} style={{width: '500px' }}>
-        ⬅ Back to Profile
+      ⬅️Back to Profile
       </button>
     </div>
   );
