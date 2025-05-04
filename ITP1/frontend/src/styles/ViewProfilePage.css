@@ -17,7 +17,7 @@
   height: 300px;
   border-radius: 50%;
   object-fit: cover;
-  border: 5px solid #ffd700;
+  border: 5px solid #007bff;
   margin-bottom: 20px;
   transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
