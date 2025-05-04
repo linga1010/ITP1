@@ -106,13 +106,13 @@ const ChangePasswordPage = () => {
           className="cpw-btn cpw-save-btn"
           onClick={handleChangePassword}
         >
-          Update Password
+          ✅Update Password
         </button>
         <button
           className="cpw-btn cpw-cancel-btn"
           onClick={() => navigate('/view-profile')}
         >
-          Cancel
+          ❌Cancel
         </button>
       </div>
     </div>

@@ -71,7 +71,7 @@
 .navbar {
   position: fixed;
   top: 0;
-  width: 100%;
+  width: 98%;
   height: 80px;
   background: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -98,6 +98,7 @@
 
 .nav-center h2 {
   font-size: 1.3rem;
+
   text-align: center;
   color: #333;
   white-space: nowrap;
@@ -132,9 +133,11 @@
 }
 
 .profile-photo {
-  width: 70px;
-  height: 69px;
-  border-radius: 50%;
+  width: 75px;
+  height: 75px;
+  vertical-align: top;
+
+  border-radius: 80%;
   object-fit: cover;
   border: 2px solid #007bff;
 }

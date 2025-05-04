@@ -54,13 +54,13 @@ const DeleteAccountPage = () => {
           className="dap-btn dap-delete-btn"
           onClick={handleDeleteAccount}
         >
-          Delete Account
+          ✅Delete Account
         </button>
         <button
           className="dap-btn dap-cancel-btn"
           onClick={() => navigate('/view-profile')}
         >
-          Cancel
+          ❌Cancel
         </button>
       </div>
     </div>

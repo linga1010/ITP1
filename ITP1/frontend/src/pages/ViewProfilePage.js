@@ -97,7 +97,7 @@ const ViewProfilePage = () => {
           className="view-action-btn"
           onClick={handleBackToDashboard}
         >
-          ⬅ Back to Dashboard
+           ⬅️ Back to Dashboard
         </button>
       </div>
     </div>
