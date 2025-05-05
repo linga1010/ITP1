@@ -84,10 +84,10 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Delete feedback
+
 // DELETE Feedback Route
 router.delete('/:id', async (req, res) => {
-  const { userEmail } = req.body; 
+  const { userEmail } = req.body;
 
   try {
     const feedback = await Feedback.findById(req.params.id);
@@ -95,10 +95,15 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Feedback not found' });
     }
 
-    // Allow admin to delete anything
-    if (userEmail !== feedback.userEmail && userEmail !== 'admin@admin.com') {
+    
+    const emailOnly = userEmail?.split('#')[0]; // ✅ real email
+    const isAdmin = userEmail?.endsWith('#admin');
+    const isOwner = emailOnly === feedback.userEmail;
+    
+    if (!isOwner && !isAdmin) {
       return res.status(403).json({ message: 'Unauthorized to delete this feedback' });
     }
+    
 
     await feedback.deleteOne();
     res.status(200).json({ message: 'Feedback deleted successfully' });

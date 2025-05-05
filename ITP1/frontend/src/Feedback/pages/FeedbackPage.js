@@ -168,28 +168,56 @@ const FeedbackPage = () => {
             {isFeedbackVisible ? "Hide Feedbacks" : "View Feedbacks"}
           </button>
 
-          {/* Feedback List */}
-          {isFeedbackVisible && (
-            <>
-              <h3 style={{ marginTop: "20px" }}>All Feedbacks</h3>
-              {feedbacks.length === 0 ? (
-                <p>No feedback available.</p>
-              ) : (
-                feedbacks.map((feedback) => (
-                  <div key={feedback._id} style={{ marginBottom: "10px" }}>
-                    <FeedbackItem
-                      feedback={feedback}
-                      canEdit={feedback.userEmail === user.email}
-                      onEdit={() => setEditing(feedback)}
-                      onDelete={() => handleDeleteFeedback(feedback._id)}
-                      onLike={handleLikeFeedback}
-                      userEmail={user.email}
-                    />
-                  </div>
-                ))
-              )}
-            </>
-          )}
+        {/* Feedback List */}
+{isFeedbackVisible && (
+  <>
+    <h3 style={{ marginTop: "20px" }}>All Feedbacks</h3>
+
+    {feedbacks.length === 0 ? (
+      <p>No feedback available.</p>
+    ) : (
+      <>
+        {/* --- Logged-in User's Feedbacks Section --- */}
+        <h4 style={{ marginTop: "15px", color: "#374495" }}>🧑‍💼 Your Feedbacks</h4>
+        {feedbacks
+          .filter((fb) => fb.userEmail === user.email)
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .map((feedback) => (
+            <div key={feedback._id} style={{ marginBottom: "10px" }}>
+              <FeedbackItem
+                feedback={feedback}
+                canEdit={true}
+                onEdit={() => setEditing(feedback)}
+                onDelete={() => handleDeleteFeedback(feedback._id)}
+                onLike={handleLikeFeedback}
+                userEmail={user.email}
+              />
+            </div>
+          ))}
+
+        {/* --- Others' Feedbacks Section --- */}
+        <h4 style={{ marginTop: "30px", color: "#888" }}>🌍 Other Users' Feedbacks</h4>
+        {feedbacks
+          .filter((fb) => fb.userEmail !== user.email)
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .map((feedback) => (
+            <div key={feedback._id} style={{ marginBottom: "10px" }}>
+              <FeedbackItem
+                feedback={feedback}
+                canEdit={false}
+                onEdit={() => {}}
+                onDelete={() => {}}
+                onLike={handleLikeFeedback}
+                userEmail={user.email}
+              />
+            </div>
+          ))}
+      </>
+    )}
+  </>
+)}
+
+
         </div>
       </main>
 
