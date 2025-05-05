@@ -18,17 +18,19 @@ const AdminFeedbackPage = () => {
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm("Are you sure you want to delete this feedback?");
     if (!confirmDelete) return;
-
+  
     if (!user?.email) {
       alert("User email not found. Cannot perform delete.");
       return;
     }
-
-    const result = await deleteFeedback(id, user.email); // ✅ Use dynamic logged-in user email
+  
+    // ✅ Send admin email with '#admin' suffix
+    const result = await deleteFeedback(id, `${user.email}#admin`);
     if (result) {
       setFeedbacks((prev) => prev.filter((fb) => fb._id !== id));
     }
   };
+  
 
   const handleLike = async (id) => {
     if (!user?.email) {
