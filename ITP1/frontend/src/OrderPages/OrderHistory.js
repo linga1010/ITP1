@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import "./OrderHistory.css";
+import OrderProgressBar from "./OrderProgressBar"; // top of file
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
@@ -96,7 +97,10 @@ const OrderHistory = () => {
       {error && <p className="error">{error}</p>}
       {!loading && filteredOrders.length === 0 && <p>No matching orders found.</p>}
       {filteredOrders.map((order) => (
+        
         <div key={order._id} className="order-card">
+          <OrderProgressBar status={order.status} />
+
           <h3>📅 Date: {new Date(order.createdAt).toLocaleDateString()}</h3>
           <h3>⏰ Time: {new Date(order.createdAt).toLocaleTimeString()}</h3>
           <ul>
