@@ -141,58 +141,9 @@ const AdminSummary = () => {
   return (
     <div className="admin-summary-container">
       <Adminnaviagtion />
+
+      
       <p className="admin-summary-title">User Summary</p>
-
-      <div className="admin-summary-search-box">
-        <input
-          type="text"
-          placeholder="Search by date, name, email, or month"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="admin-summary-search-input"
-        />
-        {searchTerm && (
-          <p className="search-count">
-            🔍 {filteredSummary.length} result{filteredSummary.length !== 1 ? 's' : ''} found
-          </p>
-        )}
-      </div>
-
-      <div className="admin-summary-user-details">
-  <h3 className="admin-summary-heading">Users Joined</h3>
-  <div className="admin-summary-table-wrapper">
-    {filteredSummary.length > 0 ? (
-      <table className="admin-summary-user-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Total Users Joined</th>
-                <th>User Details</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredSummary.map((item, index) => (
-                <tr key={index}>
-                  <td>{item._id}</td>
-                  <td>{item.totalUsers}</td>
-                  <td>
-                    <ul>
-                      {Array.isArray(item.users) && item.users.map((user, i) => (
-                        <li key={i}>
-                          Name: {user.name}, Email: {user.email}
-                        </li>
-                      ))}
-                    </ul>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>No users data available.</p>
-        )}
-      </div>
-      </div>
 
       <h3 className="admin-summary-heading">📅 Daily User Join Summary</h3>
       <div className="admin-summary-chart-container">
@@ -249,6 +200,61 @@ const AdminSummary = () => {
           }} />
         ) : <p>Loading monthly chart...</p>}
       </div>
+
+      <div className="admin-summary-search-box">
+        <input
+          type="text"
+          placeholder="Search by date, name, email, or month"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="admin-summary-search-input"
+        />
+        {searchTerm && (
+          <p className="search-count">
+            🔍 {filteredSummary.length} result{filteredSummary.length !== 1 ? 's' : ''} found
+          </p>
+        )}
+      </div>
+
+      
+
+      <div className="admin-summary-user-details">
+  <h3 className="admin-summary-heading">Users Joined</h3>
+  <div className="admin-summary-table-wrapper">
+    {filteredSummary.length > 0 ? (
+      <table className="admin-summary-user-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Total Users Joined</th>
+                <th>User Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredSummary.map((item, index) => (
+                <tr key={index}>
+                  <td>{item._id}</td>
+                  <td>{item.totalUsers}</td>
+                  <td>
+                    <ul>
+                      {Array.isArray(item.users) && item.users.map((user, i) => (
+                        <li key={i}>
+                          Name: {user.name}, Email: {user.email}
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>No users data available.</p>
+        )}
+      </div>
+      </div>
+
+      
     </div>
   );
 };

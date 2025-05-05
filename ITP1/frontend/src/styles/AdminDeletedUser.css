@@ -3,11 +3,29 @@
     color: white;
     font-weight: bold;
 }
+.removedate{
+  width: 75px;
+}
+.remove-user-address{
+  width: 150px;
+}
+.remove-email-phone{
+  width: 250px !important;
+}
+.resonR{
+  width: 200px;
+}
+.remove-name{
+  width: 100px;
+}
+.remove-prof
+{
+  width: 50px;
+}
 .admin-dashboard-container td {
   word-wrap: break-word;
   word-break: break-word;
   white-space: normal;
-  max-width: 200px; /* Optional: Limit width */
 }
 
 .admin-dashboard-container table,
@@ -20,6 +38,8 @@
   text-align: left;
   
 }
+
+
 .maincontent {
     margin-top: 100px;
     margin-bottom: 40px;
