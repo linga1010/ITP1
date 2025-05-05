@@ -4,6 +4,7 @@ import axios from "axios";
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaComments, FaBars, FaTimes } from "react-icons/fa";
 import { useAuth } from "../hooks/useAuth";
 import "../styles/ViewPackage.css";
+import { Input, Button, Card, Row, Col, message } from "antd"
 
 const BASE_URL = "http://localhost:5000";
 
@@ -48,7 +49,7 @@ const ViewPackage = () => {
     }
   
     localStorage.setItem(cartKey, JSON.stringify(cart));
-    alert(`${pkg.name} added to cart.`);
+    message.success(`${pkg.name} added to cart.`);
   };
 
 
