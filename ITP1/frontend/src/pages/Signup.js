@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/Signup.css";
+import vkImage from "../styles/vk.jpg";
 
 const Signup = () => {
   const [step, setStep] = useState(1);
@@ -181,6 +182,7 @@ const Signup = () => {
       ref={boxRef}
     >
       <div className="signup">
+        
         <div className="signupBx">
           <h2>Signup</h2>
           <div ref={messageRef}>

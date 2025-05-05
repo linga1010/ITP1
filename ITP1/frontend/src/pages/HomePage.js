@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/Home.css"; // Ensure this is the correct path
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
+import vkImage from "../styles/vk.jpg";
+import vklogoImage from "../styles/vklogo.png";
+
 
 const BASE_URL = "http://localhost:5000";
 
@@ -57,12 +60,12 @@ const HomePage = () => {
   const getSlidingWindow = (array, currentIndex) => {
     const totalItems = array.length;
     if (totalItems === 0) return [];
-    if (totalItems <= 4) return array;
+    if (totalItems <= 3) return array;
     return [
       array[currentIndex % totalItems],
       array[(currentIndex + 1) % totalItems],
       array[(currentIndex + 2) % totalItems],
-      array[(currentIndex + 3) % totalItems],
+     
     ];
   };
 
@@ -70,21 +73,19 @@ const HomePage = () => {
   const displayedPriests = getSlidingWindow(priests, priestIndex);
 
   return (
-    <div className="home-page">
-      <main className="dashboard-content">
-        <section className="carousel-section">
-          <p className="welcome-heading">
-            {"WELCOME TO VK AURA".split("").map((char, idx) => (
-              char === " " ? (
-                <span key={idx} style={{ width: "20px", display: "inline-block" }}></span>
-              ) : (
-                <span key={idx} style={{ animationDelay: `${idx * 0.3}s` }}>
-                  {char}
-                </span>
-              )
-            ))}
-          </p>
-          <br />
+    <div className="home-page" style={{marginBottom: "0px", marginTop: "0px"}}>
+
+
+<div className="top-banner" style={{marginBottom: "0px"}}>
+<img src={vkImage} alt="Background" className="banner-img large" />
+  <img src={vkImage} alt="Background" className="banner-img large" />
+  <img src={vkImage} alt="Background" className="banner-img large" />
+ </div>
+
+
+<main className="dashboard-content1" >
+ 
+ <section className="carousel-section12">
           <p className="carousel-heading">Packages</p>
           <div className="carousel-container">
             <button className="arrow-button" onClick={() => setPackageIndex((prevIndex) => (prevIndex - 1 + packages.length) % packages.length)}>
@@ -134,8 +135,8 @@ const HomePage = () => {
           </div>
         </section>
       </main>
-
-      <footer className="footer">
+    
+      <footer className="footer" style={{marginTop: "40px"}}>
         <div className="footer-content">
           <p>&copy; 2025 VK Aura. All rights reserved.</p>
           <div className="social-media">

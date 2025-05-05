@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css"; // or "../styles/VkLogin.css"
+import vkImage from "../styles/vk.jpg";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -71,7 +72,8 @@ const Login = () => {
       className={`vk-box ${expanded ? "expanded" : ""}`}
       onMouseEnter={handleMouseEnter}
     >
-      <div className="vk-login">
+      
+<div className="vk-login">
         <div className="vk-loginBx">
           <h2>
             <i className="fa-solid fa-right-to-bracket"></i> Login{" "}
