@@ -1,3 +1,4 @@
+// src/pages/AdminDeletedUsers.js
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -115,6 +116,7 @@ const AdminDeletedUsers = () => {
         <table className="admin-summary-user-table">
           <thead>
             <tr>
+              <th>Pic</th>
               <th>Name</th>
               <th>Email</th>
               <th>Phone</th>
@@ -126,6 +128,13 @@ const AdminDeletedUsers = () => {
           <tbody>
             {filteredUsers.map((user) => (
               <tr key={user._id}>
+                <td>
+                  <img
+                    src={user.profilePic || "/default-avatar.png"}
+                    alt="Profile"
+                    style={{ width: "60px", height: "60px", borderRadius: "50%", objectFit: "cover" }}
+                  />
+                </td>
                 <td>{user.name}</td>
                 <td>{user.email}</td>
                 <td>{user.phone}</td>

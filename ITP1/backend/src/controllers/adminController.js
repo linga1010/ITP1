@@ -33,8 +33,10 @@ export const removeUser = async (req, res) => {
       email: user.email,
       phone: user.phone,
       address: user.address,
+      profilePic: user.profilePic, // ✅ Add this line
       reason: reason,
     });
+    
 
     // Delete the user
     await User.findByIdAndDelete(userId);
