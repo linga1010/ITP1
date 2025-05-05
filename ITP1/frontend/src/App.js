@@ -45,7 +45,7 @@ import UserBookingList from './Bookkingpages/UserBookingList';
 import TermsAndConditions from './OrderPages/Term&condition';
 import ChatPage from './ChatPage/ChatPage';
 import AdminChatPage from './ChatPage/AdminChatPage';
-
+import AddOfferPage from './OrderPages/AddOffer.js';
 
 
 
@@ -102,6 +102,7 @@ function App() {
       <Route path="/ChatPage" element={<ChatPage />} />
       <Route path="/AdminChatPage" element={<AdminChatPage />} />
       <Route path="/admin/view-summary" element={<AdminSummary/>} />
+      <Route path="/admin/Add-Offer" element={<AddOfferPage/>} />
 
 
     
