@@ -1,5 +1,4 @@
-// src/pages/ForgotPassword.jsx
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/ForgotPassword.css";
@@ -23,8 +22,10 @@ const ForgotPassword = () => {
     specialChar: false,
   });
   const [isResendDisabled, setIsResendDisabled] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const navigate = useNavigate();
   const messageRef = useRef(null);
+  const boxRef = useRef(null);
 
   const scrollToMessage = () => {
     if (messageRef.current) {
@@ -51,7 +52,6 @@ const ForgotPassword = () => {
 
   const checkForgotPasswordEmail = async () => {
     if (!formData.email) return setError("❌ Please enter an email.");
-
     setMessage(""); setError(""); setLoading(true);
     try {
       const res = await axios.post(
@@ -94,7 +94,6 @@ const ForgotPassword = () => {
 
   const verifyOTP = async () => {
     if (!formData.otp) return setError("❌ Please enter OTP.");
-
     setMessage(""); setError(""); setLoading(true);
     try {
       await axios.post("http://localhost:5000/api/users/verify-otp", {
@@ -116,7 +115,6 @@ const ForgotPassword = () => {
     e.preventDefault();
     setMessage(""); setError("");
     scrollToMessage();
-
     if (!formData.newPassword || !formData.confirmPassword) {
       setError("❌ Please fill in both password fields.");
       scrollToMessage();
@@ -155,19 +153,41 @@ const ForgotPassword = () => {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (boxRef.current && !boxRef.current.contains(e.target)) {
+        setExpanded(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleMouseEnter = () => {
+    if (!expanded) setExpanded(true);
+  };
+
   return (
-    <div className="vkfp-container">
+    <div
+      className={`vkfp-container ${expanded ? "expanded" : ""}`}
+      onMouseEnter={handleMouseEnter}
+      ref={boxRef}
+    >
       <div className="vkfp-content">
         <div className="vkfp-box">
           <h2>Forgot Password</h2>
 
           <div ref={messageRef}>
-            {message && <p className="vk-success-message ">{message}</p>}
-            {error   && <p className="vk-error-message ">{error}</p>}
+            {message && <p className="vk-success-message">{message}</p>}
+            {error && <p className="vk-error-message">{error}</p>}
           </div>
 
           {step === 1 && (
             <>
+              {/* Autofill prevention fields */}
+              <input type="text" name="fake-user" autoComplete="username" style={{ display: "none" }} />
+              <input type="password" name="fake-pass" autoComplete="current-password" style={{ display: "none" }} />
+
               <input
                 type="email"
                 name="email"
@@ -176,6 +196,7 @@ const ForgotPassword = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
+                autoComplete="off"
               />
               <button
                 type="button"
@@ -201,6 +222,7 @@ const ForgotPassword = () => {
                 value={formData.otp}
                 onChange={handleChange}
                 required
+                autoComplete="off"
               />
               <button
                 type="button"
@@ -222,10 +244,7 @@ const ForgotPassword = () => {
           )}
 
           {step === 3 && (
-            <form
-              className="vkfp-registration-form"
-              onSubmit={handleReset}
-            >
+            <form className="vkfp-registration-form" onSubmit={handleReset} autoComplete="off">
               <input
                 type="password"
                 name="newPassword"
@@ -234,15 +253,14 @@ const ForgotPassword = () => {
                 value={formData.newPassword}
                 onChange={handleChange}
                 required
+                autoComplete="new-password"
               />
               <div className="vkfp-password-criteria">
-                <p>{passwordCriteria.length    ? "✅" : "❌"} At least 8 characters</p>
-                <p>{passwordCriteria.number    ? "✅" : "❌"} At least 1 number (0-9)</p>
-                <p>{passwordCriteria.lowercase ? "✅" : "❌"} At least 1 lowercase letter (a-z)</p>
-                <p>{passwordCriteria.uppercase ? "✅" : "❌"} At least 1 uppercase letter (A-Z)</p>
-                <p>{passwordCriteria.specialChar
-                    ? "✅"
-                    : "❌"} At least 1 special symbol (!@#$%^&*)</p>
+                <p>{passwordCriteria.length ? "✅" : "❌"} At least 8 characters</p>
+                <p>{passwordCriteria.number ? "✅" : "❌"} At least 1 number (0–9)</p>
+                <p>{passwordCriteria.lowercase ? "✅" : "❌"} At least 1 lowercase letter (a–z)</p>
+                <p>{passwordCriteria.uppercase ? "✅" : "❌"} At least 1 uppercase letter (A–Z)</p>
+                <p>{passwordCriteria.specialChar ? "✅" : "❌"} At least 1 special symbol (!@#$%^&*)</p>
               </div>
               <input
                 type="password"
@@ -252,12 +270,9 @@ const ForgotPassword = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
+                autoComplete="new-password"
               />
-              <button
-                type="submit"
-                className="vkfp-btn"
-                disabled={loading}
-              >
+              <button type="submit" className="vkfp-btn" disabled={loading}>
                 {loading ? "Resetting..." : "Reset Password"}
               </button>
             </form>

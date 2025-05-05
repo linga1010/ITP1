@@ -1,6 +1,7 @@
 import express from 'express';
 import { protect, adminOnly } from '../middleware/auth.js';
 import { getUsers, removeUser, getAllBookings,getDeletedUsers } from '../controllers/adminController.js';
+import { getUserSummary } from '../controllers/adminController.js';
 
 const router = express.Router();
 
@@ -18,6 +19,8 @@ router.delete('/users/:id', protect, adminOnly, removeUser);
 // Route to get all bookings (admin-only)
 router.get('/bookings', protect, adminOnly, getAllBookings);
 router.get('/deleted-users', getDeletedUsers);
+// Route to get user summary (admin-only)
+router.get('/user-summary', protect, adminOnly, getUserSummary);
 
 
 export default router;

@@ -30,12 +30,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: 0.5s;
-}
-
-@keyframes rotating {
-  0% { --a: 0deg; }
-  100% { --a: 360deg; }
+  transition: width 0.5s, height 0.5s;
 }
 
 .vk-box::before {
@@ -59,17 +54,19 @@ body {
   border: 8px solid #eaeaea;
 }
 
-.vk-box:hover {
-  width: 450px;
-  height: 500px;
+@keyframes rotating {
+  0% {
+    --a: 0deg;
+  }
+  100% {
+    --a: 360deg;
+  }
 }
 
-.vk-box:hover .vk-login {
-  inset: 40px;
-}
-
-.vk-box:hover .vk-loginBx {
-  transform: translateY(0px);
+/* EXPANDED STATE */
+.vk-box.expanded {
+  width: 550px;
+  height: 700px;
 }
 
 .vk-login {
@@ -89,6 +86,10 @@ body {
   overflow: hidden;
 }
 
+.vk-box.expanded .vk-login {
+  inset: 40px;
+}
+
 .vk-loginBx {
   position: relative;
   display: flex;
@@ -98,9 +99,12 @@ body {
   gap: 00px;
   width: 70%;
   height: auto;
-  padding-bottom: -0px;
   transform: translateY(126px);
   transition: 0.5s;
+}
+
+.vk-box.expanded .vk-loginBx {
+  transform: translateY(0px);
 }
 
 h2 {
@@ -133,33 +137,32 @@ h2 i {
 .vk-box input {
   width: 280px;
   padding: 10px 20px;
-  outline: black;
-  border: black;
-  font-size: 1em;
-  color: #333;
-  background: rgba(255, 255, 255, 0.8);
   border: 2px solid #ccc;
   border-radius: 50px;
-  transition: 0.3s;
+  font-size: 1em;
+  color: #333;
+  
+  background: rgba(255, 255, 255, 0.8);
 }
 
 input::placeholder {
   color: #666;
 }
 
-input[type="submit"],
-button {
+.vk-login-btn {
+  width: 100%;
+  padding: 10px 20px;
   background: #ff8c42;
   border: none;
   font-weight: 500;
   color: #fff;
   cursor: pointer;
-  transition: 0.5s;
+  transition: background-color 0.3s ease;
+  border-radius: 30px;
 }
 
-input[type="submit"]:hover,
-button:hover {
-  box-shadow: 0 0 10px #ff8c42, 0 0 40px #ff8c42;
+.vk-login-btn:hover {
+  background-color: #45a049;
 }
 
 .vk-group {
@@ -184,17 +187,6 @@ button:hover {
   text-align: center;
 }
 
-.vk-success-message {
-  margin-top: -10px;
-  font-size: 1em;
-  font-weight: bold;
-  color: #388e3c;
-  background: rgba(200, 230, 201, 0.8);
-  padding: 10px;
-  border-radius: 5px;
-  text-align: center;
-}
-
 @media (max-width: 400px) {
   h2 {
     font-size: 20px;
@@ -203,19 +195,14 @@ button:hover {
     font-size: 18px;
   }
 }
-
-.vk-login-btn {
-  width: 100%;
-  padding: 10px 20px;
-  background: #ff8c42;
-  border: none;
-  font-weight: 500;
-  color: #fff;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  border-radius: 30px;
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  font-family: "Poppins", sans-serif !important;
+  font-weight: 400 !important;
+  -webkit-text-fill-color: #333 !important;
+  box-shadow: 0 0 0px 1000px rgba(255, 255, 255, 0.8) inset !important;
+  transition: background-color 9999s ease-in-out 0s !important;
 }
 
-.vk-login-btn:hover {
-  background-color: #45a049;
-}

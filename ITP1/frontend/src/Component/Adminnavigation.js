@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { FaArrowLeft, FaSignOutAlt, FaBars } from 'react-icons/fa';
-import { FaRegSadTear } from 'react-icons/fa';
 import axios from 'axios';
 import '../styles/Adminnaviagation.css';
 import '../styles/AdminDashboard.css';
-
 
 const Adminnaviagtion = () => {
   const navigate = useNavigate();
@@ -26,6 +24,8 @@ const Adminnaviagtion = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const defaultProfilePicUrl = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
   useEffect(() => {
     const verifyAdminAccess = async () => {
@@ -77,16 +77,15 @@ const Adminnaviagtion = () => {
   const sidebarItems = [
     {
       title: 'Home',
-      links: [{ to: '/admin-dashboard', label: 'Admin Dashboard' },
-        { to: '/SalesReport', label: 'Sales Report' }]
-      
+      links: [{ to: '/admin-dashboard', label: 'Admin Dashboard' }, { to: '/SalesReport', label: 'Sales Report' }]
     },
     {
       title: 'User Management',
       links: [
         { to: '/admin/manage-users', label: 'Manage Users' },
-        { to: '/admin/deleted-users', label: 'Deleted User' },
-        { to: '/admin/view-profile', label: 'Admin Profile' },
+        { to: '/admin/deleted-users', label: 'Removed Users' },
+        
+        { to: '/admin/view-summary', label: 'Admin View Summary' },
       ],
     },
     {
@@ -119,10 +118,7 @@ const Adminnaviagtion = () => {
     },
     {
       title: 'Feedback',
-      links: [{ to: '/adminFeedback', label: 'View Feedback' },
-        { to: '/AdminChatPage', label: 'View chats' }
-      ],
-      
+      links: [{ to: '/adminFeedback', label: 'View Feedback' }, { to: '/AdminChatPage', label: 'View chats' }],
     },
   ];
 
@@ -143,22 +139,31 @@ const Adminnaviagtion = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div className="admin-dashboard-container" >
-      <header className="navbar" style={{background:' #2c3e50'}} >
-        <div className="navbar-right" >
+    <div className="admin-dashboard-container">
+      <header className="navbar" style={{ background: '#2c3e50' }}>
+        <div className="navbar-right">
           <button className="hamburger-icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             <FaBars />
           </button>
           <BackButton />
-          <p style={{fontSize: '36px'}}>Welcome back, <strong>{user?.name || 'Admin'}</strong></p>
+          <div className="admin-profile-section">
+            <p className="admin-welcome-text">Welcome back, <strong>{user?.name || 'Admin'}</strong></p>
+            <div className="admin-profile-wrapper" onClick={() => navigate('/admin/view-profile')}>
+              <img
+                src={user?.profilePic ? user.profilePic : defaultProfilePicUrl}
+                alt="Admin Profile"
+                className="admin-profile-photo"
+              />
+            </div>
+          </div>
           <button className="logout-btn" onClick={() => setShowLogoutModal(true)}>
             <FaSignOutAlt /> Logout
           </button>
         </div>
       </header>
 
-      <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`}  style={{background:' #2c3e50'}} >
-        <p   style={{color: 'rgb(255, 255, 255)',fontSize: '36px',marginTop:'80px'}} >Admin</p>
+      <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`} style={{ background: '#2c3e50' }}>
+        <p style={{ color: 'white', fontSize: '36px', marginTop: '80px' }}>Admin</p>
         <ul className="sidebar-menu">
           {sidebarItems.map((item, index) => (
             <li key={index}>
@@ -179,27 +184,25 @@ const Adminnaviagtion = () => {
         </ul>
       </aside>
 
-      {/* Logout confirmation modal */}
+      {/* Logout Modal */}
       {showLogoutModal && (
- <div className="admin-logout-modal-overlay" onClick={cancelLogout}>
- <div className="admin-logout-modal-box" onClick={(e) => e.stopPropagation()}>
-   <div className="admin-logout-emoji-animation">
-     <img 
-       src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif" 
-       alt="Sad Emoji Animation" 
-       className="admin-logout-animated-emoji" 
-     />
-   </div>
-   <p>Are you sure you want to logout?</p>
-   <div className="admin-logout-modal-buttons">
-     <button className="admin-logout-yes-btn" onClick={confirmLogout}>Yes</button>
-     <button className="admin-logout-no-btn" onClick={cancelLogout}>No</button>
-   </div>
- </div>
-</div>
-
-)}
-
+        <div className="admin-logout-modal-overlay" onClick={cancelLogout}>
+          <div className="admin-logout-modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-logout-emoji-animation">
+              <img
+                src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif"
+                alt="Sad Emoji"
+                className="admin-logout-animated-emoji"
+              />
+            </div>
+            <p>Are you sure you want to logout?</p>
+            <div className="admin-logout-modal-buttons">
+              <button className="admin-logout-yes-btn" onClick={confirmLogout}>Yes</button>
+              <button className="admin-logout-no-btn" onClick={cancelLogout}>No</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

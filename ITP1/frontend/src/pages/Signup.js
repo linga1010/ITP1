@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/Signup.css";
@@ -18,7 +18,7 @@ const Signup = () => {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [otpLoading, setOtpLoading] = useState(false); // State for OTP loading
+  const [otpLoading, setOtpLoading] = useState(false);
   const [passwordCriteria, setPasswordCriteria] = useState({
     length: false,
     number: false,
@@ -26,8 +26,25 @@ const Signup = () => {
     uppercase: false,
     specialChar: false,
   });
+  const [expanded, setExpanded] = useState(false);
+
   const navigate = useNavigate();
   const messageRef = useRef(null);
+  const boxRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (boxRef.current && !boxRef.current.contains(e.target)) {
+        setExpanded(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleMouseEnter = () => {
+    if (!expanded) setExpanded(true);
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -84,17 +101,17 @@ const Signup = () => {
   };
 
   const resendOTP = async () => {
-    setOtpLoading(true); // Set OTP loading state to true
-    setMessage(""); // Clear any previous messages
-    setError(""); // Clear any previous errors
+    setOtpLoading(true);
+    setMessage("");
+    setError("");
 
     try {
       await axios.post("http://localhost:5000/api/users/send-otp", { email: formData.email });
       setMessage("✅ OTP resent to your email!");
-      setOtpLoading(false); // Reset OTP loading state
+      setOtpLoading(false);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to resend OTP.");
-      setOtpLoading(false); // Reset OTP loading state
+      setOtpLoading(false);
     }
   };
 
@@ -158,17 +175,25 @@ const Signup = () => {
   };
 
   return (
-    <div className="signup-box">
+    <div
+      className={`signup-box ${expanded ? "expanded" : ""}`}
+      onMouseEnter={handleMouseEnter}
+      ref={boxRef}
+    >
       <div className="signup">
         <div className="signupBx">
           <h2>Signup</h2>
           <div ref={messageRef}>
-            {message && <p className="message success">{message}</p>}
+            {message && <p className="message-success">{message}</p>}
             {error && <p className="message error">{error}</p>}
           </div>
 
           {step === 1 && (
             <div className="step-container">
+              {/* Autofill prevention fields */}
+              <input type="text" name="fake-user" autoComplete="username" style={{ display: "none" }} />
+              <input type="password" name="fake-pass" autoComplete="current-password" style={{ display: "none" }} />
+
               <input
                 className="input-field"
                 type="email"
@@ -178,6 +203,7 @@ const Signup = () => {
                 onChange={handleChange}
                 required
                 disabled={loading}
+                autoComplete="off"
               />
               <button className="btn" type="button" onClick={checkEmail} disabled={loading}>
                 {loading ? "Checking..." : "Next"}
@@ -198,6 +224,7 @@ const Signup = () => {
                 value={formData.otp}
                 onChange={handleChange}
                 required
+                autoComplete="off"
               />
               <button className="btn" type="button" onClick={verifyOTP}>
                 Verify OTP
@@ -209,7 +236,7 @@ const Signup = () => {
           )}
 
           {step === 3 && (
-            <form className="registration-form" onSubmit={handleRegister}>
+            <form className="registration-form" onSubmit={handleRegister} autoComplete="off">
               <input
                 className="input-field"
                 type="text"
@@ -218,6 +245,7 @@ const Signup = () => {
                 value={formData.name}
                 onChange={handleChange}
                 required
+                autoComplete="off"
               />
               <input
                 className="input-field"
@@ -228,6 +256,7 @@ const Signup = () => {
                 onChange={handleChange}
                 required
                 inputMode="numeric"
+                autoComplete="off"
                 onKeyDown={(e) => {
                   if (!/^\d$/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight"].includes(e.key)) {
                     e.preventDefault();
@@ -242,6 +271,7 @@ const Signup = () => {
                 value={formData.address}
                 onChange={handleChange}
                 required
+                autoComplete="off"
               />
               <div className="gender-container">
                 <div className="gender-radio-group">
@@ -277,6 +307,7 @@ const Signup = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
+                autoComplete="new-password"
               />
               <div className="password-criteria">
                 <p>{passwordCriteria.length ? "✅" : "❌"} At least 8 characters</p>
@@ -293,6 +324,7 @@ const Signup = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
+                autoComplete="new-password"
               />
               <button className="btn" type="submit">Register</button>
             </form>

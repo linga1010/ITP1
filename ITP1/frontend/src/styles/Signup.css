@@ -1,6 +1,24 @@
 @import url("https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap");
 @import url("https://use.fontawesome.com/releases/v6.5.1/css/all.css");
 
+
+
+
+
+
+.signup-box.expanded {
+  width: 550px;
+  height: 700px;
+}
+
+.signup-box.expanded .signup {
+  inset: 40px;
+}
+
+.signup-box.expanded .signupBx {
+  transform: translateY(0px);
+}
+
 body {
   display: flex;
   justify-content: center;
@@ -77,18 +95,7 @@ body {
   border: 8px solid #eaeaea;
 }
 
-.signup-box:hover {
-  width: 450px;
-  height: 600px;
-}
 
-.signup-box:hover .signup {
-  inset: 40px;
-}
-
-.signup-box:hover .signupBx {
-  transform: translateY(0px);
-}
 
 .signup {
   position: absolute;
@@ -147,10 +154,10 @@ h2 i {
 }
 
 .input-field {
-  width: 250px;
+  width: 340px;
   padding: 10px 20px;
   outline: none;
-  border: 2px solid #ccc;
+  border: 3px solid #ccc;
   border-radius: 30px;
   font-size: 1em;
   margin-bottom: 15px;
@@ -158,13 +165,19 @@ h2 i {
   background: rgba(255, 255, 255, 0.8);
   transition: border-color 0.3s ease;
 }
+.input-field::placeholder {
+  color: #000000;
+  font-weight: 300;
+  opacity: 1;
+}
+
 
 .input-field:focus {
   border-color: #4caf50;
 }
 
 .btn {
-  width: 95%;
+  width: 75%;
   padding: 10px 20px;
   background: #ff8c42;
   border: none;
@@ -198,6 +211,12 @@ h2 i {
   color: #388e3c;
   background: rgba(200, 230, 201, 0.8);
 }
+.message-success {
+  color: #388e3c;
+  font-weight: bold;
+  background: rgba(200, 230, 201, 0.8);
+}
+
 
 .error {
   color: #d32f2f;
@@ -240,7 +259,9 @@ h2 i {
 
 .password-criteria p {
   margin-bottom: 5px;
-  font-size: 14px;
+  font-size: 1.0rem;
+  color: #000000;
+  font-weight: 500;
 }
 
 @media (max-width: 480px) {
@@ -277,3 +298,4 @@ h2 i {
   accent-color: #ff8c42; /* Customized accent color */
   transform: scale(1.2); /* Increased size */
 }
+
