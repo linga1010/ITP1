@@ -3,7 +3,17 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import "../styles/UserHome.css";
 import { useAuth } from "../hooks/useAuth";
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaComments, FaBars, FaTimes } from "react-icons/fa";
+import {
+  FaFacebook,
+  FaTwitter,
+  FaInstagram,
+  FaLinkedin,
+  FaComments,
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
+import { BellOutlined, CheckOutlined } from "@ant-design/icons";
+import { Badge, Dropdown, Menu } from "antd";
 
 const BASE_URL = "http://localhost:5000";
 
@@ -12,6 +22,8 @@ const UserDashboard = () => {
   const navigate = useNavigate();
   const [packages, setPackages] = useState([]);
   const [priests, setPriests] = useState([]);
+  const [offers, setOffers] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [packageIndex, setPackageIndex] = useState(0);
   const [priestIndex, setPriestIndex] = useState(0);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -21,42 +33,80 @@ const UserDashboard = () => {
     fetchPackages();
     fetchPriests();
   }, []);
+  
+  useEffect(() => {
+    if (user && user._id) {
+      fetchOffers();
+    }
+  }, [user]);
+  
 
   const fetchPackages = async () => {
-    try {
-      const { data } = await axios.get(`${BASE_URL}/api/packages`);
-      setPackages(data || []);
-    } catch (error) {
-      console.error("Error fetching packages:", error);
-    }
+    const { data } = await axios.get(`${BASE_URL}/api/packages`);
+    setPackages(data);
   };
 
   const fetchPriests = async () => {
+    const { data } = await axios.get(`${BASE_URL}/api/priests`);
+    setPriests(data);
+  };
+
+  const fetchOffers = async () => {
     try {
-      const { data } = await axios.get(`${BASE_URL}/api/priests`);
-      setPriests(data || []);
+      const { data } = await axios.get(`${BASE_URL}/api/offers`);
+      setOffers(data || []);
+      if (user && user._id) {
+        const unread = data.filter((offer) => !offer.isReadBy.includes(user._id));
+        setUnreadCount(unread.length);
+      } else {
+        setUnreadCount(0);
+      }
     } catch (error) {
-      console.error("Error fetching priests:", error);
+      console.error("Error fetching offers:", error);
     }
   };
 
-  useEffect(() => {
-    const packageInterval = setInterval(() => {
-      if (packages.length) {
-        setPackageIndex((prevIndex) => (prevIndex + 1) % packages.length);
-      }
-    }, 1500);
-    return () => clearInterval(packageInterval);
-  }, [packages]);
+  const markAllAsRead = async () => {
+    await axios.put(`${BASE_URL}/api/offers/mark-all-read/${user._id}`);
+    fetchOffers();
+  };
 
-  useEffect(() => {
-    const priestInterval = setInterval(() => {
-      if (priests.length) {
-        setPriestIndex((prevIndex) => (prevIndex + 1) % priests.length);
-      }
-    }, 1500);
-    return () => clearInterval(priestInterval);
-  }, [priests]);
+  const handleClickOffer = (pkgId) => {
+    localStorage.setItem("highlightPackageId", pkgId);
+    navigate("/view-package");
+  };
+
+  const offerMenuItems = offers.length > 0 ? [
+    ...offers.map((offer) => ({
+      key: offer._id,
+      label: (
+        <div
+  key={offer._id}
+  className={`offer-item ${offer.isReadBy.includes(user._id) ? "read" : "unread"}`}
+  onClick={() => handleClickOffer(offer.packageId._id)}
+>
+  <strong>{offer.packageId.name}</strong>
+  <p>{offer.offerMessage}</p>
+</div>
+
+      ),
+    })),
+    { type: 'divider' },
+    {
+      key: 'mark-all-read',
+      label: (
+        <div className="mark-read-bar" onClick={markAllAsRead}>
+          <CheckOutlined /> Mark all as read
+        </div>
+      ),
+    },
+  ] : [
+    {
+      key: 'no-offers',
+      label: <p className="no-offers">No offers available</p>,
+      disabled: true,
+    }
+  ];
 
   const confirmLogout = () => {
     localStorage.removeItem("token");
@@ -74,10 +124,7 @@ const UserDashboard = () => {
 
   const defaultProfilePicUrl = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
-  const displayedPackages = getSlidingWindow(packages, packageIndex);
-  const displayedPriests = getSlidingWindow(priests, priestIndex);
-
-  function getSlidingWindow(array, currentIndex) {
+  const getSlidingWindow = (array, currentIndex) => {
     const totalItems = array.length;
     if (totalItems === 0) return [];
     if (totalItems <= 4) return array;
@@ -87,110 +134,90 @@ const UserDashboard = () => {
       array[(currentIndex + 2) % totalItems],
       array[(currentIndex + 3) % totalItems],
     ];
-  }
+  };
+
+  const displayedPackages = getSlidingWindow(packages, packageIndex);
+  const displayedPriests = getSlidingWindow(priests, priestIndex);
 
   return (
     <div className="dashboard-container">
-      {/* Sidebar */}
-      <div
-        className={`sidebar ${sidebarOpen ? "open" : ""}`}
-        onMouseEnter={() => setSidebarOpen(true)}
-        onMouseLeave={() => setSidebarOpen(false)}
-      >
-        <button className="close-btn" onClick={() => setSidebarOpen(false)}>
-          <FaTimes />
-        </button>
+      <div className={`sidebar ${sidebarOpen ? "open" : ""}`} onMouseEnter={() => setSidebarOpen(true)} onMouseLeave={() => setSidebarOpen(false)}>
+        <button className="close-btn" onClick={() => setSidebarOpen(false)}><FaTimes /></button>
         <Link to="/view-package" onClick={() => setSidebarOpen(false)}>Packages</Link>
         <Link to="/OrderHistoryDetails" onClick={() => setSidebarOpen(false)}>Order History</Link>
         <Link to="/Feedback" onClick={() => setSidebarOpen(false)}>Feedbacks</Link>
         <Link to="/about-us" onClick={() => setSidebarOpen(false)}>About Us</Link>
         <Link to="/user/booking-list" onClick={() => setSidebarOpen(false)}>Booking Details</Link>
         <Link to="/user/book-priest" onClick={() => setSidebarOpen(false)}>Book Priest</Link>
-        
       </div>
 
-      {/* Navbar */}
       <header className="dashboard-header">
         <nav className="navbar">
           <div className="nav-left">
             <FaBars className="menu-icon" onClick={() => setSidebarOpen(true)} />
           </div>
           <div className="nav-center">
-          <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
-          WELCOME TO VK AURA, {user?.name?.toUpperCase() || "USER"}</p>
+            <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '20px 0', textAlign: 'center', letterSpacing: '1px' }}>
+              WELCOME TO VK AURA, {user?.name?.toUpperCase() || "USER"}
+            </p>
           </div>
           <div className="nav-right">
             <FaComments className="chat-icon" onClick={handleChatClick} />
-            <div className="profile-wrapper" onClick={handleProfileClick}>
-              <img
-                src={user?.profilePic ? user.profilePic : defaultProfilePicUrl}
-                alt="Profile"
-                className="profile-photo"
-              />
+
+            <div className="notification">
+            <Dropdown menu={{ items: offerMenuItems }} trigger={["click"]} getPopupContainer={() => document.body} overlayClassName="dropdownbell">
+              <Badge count={unreadCount} offset={[2, -4]}>
+                <BellOutlined style={{ fontSize: 24, cursor: "pointer", color: "#374495" }} />
+              </Badge>
+            </Dropdown>
             </div>
-            <button className="nav-btn logout-btn" onClick={() => setShowLogoutModal(true)}>
-              Logout
-            </button>
+            <div className="profile-wrapper" onClick={handleProfileClick}>
+              <img src={user?.profilePic || defaultProfilePicUrl} alt="Profile" className="profile-photo" />
+            </div>
+            <button className="nav-btn logout-btn" onClick={() => setShowLogoutModal(true)}>Logout</button>
           </div>
         </nav>
       </header>
 
       <main className="dashboard-content">
-  <section className="carousel-section">
-    <div className="carousel-final-box">
-      
-      {/* Left Buttons for Packages */}
-      <div className="side-buttons">
-        <button className="side-arrow-button" onClick={() => setPackageIndex(prev => (prev - 1 + packages.length) % packages.length)}>
-          &#8249;
-        </button>
-        <button className="side-arrow-button" onClick={() => setPackageIndex(prev => (prev + 1) % packages.length)}>
-          &#8250;
-        </button>
-      </div>
+        <section className="carousel-section">
+          <div className="carousel-final-box">
+            {/* Left Buttons */}
+            <div className="side-buttons">
+              <button className="side-arrow-button" onClick={() => setPackageIndex(prev => (prev - 1 + packages.length) % packages.length)}>&#8249;</button>
+              <button className="side-arrow-button" onClick={() => setPackageIndex(prev => (prev + 1) % packages.length)}>&#8250;</button>
+            </div>
 
-      {/* Package and Priest Cards */}
-      <div className="package-priest-container">
-        {/* Package Card */}
-        {packages.length > 0 && (
-          <div className="package-card" onClick={() => navigate("/view-package")}>
-            <h3 className="card-heading">PACKAGES</h3>
-            <img src={packages[packageIndex]?.image || "#"} alt={packages[packageIndex]?.name || "Package"} className="package-image" />
-            <h4>{packages[packageIndex]?.name || "Package Name"}</h4>
-            <p>Price: Rs. {packages[packageIndex]?.totalPrice || "0"}</p>
+            <div className="package-priest-container">
+              {/* Package Card */}
+              {packages.length > 0 && (
+                <div className="package-card" onClick={() => navigate("/view-package")}>
+                  <h3 className="card-heading">PACKAGES</h3>
+                  <img src={packages[packageIndex]?.image || "#"} alt={packages[packageIndex]?.name || "Package"} className="package-image" />
+                  <h4>{packages[packageIndex]?.name || "Package Name"}</h4>
+                  <p>Price: Rs. {packages[packageIndex]?.totalPrice || "0"}</p>
+                </div>
+              )}
+
+              {/* Priest Card */}
+              {priests.length > 0 && (
+                <div className="priest-card" onClick={() => navigate("/user/book-priest")}>
+                  <h3 className="card-heading">PRIESTS</h3>
+                  <img src={priests[priestIndex]?.photo ? `${BASE_URL}${priests[priestIndex].photo}` : "#"} alt={priests[priestIndex]?.name || "Priest"} className="priest-image" />
+                  <h4>{priests[priestIndex]?.name || "Priest Name"}</h4>
+                  <p>Daily Charge: Rs. {priests[priestIndex]?.dailyCharge || "0"}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Right Buttons */}
+            <div className="side-buttons">
+              <button className="side-arrow-button" onClick={() => setPriestIndex(prev => (prev - 1 + priests.length) % priests.length)}>&#8249;</button>
+              <button className="side-arrow-button" onClick={() => setPriestIndex(prev => (prev + 1) % priests.length)}>&#8250;</button>
+            </div>
           </div>
-        )}
-
-        {/* Priest Card */}
-        {priests.length > 0 && (
-          <div className="priest-card" onClick={() => navigate("/user/book-priest")}>
-            <h3 className="card-heading">PRIESTS</h3>
-            <img src={priests[priestIndex]?.photo ? `${BASE_URL}${priests[priestIndex].photo}` : "#"} alt={priests[priestIndex]?.name || "Priest"} className="priest-image" />
-            <h4>{priests[priestIndex]?.name || "Priest Name"}</h4>
-            <p>Daily Charge: Rs. {priests[priestIndex]?.dailyCharge || "0"}</p>
-          </div>
-        )}
-      </div>
-
-      {/* Right Buttons for Priests */}
-      <div className="side-buttons">
-        <button className="side-arrow-button" onClick={() => setPriestIndex(prev => (prev - 1 + priests.length) % priests.length)}>
-          &#8249;
-        </button>
-        <button className="side-arrow-button" onClick={() => setPriestIndex(prev => (prev + 1) % priests.length)}>
-          &#8250;
-        </button>
-      </div>
-
-    </div>
-  </section>
-</main>
-
-
-
-
-
-
+        </section>
+      </main>
 
       {/* Footer */}
       <footer className="footer">
