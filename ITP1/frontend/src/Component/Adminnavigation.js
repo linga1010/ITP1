@@ -85,7 +85,7 @@ const Adminnaviagtion = () => {
         { to: '/admin/manage-users', label: 'Manage Users' },
         { to: '/admin/deleted-users', label: 'Removed Users' },
         
-        { to: '/admin/view-summary', label: 'Admin View Summary' },
+        { to: '/admin/view-summary', label: 'User Summary' },
       ],
     },
     {

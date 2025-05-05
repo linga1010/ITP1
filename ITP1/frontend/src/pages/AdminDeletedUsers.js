@@ -118,8 +118,7 @@ const AdminDeletedUsers = () => {
             <tr>
               <th>Pic</th>
               <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
+              <th>Email & Phone</th>
               <th>Address</th>
               <th>Reason</th>
               <th>Removed At</th>
@@ -128,19 +127,18 @@ const AdminDeletedUsers = () => {
           <tbody>
             {filteredUsers.map((user) => (
               <tr key={user._id}>
-                <td>
+                <td className='remove-prof'>
                   <img
                     src={user.profilePic || "/default-avatar.png"}
                     alt="Profile"
                     style={{ width: "60px", height: "60px", borderRadius: "50%", objectFit: "cover" }}
                   />
                 </td>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.phone}</td>
-                <td>{user.address || 'No address available'}</td>
-                <td style={{ color: 'red', fontWeight: 'bold' }}>{user.reason}</td>
-                <td>{new Date(user.deletedAt).toLocaleString()}</td>
+                <td className='remove-name'>{user.name}</td>
+                <td className='remove-email-phone'>{user.email}<br /> {user.phone}</td>
+                <td className='remove-user-address' >{user.address || 'No address available'}</td>
+                <td className='resonR' style={{ color: 'red', fontWeight: 'bold' }}>{user.reason}</td>
+                <td className='removedate'>{new Date(user.deletedAt).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>
