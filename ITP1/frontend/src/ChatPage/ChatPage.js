@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
 import axios from 'axios';
 import * as timeago from 'timeago.js';
+import UserComponent from "../Component/Usercomponent";
 
 let socket;
 let typingTimeout;
@@ -217,6 +218,8 @@ function UserChat() {
   };
 
   return (
+    <div>
+          <UserComponent user={user} />
     <div style={{ padding: '20px' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Chat with Admin</h2>
       <div
@@ -319,6 +322,7 @@ function UserChat() {
           Send
         </button>
       </div>
+    </div>
     </div>
   );
 }
