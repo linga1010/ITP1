@@ -1,4 +1,3 @@
-// ... [top imports remain unchanged]
 import React, { useState, useEffect, useRef } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS } from 'chart.js/auto';
@@ -8,6 +7,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+
 import Adminnaviagtion from "../Component/Adminnavigation";
 import '../styles/AdminSummary.css';
 
@@ -28,46 +28,46 @@ const AdminSummary = () => {
   const [summaryCards, setSummaryCards] = useState({});
   const [top5Days, setTop5Days] = useState([]);
 
-  const verifyAdminAccess = async () => {
-    const token = localStorage.getItem('token');
-    if (!token) return navigate('/login');
+  useEffect(() => {
+    const verifyAdminAccess = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return navigate('/login');
 
-    try {
-      const res = await axios.get('http://localhost:5000/api/users/profile', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      try {
+        const res = await axios.get('http://localhost:5000/api/users/profile', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-      if (!res.data.isAdmin) navigate('/user-home');
-      else fetchUserSummary(token);
-    } catch {
-      localStorage.removeItem('token');
-      navigate('/login');
-    }
-  };
+        if (!res.data.isAdmin) navigate('/user-home');
+        else fetchUserSummary(token);
+      } catch {
+        localStorage.removeItem('token');
+        navigate('/login');
+      }
+    };
 
-  const fetchUserSummary = async (token) => {
-    try {
-      const res = await axios.get('http://localhost:5000/api/admin/user-summary', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+    const fetchUserSummary = async (token) => {
+      try {
+        const res = await axios.get('http://localhost:5000/api/admin/user-summary', {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-      const data = res.data || [];
-      setUserSummary(data);
-      setFilteredSummary(data);
+        const data = res.data || [];
+        setUserSummary(data);
+        setFilteredSummary(data);
 
-      const dates = data.map(item => item._id);
-      const totalUsers = data.map(item => item.totalUsers);
+        const dates = data.map(item => item._id);
+        const totalUsers = data.map(item => item.totalUsers);
 
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-      gradient.addColorStop(0, 'blue');
-      gradient.addColorStop(1, 'red');
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'blue');
+        gradient.addColorStop(1, 'red');
 
-      setChartData({
-        labels: dates,
-        datasets: [
-          {
+        setChartData({
+          labels: dates,
+          datasets: [{
             label: 'Users Joined',
             data: totalUsers,
             borderColor: gradient,
@@ -76,70 +76,68 @@ const AdminSummary = () => {
             tension: 0.1,
             pointRadius: 5,
             pointHoverRadius: 7,
+          }]
+        });
+
+        const mean = totalUsers.reduce((sum, n) => sum + n, 0) / totalUsers.length;
+        const stdDev = Math.sqrt(totalUsers.reduce((sum, n) => sum + Math.pow(n - mean, 2), 0) / totalUsers.length);
+        const expected = totalUsers.map(() => mean);
+        const upper = totalUsers.map(() => mean + stdDev);
+        const lower = totalUsers.map(() => mean - stdDev);
+
+        setDeviationChartData({
+          labels: dates,
+          datasets: [
+            {
+              label: 'Actual Users Joined',
+              data: totalUsers,
+              borderColor: 'blue',
+              backgroundColor: 'rgba(0,0,255,0.1)',
+              fill: true
+            },
+            {
+              label: 'Mean',
+              data: expected,
+              borderColor: 'green',
+              borderDash: [5, 5],
+              fill: false
+            },
+            {
+              label: '+1 Std Dev',
+              data: upper,
+              borderColor: 'orange',
+              borderDash: [5, 5],
+              fill: false
+            },
+            {
+              label: '-1 Std Dev',
+              data: lower,
+              borderColor: 'red',
+              borderDash: [5, 5],
+              fill: false
+            }
+          ]
+        });
+
+        const monthlyMap = {};
+        const cumulative = [];
+        let running = 0;
+        data.forEach(item => {
+          const date = new Date(item._id);
+          if (!isNaN(date)) {
+            const month = date.toLocaleString('default', { month: 'long' });
+            monthlyMap[month] = (monthlyMap[month] || 0) + item.totalUsers;
           }
-        ]
-      });
+          running += item.totalUsers;
+          cumulative.push({ _id: item._id, cumulativeUsers: running });
+        });
 
-      const mean = totalUsers.reduce((sum, n) => sum + n, 0) / totalUsers.length;
-      const stdDev = Math.sqrt(totalUsers.reduce((sum, n) => sum + Math.pow(n - mean, 2), 0) / totalUsers.length);
-      const expected = totalUsers.map(() => mean);
-      const upper = totalUsers.map(() => mean + stdDev);
-      const lower = totalUsers.map(() => mean - stdDev);
+        const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        const monthCounts = months.map(month => monthlyMap[month] || 0);
 
-      setDeviationChartData({
-        labels: dates,
-        datasets: [
-          {
-            label: 'Actual Users Joined',
-            data: totalUsers,
-            borderColor: 'blue',
-            backgroundColor: 'rgba(0,0,255,0.1)',
-            fill: true
-          },
-          {
-            label: 'Mean',
-            data: expected,
-            borderColor: 'green',
-            borderDash: [5, 5],
-            fill: false
-          },
-          {
-            label: '+1 Std Dev',
-            data: upper,
-            borderColor: 'orange',
-            borderDash: [5, 5],
-            fill: false
-          },
-          {
-            label: '-1 Std Dev',
-            data: lower,
-            borderColor: 'red',
-            borderDash: [5, 5],
-            fill: false
-          }
-        ]
-      });
-
-      const monthlyMap = {};
-      const cumulative = [];
-      let running = 0;
-      data.forEach(item => {
-        const date = new Date(item._id);
-        if (!isNaN(date)) {
-          const month = date.toLocaleString('default', { month: 'long' });
-          monthlyMap[month] = (monthlyMap[month] || 0) + item.totalUsers;
-        }
-        running += item.totalUsers;
-        cumulative.push({ _id: item._id, cumulativeUsers: running });
-      });
-
-      const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-      const monthCounts = months.map(month => monthlyMap[month] || 0);
-
-      setMonthlyChartData({
-        labels: months,
-        datasets: [
-          {
+        setMonthlyChartData({
+          labels: months,
+          datasets: [{
             label: 'Users Joined Per Month',
             data: monthCounts,
             borderColor: '#ff7f50',
@@ -148,14 +146,12 @@ const AdminSummary = () => {
             tension: 0.2,
             pointRadius: 5,
             pointHoverRadius: 7,
-          }
-        ]
-      });
+          }]
+        });
 
-      setCumulativeChartData({
-        labels: cumulative.map(i => i._id),
-        datasets: [
-          {
+        setCumulativeChartData({
+          labels: cumulative.map(i => i._id),
+          datasets: [{
             label: 'Cumulative Users Joined',
             data: cumulative.map(i => i.cumulativeUsers),
             borderColor: '#28a745',
@@ -164,36 +160,36 @@ const AdminSummary = () => {
             tension: 0.2,
             pointRadius: 4,
             pointHoverRadius: 6
-          }
-        ]
-      });
+          }]
+        });
 
-      const total = data.reduce((sum, item) => sum + item.totalUsers, 0);
-      const active = data.filter(item => item.totalUsers > 0).length;
-      const peak = data.reduce((a, b) => a.totalUsers > b.totalUsers ? a : b);
-      const minCount = Math.min(...data.map(d => d.totalUsers));
-      const lowestDays = data.filter(d => d.totalUsers === minCount);
-      setSummaryCards({
-        'Total Users Joined': total,
-        'Active Days': active,
-        'Peak Join Date': `${peak._id} (${peak.totalUsers} users)`,
-      });
-      
+        const total = data.reduce((sum, item) => sum + item.totalUsers, 0);
+        const active = data.filter(item => item.totalUsers > 0).length;
+        const peak = data.reduce((a, b) => a.totalUsers > b.totalUsers ? a : b);
+        const minCount = Math.min(...data.map(d => d.totalUsers));
+        const lowestDays = data.filter(d => d.totalUsers === minCount);
 
-      const sorted = data.filter(d => d.totalUsers > 1).sort((a, b) => b.totalUsers - a.totalUsers).slice(0, 5);
-      setTop5Days(sorted);
-    } catch (error) {
-      alert('❌ Error fetching user summary');
-    }
-  };
+        setSummaryCards({
+          'Total Users Joined': total,
+          'Active Days': active,
+          'Peak Join Date': `${peak._id} (${peak.totalUsers} users)`
+        });
 
-  useEffect(() => verifyAdminAccess(), []);
+        const sorted = data.filter(d => d.totalUsers > 1).sort((a, b) => b.totalUsers - a.totalUsers).slice(0, 5);
+        setTop5Days(sorted);
+      } catch (err) {
+        alert("❌ Failed to fetch user summary");
+      }
+    };
+
+    verifyAdminAccess();
+  }, [navigate]);
 
   useEffect(() => {
     const isInDateRange = (dateStr) => {
       const date = new Date(dateStr);
-      return (!startDate || date >= new Date(startDate.setHours(0,0,0,0))) &&
-             (!endDate || date <= new Date(endDate.setHours(23,59,59,999)));
+      return (!startDate || date >= new Date(startDate.setHours(0, 0, 0, 0))) &&
+             (!endDate || date <= new Date(endDate.setHours(23, 59, 59, 999)));
     };
 
     const isInMonthRange = (dateStr) => {
@@ -206,8 +202,7 @@ const AdminSummary = () => {
     const filtered = userSummary.filter(item => {
       const dateMatch = item._id.toLowerCase().includes(lowerSearch);
       const userMatch = Array.isArray(item.users) && item.users.some(user =>
-        user.name.toLowerCase().includes(lowerSearch) ||
-        user.email.toLowerCase().includes(lowerSearch)
+        user.name.toLowerCase().includes(lowerSearch) || user.email.toLowerCase().includes(lowerSearch)
       );
       const monthMatch = new Date(item._id).toLocaleString('default', { month: 'long' }).toLowerCase().includes(lowerSearch);
       return (dateMatch || userMatch || monthMatch) && isInDateRange(item._id) && isInMonthRange(item._id);
@@ -216,21 +211,19 @@ const AdminSummary = () => {
     setFilteredSummary(filtered);
   }, [searchTerm, userSummary, startDate, endDate, startMonth]);
 
-  const handlePrint = () => window.print();
-
   const handleDownloadPDF = () => {
-    const input = reportRef.current;
-    html2canvas(input).then(canvas => {
+    html2canvas(reportRef.current).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgWidth = 210;
-      const imgHeight = canvas.height * imgWidth / canvas.width;
-      let position = 0;
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      const pdf = new jsPDF();
+      const width = pdf.internal.pageSize.getWidth();
+      const height = (canvas.height * width) / canvas.width;
+      pdf.addImage(imgData, 'PNG', 0, 0, width, height);
       pdf.save('admin-summary-report.pdf');
     });
   };
- 
+
+  const handlePrint = () => window.print();
+
   return (
     <div className="admin-summary-container" ref={reportRef}>
       <Adminnaviagtion />
