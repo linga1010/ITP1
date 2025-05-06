@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom'; 
-import UserDashboard from '../Component/Usercomponent';
+import UserComponent from "../Component/Usercomponent";
 
 
 const UserBookingList = () => {
@@ -52,7 +52,7 @@ const UserBookingList = () => {
   return (
     <div>
 
-      <UserDashboard /> 
+    <UserComponent user={user} />
     
     <div style={{ backgroundColor: 'rgba(250, 243, 243, 0.5)', padding: '20px' }}>
       <h2>Your Bookings</h2>

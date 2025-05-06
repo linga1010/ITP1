@@ -1,17 +1,88 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Badge, Dropdown } from "antd";
+import { BellOutlined, CheckOutlined } from "@ant-design/icons";
+import {
+  FaComments,
+  FaBars,
+  FaTimes,
+  FaSignOutAlt,
+} from "react-icons/fa";
 import axios from "axios";
-import "../styles/UserHome.css";
-import { useAuth } from "../hooks/useAuth";
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaComments, FaBars, FaTimes } from "react-icons/fa";
+import "./Usercomponent.css";
 
 const BASE_URL = "http://localhost:5000";
 
-const UserDashboard = () => {
-  const { user } = useAuth();
+
+
+const UserComponent = ({ user }) => {
   const navigate = useNavigate();
-  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [offers, setOffers] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+
+  const fetchOffers = async () => {
+    try {
+      const { data } = await axios.get(`${BASE_URL}/api/offers`);
+      setOffers(data || []);
+      if (user && user._id) {
+        const unread = data.filter((offer) => !offer.isReadBy.includes(user._id));
+        setUnreadCount(unread.length);
+      } else {
+        setUnreadCount(0);
+      }
+    } catch (error) {
+      console.error("Error fetching offers:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (user && user._id) {
+      fetchOffers();
+    }
+  }, [user]);
+
+  const markAllAsRead = async () => {
+    await axios.put(`${BASE_URL}/api/offers/mark-all-read/${user._id}`);
+    fetchOffers();
+  };
+
+  const handleClickOffer = (pkgId) => {
+    localStorage.setItem("highlightPackageId", pkgId);
+    navigate("/view-package");
+  };
+
+  const offerMenuItems = offers.length > 0 ? [
+    ...offers.map((offer) => ({
+      key: offer._id,
+      label: (
+        <div
+          key={offer._id}
+          className={`offer-item ${offer.isReadBy.includes(user._id) ? "read" : "unread"}`}
+          onClick={() => handleClickOffer(offer.packageId._id)}
+        >
+          <strong>{offer.packageId.name}</strong>
+          <p>{offer.offerMessage}</p>
+        </div>
+      ),
+    })),
+    { type: "divider" },
+    {
+      key: "mark-all-read",
+      label: (
+        <div className="mark-read-bar" onClick={markAllAsRead}>
+          <CheckOutlined /> Mark all as read
+        </div>
+      ),
+    },
+  ] : [
+    {
+      key: "no-offers",
+      label: <p className="no-offers">No offers available</p>,
+      disabled: true,
+    },
+  ];
 
   const confirmLogout = () => {
     localStorage.removeItem("token");
@@ -27,11 +98,11 @@ const UserDashboard = () => {
     navigate("/ChatPage");
   };
 
-  const defaultProfilePicUrl = "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
+  const defaultProfilePicUrl =
+    "https://cdn-icons-png.flaticon.com/512/3135/3135715.png";
 
   return (
-    <div className="dashboard-container">
-      {/* Sidebar */}
+    <>
       <div
         className={`sidebar ${sidebarOpen ? "open" : ""}`}
         onMouseEnter={() => setSidebarOpen(true)}
@@ -48,52 +119,48 @@ const UserDashboard = () => {
         <Link to="/user/book-priest" onClick={() => setSidebarOpen(false)}>Book Priest</Link>
       </div>
 
-      {/* Navbar */}
       <header className="dashboard-header">
         <nav className="navbar">
           <div className="nav-left">
             <FaBars className="menu-icon" onClick={() => setSidebarOpen(true)} />
           </div>
           <div className="nav-center">
-            <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '20px 0', textAlign: 'center', letterSpacing: '1px' }}>
+            <p className="dashboard-title">
               WELCOME TO VK AURA, {user?.name?.toUpperCase() || "USER"}
             </p>
           </div>
           <div className="nav-right">
             <FaComments className="chat-icon" onClick={handleChatClick} />
+            <div className="notification">
+              <Dropdown menu={{ items: offerMenuItems }} trigger={["click"]} overlayClassName="dropdownbell">
+                <Badge count={unreadCount} offset={[2, -4]}>
+                  <BellOutlined style={{ fontSize: 24, cursor: "pointer", color: "#374495" }} />
+                </Badge>
+              </Dropdown>
+            </div>
             <div className="profile-wrapper" onClick={handleProfileClick}>
               <img
-                src={user?.profilePic ? user.profilePic : defaultProfilePicUrl}
+                src={user?.profilePic || defaultProfilePicUrl}
                 alt="Profile"
                 className="profile-photo"
               />
             </div>
             <button className="nav-btn logout-btn" onClick={() => setShowLogoutModal(true)}>
-              Logout
+              <FaSignOutAlt /> Logout
             </button>
           </div>
         </nav>
       </header>
 
-      {/* Footer */}
-      <footer className="footer">
-        <div className="footer-content">
-          <p>&copy; 2025 VK Aura. All rights reserved.</p>
-          <div className="social-media">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><FaFacebook /></a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
-            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"><FaLinkedin /></a>
-          </div>
-        </div>
-      </footer>
-
-      {/* Logout Modal */}
       {showLogoutModal && (
         <div className="admin-logout-modal-overlay" onClick={() => setShowLogoutModal(false)}>
           <div className="admin-logout-modal-box" onClick={(e) => e.stopPropagation()}>
             <div className="admin-logout-emoji-animation">
-              <img src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif" alt="Sad Emoji" className="admin-logout-animated-emoji" />
+              <img
+                src="https://media1.tenor.com/m/G5NOmLUKGPIAAAAC/bola-amarilla.gif"
+                alt="Sad Emoji"
+                className="admin-logout-animated-emoji"
+              />
             </div>
             <p>Are you sure you want to logout?</p>
             <div className="admin-logout-modal-buttons">
@@ -103,13 +170,8 @@ const UserDashboard = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
-export default UserDashboard;
-
-
-
-
-
+export default UserComponent;

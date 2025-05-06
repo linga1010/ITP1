@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
-import UserDashboard from '../Component/Usercomponent';
+import UserComponent from "../Component/Usercomponent";
 
 const UserBookPriest = () => {
   const [event, setEvent] = useState('');
@@ -109,7 +109,7 @@ const UserBookPriest = () => {
 
     <div>
 
-      <UserDashboard /> {/* Include the UserDashboard component */}
+    <UserComponent user={user} />
     
     <div
       className="user-book-priest-container"
