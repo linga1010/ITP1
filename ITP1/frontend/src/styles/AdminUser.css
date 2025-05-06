@@ -42,14 +42,12 @@
 .modal-content {
   background: #fff;
   border-radius: 8px;
-  width: 90%;
-  max-width: 800px;
+  width: 95%; /* increased from 90% */
+  max-width: 1000px; /* increased from 800px */
   max-height: 88vh;
-
   overflow-y: auto;
   scroll-behavior: smooth;
-
-  padding: 20px 20px 40px 20px; /* 🛠 ADD EXTRA bottom padding (40px) */
+  padding: 20px 20px 40px 20px;
   position: relative;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
@@ -144,14 +142,22 @@
 .order-history {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
+  width: 85%; /* ensure full width */
 }
+
 .order-card {
-  background: #fafafa;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  padding: 16px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  width: 100% !important;
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.4); /* glass effect */
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-sizing: border-box;
+  max-width: 100% !important;
+  overflow-x: auto;
 }
 .order-header {
   display: flex;
@@ -163,28 +169,35 @@
 .order-date { color: #666; font-size: 1.2rem; font-weight: bold;}
 
 .items-table {
-  width: 100%;
+  width: 100% !important;
+  table-layout: auto; /* or fixed if you want equal columns */
   border-collapse: collapse;
   margin-bottom: 12px;
 }
+
 .items-table th,
 .items-table td {
   border: 1px solid #ddd;
-  padding: 6px 10px;
+  padding: 10px;
   text-align: center;
   font-size: 1.1rem;
-
-  
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
+
+/* Optional: bold header background */
 .items-table th {
-  background: #f2f2f2;
-  font-weight: 500;
+  background: #4b6cb7;
+  color: white;
+  font-weight: bold;
 }
 
 .order-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-top: 12px;
 }
 .order-status { font-style: italic; }
 .order-final-total {
