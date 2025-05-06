@@ -111,6 +111,7 @@ const UserComponent = ({ user }) => {
         <button className="close-btn" onClick={() => setSidebarOpen(false)}>
           <FaTimes />
         </button>
+        <Link to="/user-home" onClick={() => setSidebarOpen(false)}>Home</Link>
         <Link to="/view-package" onClick={() => setSidebarOpen(false)}>Packages</Link>
         <Link to="/OrderHistoryDetails" onClick={() => setSidebarOpen(false)}>Order History</Link>
         <Link to="/Feedback" onClick={() => setSidebarOpen(false)}>Feedbacks</Link>

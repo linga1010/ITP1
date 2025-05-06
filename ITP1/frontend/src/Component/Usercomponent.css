@@ -121,11 +121,12 @@
   
   .profile-wrapper {
     cursor: pointer;
+    
   }
   
   .profile-photo {
-    width: 75px;
-    height: 75px;
+    width: 65px;
+    height: 65px;
     vertical-align: top;
     border-radius: 80%;
     object-fit: cover;
