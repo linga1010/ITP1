@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import "./OrderHistory.css";
 import OrderProgressBar from "./OrderProgressBar"; // top of file
+import UserComponent from "../Component/Usercomponent";
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
@@ -84,7 +85,11 @@ const OrderHistory = () => {
   
 
   return (
+    <div>
+      <UserComponent user={user} />
+   
     <div className="order-history-container">
+      
       <h1 className="OrderHis">🛒 Order History</h1>
       <input
         type="text"
@@ -118,6 +123,7 @@ const OrderHistory = () => {
         </div>
       ))}
       <button className="back-button" onClick={() => navigate("/user-home")}>⬅ Back to Home</button>
+    </div>
     </div>
   );
 };
