@@ -90,7 +90,8 @@ const OrderHistory = () => {
    
     <div className="order-history-container">
       
-      <h1 className="OrderHis">🛒 Order History</h1>
+      <p className="OrderHis">🛒 Order History</p>
+      <br />
       <input
         type="text"
         className="search-bar"
@@ -101,6 +102,7 @@ const OrderHistory = () => {
       {loading && <p>Loading...</p>}
       {error && <p className="error">{error}</p>}
       {!loading && filteredOrders.length === 0 && <p>No matching orders found.</p>}
+      <div className="order-grid">
       {filteredOrders.map((order) => (
         
         <div key={order._id} className="order-card">
@@ -122,6 +124,7 @@ const OrderHistory = () => {
           )}
         </div>
       ))}
+      </div>
       <button className="back-button" onClick={() => navigate("/user-home")}>⬅ Back to Home</button>
     </div>
     </div>
