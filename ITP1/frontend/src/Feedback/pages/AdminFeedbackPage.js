@@ -83,7 +83,7 @@ const AdminFeedbackPage = () => {
             All Users's Feedbacks</p> 
             
 
-          <h2 style={{ marginBottom: "20px", marginLeft: "350px", color: "#333", textAlign: "center" }}>All Users' Feedbacks</h2>
+        
 
 
           {feedbacks.length === 0 ? (
