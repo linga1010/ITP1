@@ -350,24 +350,24 @@ const ViewBookings = () => {
           <h4 className="summary-heading" style={{ fontSize: '24px', fontWeight: 'bold', color: '#374495'}}>💰 Sales & Profit</h4>
 
           <div
-  className="totals-container"
-  style={{
-    display: 'flex',
-    gap: '40px',               // more spacing between the boxes
-    marginTop: '20px',
-    flexWrap: 'nowrap',        // ❗ prevents line break
-    justifyContent: 'center'   // centers the boxes nicely
-  }}
->
-  <div className="totals-box" style={{ width: '450px' }}>
-    <h3 style={{ fontSize: '24px', fontWeight: 'bold' }}>Total Sales</h3>
-    <p>Total Sales: Rs {totalSales}</p>
-  </div>
-  <div className="totals-box" style={{ width: '450px' }}>
-    <h3 style={{ fontSize: '24px', fontWeight: 'bold' }}>Profit</h3>
-    <p>Total Profit: Rs {totalProfit.toFixed(2)}</p>
-  </div>
-</div>
+            className="totals-container"
+             style={{
+             display: 'flex',
+             gap: '40px',               // more spacing between the boxes
+             marginTop: '20px',
+             flexWrap: 'nowrap',        // ❗ prevents line break
+             justifyContent: 'center'   // centers the boxes nicely
+            }}
+            >
+            <div className="totals-box" style={{ width: '450px' }}>
+              <h3 style={{ fontSize: '24px', fontWeight: 'bold' }}>Total Sales</h3>
+             <p>Total Sales: Rs {totalSales}</p>
+            </div>
+            <div className="totals-box" style={{ width: '450px' }}>
+              <h3 style={{ fontSize: '24px', fontWeight: 'bold' }}>Profit</h3>
+              <p>Total Profit: Rs {totalProfit.toFixed(2)}</p>
+            </div>
+          </div>
 
 
           
