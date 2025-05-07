@@ -300,15 +300,38 @@ const AdminSummary = () => {
   }, [selectedMonth, userSummary]);
 
   const handleDownloadPDF = () => {
-    html2canvas(reportRef.current).then(canvas => {
+    const element = reportRef.current;
+    const originalHeight = element.scrollHeight;
+  
+    html2canvas(element, {
+      scrollY: -window.scrollY, // Fix vertical offset
+      height: originalHeight, // Ensure full content height
+      useCORS: true, // If using external images
+      windowWidth: element.scrollWidth
+    }).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF();
-      const width = pdf.internal.pageSize.getWidth();
-      const height = (canvas.height * width) / canvas.width;
-      pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+  
+      // If content is taller than one page, split across multiple pages
+      let position = 0;
+      if (pdfHeight > 297) {
+        const pageHeight = 297;
+        while (position < pdfHeight) {
+          pdf.addImage(imgData, 'PNG', 0, -position, pdfWidth, pdfHeight);
+          position += pageHeight;
+          if (position < pdfHeight) pdf.addPage();
+        }
+      } else {
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      }
+  
       pdf.save('admin-summary-report.pdf');
     });
   };
+  
+  
 
   const handlePrint = () => window.print();
 
@@ -317,8 +340,10 @@ const AdminSummary = () => {
       <Adminnaviagtion />
       <p className="admin-summary-title">User Summary</p>
       <div className="admin-summary-controls">
-        <button onClick={handlePrint} className="print-btn">🖨️ Print</button>
-      </div>
+  <button onClick={handlePrint} className="print-btn">🖨️ Print</button>
+  <button onClick={handleDownloadPDF} className="download-btn">⬇️ Download</button>
+</div>
+
       
       <div className="admin-summary-cards">
   {Object.entries(summaryCards).map(([title, value], idx) => (
@@ -330,19 +355,19 @@ const AdminSummary = () => {
 </div>
 
       {/* Month Picker for Daily Chart */}
-      <div className="date-picker-row">
-        <div>
-          <label>Select Month for Daily Summary:</label>
-          <DatePicker
-            selected={selectedMonth}
-            onChange={(date) => setSelectedMonth(date)}
-            dateFormat="MM/yyyy"
-            showMonthYearPicker
-            isClearable
-            placeholderText="Choose Month"
-          />
-        </div>
-      </div>
+      <div className="centered-month-picker">
+  <label htmlFor="monthly-picker">Select Month for Daily Summary:</label>
+  <DatePicker
+    id="monthly-picker"
+    selected={selectedMonth}
+    onChange={(date) => setSelectedMonth(date)}
+    dateFormat="MM/yyyy"
+    showMonthYearPicker
+    isClearable
+    placeholderText="Choose Month"
+    className="custom-month-input"
+  />
+</div>
 
       {/* 📅 Daily User Join Summary */}
       <h3 className="admin-summary-heading">📅 Daily User Join Summary</h3>

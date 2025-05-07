@@ -10,8 +10,8 @@ const ProfilePage = () => {
   const [user, setUser] = useState({});
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
-  const [isEditing, setIsEditing] = useState({ name: false, address: false, phone: false, profilePic: false });
-  const [formData, setFormData] = useState({ name: '', address: '', phone: '', profilePic: '' });
+  const [isEditing, setIsEditing] = useState({ name: false, address: false, phone: false, profilePic: false, personalPrayerWish: false });
+  const [formData, setFormData] = useState({ name: '', address: '', phone: '', profilePic: '', personalPrayerWish: '' });
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
 
@@ -153,7 +153,6 @@ const ProfilePage = () => {
     <div className="profile-container" style={{ width: '900px', height: '1000px', backgroundColor: '#f0f0f0' }}>
       <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '0px',marginBottom:'30PX', textAlign: 'center',letterSpacing: '1px' }}>
       Your Profile</p>
-     
 
       {message && <p className="success-message">{message}</p>}
       {error && <p className="error-message">{error}</p>}
@@ -197,180 +196,130 @@ const ProfilePage = () => {
             </div>
           )}
         </div>
-        
+
         <div style={{ marginBottom: '20px' }}>
-  <p>
-    <strong>Email:</strong> {user.email}
-  </p>
+          <p><strong>Email:</strong> {user.email}</p>
+          <p><strong>Name:</strong> {user.name}</p>
+          {isEditing.name ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
+                className="profile-input"
+                style={{ padding: '8px', flex: '1' }}
+              />
+              {formData.name.trim() !== '' && formData.name !== user.name && (
+                <button className="action-btn" onClick={() => handleUpdate('name')}>✅Confirm</button>
+              )}
+              <button className="cancelremove" onClick={() => {
+                setIsEditing((prev) => ({ ...prev, name: false }));
+                setFormData((prev) => ({ ...prev, name: '' }));
+              }}>❌Cancel</button>
+            </div>
+          ) : (
+            <button className="action-btn" onClick={() => {
+              setFormData((prev) => ({ ...prev, name: user.name || '' }));
+              setIsEditing((prev) => ({ ...prev, name: true }));
+            }} style={{ marginTop: '10px',width: '520px' }}>✏️Change Name</button>
+          )}
+        </div>
 
-  <p>
-    <strong>Name:</strong> {user.name}
-  </p>
+        <div style={{ marginBottom: '20px' }}>
+          <p><strong>Address:</strong> {user.address}</p>
+          {isEditing.address ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+              <input
+                type="text"
+                value={formData.address}
+                onChange={(e) => setFormData((prev) => ({ ...prev, address: e.target.value }))}
+                className="profile-input"
+                style={{ padding: '8px', flex: '1' }}
+              />
+              {formData.address.trim() !== '' && formData.address !== user.address && (
+                <button className="action-btn" onClick={() => handleUpdate('address')}>✅Confirm</button>
+              )}
+              <button className="cancelremove" onClick={() => {
+                setIsEditing((prev) => ({ ...prev, address: false }));
+                setFormData((prev) => ({ ...prev, address: '' }));
+              }}>❌Cancel</button>
+            </div>
+          ) : (
+            <button className="action-btn" onClick={() => {
+              setFormData((prev) => ({ ...prev, address: user.address || '' }));
+              setIsEditing((prev) => ({ ...prev, address: true }));
+            }} style={{ marginTop: '10px',width: '500px' }}>🏠ChangeAddress</button>
+          )}
+        </div>
 
-  {isEditing.name ? (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
-      <input
-        type="text"
-        value={formData.name}
-        onChange={(e) =>
-          setFormData((prev) => ({ ...prev, name: e.target.value }))
-        }
-        className="profile-input"
-        style={{ padding: '8px', flex: '1' }}  // 👈 Input stretches nicely
-      />
+        <div style={{ marginBottom: '20px' }}>
+          <p><strong>Phone:</strong> {user.phone}</p>
+          {isEditing.phone ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
+                pattern="\d*"
+                inputMode="numeric"
+                onKeyDown={(e) => {
+                  if (!/^\d$/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+                className="profile-input"
+                style={{ padding: '8px', flex: '1' }}
+              />
+              {formData.phone.trim() !== '' && formData.phone !== user.phone && (
+                <button className="action-btn" onClick={() => handleUpdate('phone')}>✅Confirm</button>
+              )}
+              <button className="cancelremove" onClick={() => {
+                setIsEditing((prev) => ({ ...prev, phone: false }));
+                setFormData((prev) => ({ ...prev, phone: '' }));
+              }}>❌Cancel</button>
+            </div>
+          ) : (
+            <button className="action-btn" onClick={() => {
+              setFormData((prev) => ({ ...prev, phone: user.phone || '' }));
+              setIsEditing((prev) => ({ ...prev, phone: true }));
+            }} style={{ marginTop: '10px',width: '500px' }}>📞Change Phone</button>
+          )}
+        </div>
 
-      {formData.name.trim() !== '' && formData.name !== user.name && (
-        <button 
-          className="action-btn" 
-          onClick={() => handleUpdate('name')}
-          style={{ whiteSpace: 'nowrap' }}
-        >
-          ✅Confirm
-        </button>
-      )}
-
-      <button
-        className="cancelremove"
-        onClick={() => {
-          setIsEditing((prev) => ({ ...prev, name: false }));
-          setFormData((prev) => ({ ...prev, name: '' }));
-        }}
-        style={{ whiteSpace: 'nowrap' }}
-      >
-        ❌Cancel
-      </button>
-    </div>
-  ) : (
-    <button
-      className="action-btn"
-      onClick={() => {
-        setFormData((prev) => ({ ...prev, name: user.name || '' }));
-        setIsEditing((prev) => ({ ...prev, name: true }));
-      }}
-      style={{ marginTop: '10px',width: '520px' }}
-    >
-       ✏️Change Name
-    </button>
-  )}
-</div>
-
-
-<div style={{ marginBottom: '20px' }}>
-  <p>
-    <strong>Address:</strong> {user.address}
-  </p>
-
-  {isEditing.address ? (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
-      <input
-        type="text"
-        value={formData.address}
-        onChange={(e) =>
-          setFormData((prev) => ({ ...prev, address: e.target.value }))
-        }
-        className="profile-input"
-        style={{ padding: '8px', flex: '1' }} // 🔥 input will stretch nicely
-      />
-
-      {formData.address.trim() !== '' && formData.address !== user.address && (
-        <button 
-          className="action-btn" 
-          onClick={() => handleUpdate('address')}
-          style={{ whiteSpace: 'nowrap' }}
-        >
-           ✅Confirm
-        </button>
-      )}
-
-      <button
-        className="cancelremove"
-        onClick={() => {
-          setIsEditing((prev) => ({ ...prev, address: false }));
-          setFormData((prev) => ({ ...prev, address: '' }));
-        }}
-        style={{ whiteSpace: 'nowrap' }}
-      >
-       ❌Cancel
-      </button>
-    </div>
-  ) : (
-    <button
-      className="action-btn"
-      onClick={() => {
-        setFormData((prev) => ({ ...prev, address: user.address || '' }));
-        setIsEditing((prev) => ({ ...prev, address: true }));
-      }}
-      style={{ marginTop: '10px',width: '500px' }}
-    >
-     🏠ChangeAddress
-    </button>
-  )}
-</div>
-<div style={{ marginBottom: '20px' }}>
-  <p>
-    <strong>Phone:</strong> {user.phone}
-  </p>
-
-  {isEditing.phone ? (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
-      <input
-        type="tel"
-        value={formData.phone}
-        onChange={(e) =>
-          setFormData((prev) => ({ ...prev, phone: e.target.value }))
-        }
-        pattern="\d*"
-        inputMode="numeric"
-        onKeyDown={(e) => {
-          if (!/^\d$/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-            e.preventDefault();
-          }
-        }}
-        className="profile-input"
-        style={{ padding: '8px', flex: '1' }} // 🔥 input stretches
-      />
-
-      {formData.phone.trim() !== '' && formData.phone !== user.phone && (
-        <button 
-          className="action-btn" 
-          onClick={() => handleUpdate('phone')}
-          style={{ whiteSpace: 'nowrap' }}
-        >
-          ✅Confirm
-        </button>
-      )}
-
-      <button
-        className="cancelremove"
-        onClick={() => {
-          setIsEditing((prev) => ({ ...prev, phone: false }));
-          setFormData((prev) => ({ ...prev, phone: '' }));
-        }}
-        style={{ whiteSpace: 'nowrap' }}
-      >
-        ❌Cancel
-      </button>
-    </div>
-  ) : (
-    <button
-      className="action-btn"
-      onClick={() => {
-        setFormData((prev) => ({ ...prev, phone: user.phone || '' }));
-        setIsEditing((prev) => ({ ...prev, phone: true }));
-      }}
-      style={{ marginTop: '10px' ,width: '500px'}}
-    >
-      📞Change Phone
-    </button>
-  )}
-</div>
-
-
-
+        <div style={{ marginBottom: '20px' }}>
+        <p>
+  <strong>Personal Prayer Wish:</strong>{' '}
+  {user.personalPrayerWish || <em style={{ color: '#888' }}>Awaiting your prayer 🙏</em>}
+</p>
+          {isEditing.personalPrayerWish ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '10px' }}>
+              <textarea
+                rows={2}
+                value={formData.personalPrayerWish}
+                onChange={(e) => setFormData((prev) => ({ ...prev, personalPrayerWish: e.target.value }))}
+                className="profile-input"
+                style={{ padding: '8px', flex: '1', resize: 'none' }}
+                placeholder="e.g., For my mother's health"
+              />
+{formData.personalPrayerWish.trim() !== '' && formData.personalPrayerWish !== user.personalPrayerWish && (
+  <button className="action-btn" onClick={() => handleUpdate('personalPrayerWish')}>✅Confirm</button>
+)}
+              <button className="cancelremove" onClick={() => {
+                setIsEditing((prev) => ({ ...prev, personalPrayerWish: false }));
+                setFormData((prev) => ({ ...prev, personalPrayerWish: '' }));
+              }}>❌Cancel</button>
+            </div>
+          ) : (
+            <button className="action-btn" onClick={() => {
+              setFormData((prev) => ({ ...prev, personalPrayerWish: user.personalPrayerWish || '' }));
+              setIsEditing((prev) => ({ ...prev, personalPrayerWish: true }));
+            }} style={{ marginTop: '10px', width: '500px' }}>🙏  Prayer Wish</button>
+          )}
+        </div>
       </div>
 
       <button className="action-btn" onClick={handleBackToProfile} style={{width: '500px' }}>
-      ⬅️Back to Profile
+        ⬅️Back to Profile
       </button>
     </div>
   );

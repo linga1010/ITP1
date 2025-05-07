@@ -1,3 +1,30 @@
+.centered-month-picker {
+  display: flex;
+  justify-content: center;
+  align-items: baseline; /* Aligns text with input */
+  gap: 10px;
+  margin: 20px 220px;
+  font-size: 25px;
+  font-weight: 500;
+  color: #d33530;
+  flex-wrap: wrap;
+}
+
+.centered-month-picker label {
+  margin-top: 4px; /* Small tweak to align text visually */
+  font-weight: 600;
+}
+
+.custom-month-input {
+  font-size: 16px !important;
+  padding: 10px 12px !important;
+  border-radius: 6px !important;
+  border: 1px solid #ccc !important;
+  color: #d33530;
+  font-weight: 600 !important;
+  width: 160px !important;
+}
+
 
 .admin-summary-table-wrapper {
   display: flex;
@@ -217,13 +244,13 @@
   display: flex;
   justify-content: flex-end; /* align to right */
   gap: 15px;
-  margin: 20px 60px 10px 950px; /* space from top and right */
+  margin: 20px 60px 10px 800px; /* space from top and right */
 }
 
 /* Style for both buttons */
 .print-btn,
 .download-btn {
-  padding: 12px 20px;
+  padding: 10px 20px;
   font-size: 16px;
   font-weight: 600;
   color: #fff;
@@ -237,6 +264,8 @@
 /* Hover effect */
 .print-btn:hover,
 .download-btn:hover {
+  transform: scale(1.05);
+
   background-color: #0056b3;
 }
 /* Summary Cards Section */
