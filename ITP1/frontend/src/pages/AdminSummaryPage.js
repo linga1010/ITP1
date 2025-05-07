@@ -27,6 +27,31 @@ const AdminSummary = () => {
   const [startMonth, setStartMonth] = useState(null);
   const [summaryCards, setSummaryCards] = useState({});
   const [top5Days, setTop5Days] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState(null);
+  const [dailyChartData, setDailyChartData] = useState(null);
+  const [dailyDeviationChartData, setDailyDeviationChartData] = useState(null);
+
+  const generateMonthlyData = (data, monthDate) => {
+    if (!monthDate) return [];
+
+    const year = monthDate.getFullYear();
+    const month = monthDate.getMonth();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const fullDates = [];
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(year, month, day);
+      const iso = date.toISOString().split('T')[0];
+      fullDates.push(iso);
+    }
+
+    const dateMap = new Map(data.map(item => [item._id, item.totalUsers]));
+
+    return fullDates.map(date => ({
+      _id: date,
+      totalUsers: dateMap.get(date) || 0
+    }));
+  };
 
   useEffect(() => {
     const verifyAdminAccess = async () => {
@@ -55,6 +80,7 @@ const AdminSummary = () => {
         const data = res.data || [];
         setUserSummary(data);
         setFilteredSummary(data);
+        setSelectedMonth(new Date(new Date().getFullYear(), new Date().getMonth(), 1)); 
 
         const dates = data.map(item => item._id);
         const totalUsers = data.map(item => item.totalUsers);
@@ -211,6 +237,68 @@ const AdminSummary = () => {
     setFilteredSummary(filtered);
   }, [searchTerm, userSummary, startDate, endDate, startMonth]);
 
+  useEffect(() => {
+    if (!selectedMonth || userSummary.length === 0) return;
+
+    const filledMonthData = generateMonthlyData(userSummary, selectedMonth);
+    const dates = filledMonthData.map(item => item._id);
+    const totalUsers = filledMonthData.map(item => item.totalUsers);
+
+    const mean = totalUsers.reduce((sum, val) => sum + val, 0) / totalUsers.length;
+    const stdDev = Math.sqrt(totalUsers.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / totalUsers.length);
+    const expected = totalUsers.map(() => mean);
+    const upper = totalUsers.map(() => mean + stdDev);
+    const lower = totalUsers.map(() => Math.max(0, mean - stdDev));
+
+    setDailyChartData({
+      labels: dates,
+      datasets: [{
+        label: 'Users Joined',
+        data: totalUsers,
+        borderColor: 'blue',
+        backgroundColor: 'rgba(0, 123, 255, 0.2)',
+        fill: true,
+        tension: 0.1,
+        pointRadius: 4,
+      }]
+    });
+
+    setDailyDeviationChartData({
+      labels: dates,
+      datasets: [
+        {
+          label: 'Actual',
+          data: totalUsers,
+          borderColor: 'blue',
+          backgroundColor: 'rgba(0,0,255,0.1)',
+          fill: true
+        },
+        {
+          label: 'Mean',
+          data: expected,
+          borderColor: 'green',
+          borderDash: [4, 4],
+          fill: false
+        },
+        {
+          label: '+1 Std Dev',
+          data: upper,
+          borderColor: 'orange',
+          borderDash: [4, 4],
+          fill: false
+        },
+        {
+          label: '-1 Std Dev',
+          data: lower,
+          borderColor: 'red',
+          borderDash: [4, 4],
+          fill: false
+        }
+      ]
+    });
+
+  }, [selectedMonth, userSummary]);
+
   const handleDownloadPDF = () => {
     html2canvas(reportRef.current).then(canvas => {
       const imgData = canvas.toDataURL('image/png');
@@ -231,66 +319,77 @@ const AdminSummary = () => {
       <div className="admin-summary-controls">
         <button onClick={handlePrint} className="print-btn">🖨️ Print</button>
       </div>
-
+      <p className="admin-summary-title">User Summary</p>
       <div className="admin-summary-cards">
-        {Object.entries(summaryCards).map(([title, value], index) => (
-          <div className="summary-card" key={index}>
-            <p className="summary-title">{title}</p>
-            <p className="summary-value">{value}</p>
-          </div>
-        ))}
+  {Object.entries(summaryCards).map(([title, value], idx) => (
+    <div key={idx} className="summary-card">
+      <h4>{title}</h4>
+      <div className="summary-value">{value}</div>
+      </div>
+  ))}
+</div>
+
+      {/* Month Picker for Daily Chart */}
+      <div className="date-picker-row">
+        <div>
+          <label>Select Month for Daily Summary:</label>
+          <DatePicker
+            selected={selectedMonth}
+            onChange={(date) => setSelectedMonth(date)}
+            dateFormat="MM/yyyy"
+            showMonthYearPicker
+            isClearable
+            placeholderText="Choose Month"
+          />
+        </div>
       </div>
 
-   
-
+      {/* 📅 Daily User Join Summary */}
       <h3 className="admin-summary-heading">📅 Daily User Join Summary</h3>
-      <div className="admin-summary-chart-container">
-        {chartData && (
+      {selectedMonth && dailyChartData ? (
+        <div className="admin-summary-chart-container">
           <Line
-          data={chartData}
-          options={{
-            scales: {
-              y: {
-                beginAtZero: true,
-                ticks: {
-                  stepSize: 1,
-                  callback: function(value) {
-                    return Number.isInteger(value) ? value : null;
+            data={dailyChartData}
+            options={{
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    stepSize: 1,
+                    callback: value => Number.isInteger(value) ? value : null
                   }
                 }
               }
-            }
-          }}
-        />
-        
-        )}
-      </div>
+            }}
+          />
+        </div>
+      ) : (
+        <p>📆 Please select a month to view daily summary.</p>
+      )}
 
+      {/* 📊 Deviation Chart */}
       <h3 className="admin-summary-heading">📊 Expected vs Actual Join Deviation</h3>
-      <div className="admin-summary-chart-container">
-        {deviationChartData && (
-        <Line
-        data={deviationChartData}
-        options={{
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                stepSize: 1,
-                callback: function (value) {
-                  return Number.isInteger(value) ? value : null;
+      {selectedMonth && dailyDeviationChartData ? (
+        <div className="admin-summary-chart-container">
+          <Line
+            data={dailyDeviationChartData}
+            options={{
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  ticks: {
+                    stepSize: 1,
+                    callback: value => Number.isInteger(value) ? value : null
+                  }
                 }
               }
-            }
-          }
-        }}
-      />
-      
-        
-        )}
-      </div>
-
-      <h3 className="admin-summary-heading">📅 Monthly User Join Summary</h3>
+            }}
+          />
+        </div>
+      ) : (
+        <p>📊 Select a month to analyze deviation from average.</p>
+      )}
+  <h3 className="admin-summary-heading">📅 Monthly User Join Summary</h3>
       <div className="admin-summary-chart-container">{monthlyChartData && <Line data={monthlyChartData} />}</div>
 
       <h3 className="admin-summary-heading">📈 Cumulative User Growth</h3>
@@ -359,11 +458,8 @@ const AdminSummary = () => {
           ) : (<p>No users data available.</p>)}
         </div>
       </div>
-
-    
     </div>
-   
   );
-}; 
+};
 
 export default AdminSummary;
