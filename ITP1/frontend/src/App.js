@@ -30,7 +30,7 @@ import AdminDeletedUsers from './pages/AdminDeletedUsers';
 import AdminFeedbackPage from './Feedback/pages/AdminFeedbackPage';
 import CreatePurchase from './invontorypage/CreatePurchase';
 import SalesReport from './invontorypage/SalesReport';
-
+import AdminUserPrayers from './pages/AdminUserPrayers';
 import PurchaseList from './invontorypage/PurchaseList';
 import AdminProfile from './pages/AdminProfile';
 
@@ -79,7 +79,7 @@ function App() {
         <Route path="/create-invoice" element={<Createinvoice />} />
         <Route path="/invoices" element={<Invoices />} />
 
-
+         <Route path="/admin/user-prayers" element={<AdminUserPrayers />} />
         <Route path="/Feedback" element={<FeedbackPage />} />
         <Route path="/adminFeedback" element={<AdminFeedbackPage />} />
         <Route path="/admin/deleted-users" element={<AdminDeletedUsers />} />

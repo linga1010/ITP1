@@ -2,6 +2,11 @@ import express from 'express';
 import { protect, adminOnly } from '../middleware/auth.js';
 import { getUsers, removeUser, getAllBookings,getDeletedUsers } from '../controllers/adminController.js';
 import { getUserSummary } from '../controllers/adminController.js';
+// Inside adminRoutes.js
+import { sendPrayerEmailToUser } from '../controllers/adminController.js';
+
+
+
 
 const router = express.Router();
 
@@ -22,5 +27,6 @@ router.get('/deleted-users', getDeletedUsers);
 // Route to get user summary (admin-only)
 router.get('/user-summary', protect, adminOnly, getUserSummary);
 
+router.post('/send-prayer-email', protect, adminOnly, sendPrayerEmailToUser);
 
 export default router;

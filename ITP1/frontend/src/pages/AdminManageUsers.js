@@ -237,11 +237,19 @@ const AdminManageUsers = () => {
               <div className="user-info">
                 <img style={{marginRight:"30px"}} src={selectedUser.profilePic || defaultProfilePicUrl} alt={selectedUser.name} className="user-profile-pic-large" />
                 <div className="user-fields">
-                  <p><strong>Name</strong> {selectedUser.name}</p>
-                  <p><strong>Email:</strong> {selectedUser.email}</p>
-                  <p><strong>Phone:</strong> {selectedUser.phone}</p>
-                  <p><strong>Address:</strong> {selectedUser.address || '—'}</p>
-                </div>
+  <p><strong>Name:</strong> {selectedUser.name}</p>
+  <p><strong>Email:</strong> {selectedUser.email}</p>
+  <p><strong>Phone:</strong> {selectedUser.phone}</p>
+  <p><strong>Address:</strong> {selectedUser.address || '—'}</p>
+
+  {/* ✅ Only show this if personalPrayerWish exists */}
+  {selectedUser.personalPrayerWish && (
+    <p style={{ backgroundColor: '#fff6e6', padding: '5px', borderRadius: '6px', marginTop: '10px' }}>
+      <strong>🙏 Prayer Wish:</strong> {selectedUser.personalPrayerWish}
+    </p>
+  )}
+</div>
+
               </div>
 
              <p><br></br></p>   <p><br></br></p>

@@ -84,7 +84,8 @@ const Adminnaviagtion = () => {
       links: [
         { to: '/admin/manage-users', label: 'Manage Users' },
         { to: '/admin/deleted-users', label: 'Removed Users' },
-        
+        { to: '/admin/user-prayers', label: ' User Prayers' },
+
         { to: '/admin/view-summary', label: 'User Summary' },
       ],
     },
