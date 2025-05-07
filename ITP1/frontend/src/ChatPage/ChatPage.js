@@ -4,6 +4,13 @@ import { io } from 'socket.io-client';
 import axios from 'axios';
 import * as timeago from 'timeago.js';
 import UserComponent from "../Component/Usercomponent";
+import vkImage from "../styles/vk.jpg";
+import {
+  FaFacebook,
+  FaTwitter,
+  FaInstagram,
+  FaLinkedin
+} from "react-icons/fa";
 
 let socket;
 let typingTimeout;
@@ -218,16 +225,18 @@ function UserChat() {
   };
 
   return (
+    
     <div>
           <UserComponent user={user} />
-    <div style={{ padding: '20px' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Chat with Admin</h2>
+          <p><br></br></p> 
+    <div style={{ padding: '0px' }}>
+     <img src={vkImage} alt="Background" style={{width:"500px", height:"120px"}} />
       <div
         ref={chatBoxRef}
         onClick={handleReadMessages}
         onScroll={handleReadMessages}
         style={{
-          height: '500px',
+          height: '300px',
           overflowY: 'scroll',
           border: '1px solid gray',
           borderRadius: '10px',
@@ -236,6 +245,7 @@ function UserChat() {
           marginBottom: '20px'
         }}
       >
+        
         {messages.map((msg, idx) => (
           <div
             key={idx}
@@ -273,12 +283,13 @@ function UserChat() {
       </div>
 
       {/* Footer Input */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        {/* 📎 Attach Button */}
-        <button onClick={openFilePicker} style={{ background: 'none', border: 'none', fontSize: '20px', marginRight: '10px', cursor: 'pointer' }}>
-          📎
-        </button>
-        <input type="file" accept="image/*,audio/*" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
+      <div style={{ display: 'flex', alignItems: 'center', padding: '10px', background: '#f0f2f5' }}>
+
+      <button onClick={openFilePicker} style={{ marginRight: '10px', background: 'none', border: 'none', cursor: 'pointer', fontSize: '20px' }}>
+                  📎
+                </button>
+                <input type="file" accept="image/*,audio/*" ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileChange} />
+    
 
         {/* ✏️ Text Input */}
         <input
@@ -322,9 +333,15 @@ function UserChat() {
           Send
         </button>
       </div>
+  </div>
     </div>
-    </div>
+
+    
+
+
   );
+  
 }
+
 
 export default UserChat;

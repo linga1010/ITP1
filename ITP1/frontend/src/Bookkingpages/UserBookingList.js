@@ -3,14 +3,21 @@ import axios from 'axios';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom'; 
 import UserComponent from "../Component/Usercomponent";
-
+import {
+  FaFacebook,
+  FaTwitter,
+  FaInstagram,
+  FaLinkedin
+} from "react-icons/fa";
+import "./OrderHistory.css";
 
 const UserBookingList = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const { user, loading: authLoading } = useAuth();
-  const navigate = useNavigate();  // Initialize useNavigate
+  const navigate = useNavigate();
 
   const fetchBookings = async () => {
     if (!user) {
@@ -46,59 +53,85 @@ const UserBookingList = () => {
     }
   };
 
+  const handleCancelConfirmation = (id) => {
+    const confirmCancel = window.confirm("Are you sure you want to cancel this booking?\n❗Your request cannot be undone.");
+    if (!confirmCancel) return;
+  
+    cancelBooking(id); 
+  };
+
+
+
+  const filteredBookings = bookings
+  .filter((booking) => {
+    const search = searchQuery.toLowerCase();
+    const dateMatch = new Date(booking.date).toLocaleDateString().includes(search);
+    const statusMatch = booking.status.toLowerCase().includes(search);
+    const priestMatch = booking.priest?.name?.toLowerCase().includes(search);
+    const eventMatch = booking.event?.toLowerCase().includes(search);
+    return dateMatch || statusMatch || priestMatch || eventMatch;
+  })
+  .sort((a, b) => new Date(b.date) - new Date(a.date)); // ← this line sorts by date descending
+
+
   if (authLoading) return <p>Loading...</p>;
   if (!user) return <p>Please log in to view your bookings.</p>;
 
   return (
     <div>
+      <UserComponent user={user} />
+      <p><br /></p>
 
-    <UserComponent user={user} />
-    
-    <div style={{ backgroundColor: 'rgba(250, 243, 243, 0.5)', padding: '20px' }}>
-      <h2>Your Bookings</h2>
-      <button 
-        className="back-button" 
-        onClick={() => navigate("/user-home")}  // Corrected navigation to the user-home page
-        style={{
-          padding: '10px', 
-          backgroundColor: '#007bff', 
-          color: 'white', 
-          border: 'none', 
-          borderRadius: '4px', 
-          cursor: 'pointer',
-          marginBottom: '20px'  // Space between the button and bookings list
-        }}
-      >
-        ⬅ Back to Home
-      </button>
-      {loading && <p>Loading bookings...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {bookings.map(booking => (
-        <div
-          key={booking._id}
-          style={{
-            border: '1px solid #ccc',
-            padding: '10px',
-            marginBottom: '10px',
-            backgroundColor: 'rgba(255, 253, 253, 0.7)', // Background color for each booking card
-            borderRadius: '8px'
-          }}
-        >
-          <h3>{booking.event}</h3>
-          <p>Date: {new Date(booking.date).toLocaleDateString()}</p>
-          <p>Priest: {booking.priest?.name}</p>
-          <p>Status: {booking.status}</p>
-          {booking.status === 'Booked' && (
-            <button onClick={() => cancelBooking(booking._id)}>Cancel Booking</button>
-          )}
+      <div className="order-history-container" style={{ marginLeft: "180px" }}>
+        <p className="OrderHis">📦 Your Bookings</p>
+        <br />
+        <input
+          type="text"
+          className="search-bar"
+          placeholder="Search by event, priest, date, or status... 🔍"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        {loading && <p>Loading bookings...</p>}
+        {error && <p className="error">{error}</p>}
+        {!loading && filteredBookings.length === 0 && <p>No bookings found.</p>}
+
+        <div className="order-grid">
+          {filteredBookings.map((booking) => (
+            <div key={booking._id} className="order-card">
+              <h3>📅 Date: {new Date(booking.date).toLocaleDateString()}</h3>
+              <p><strong>Event:</strong> {booking.event}</p>
+              <p><strong>Priest:</strong> {booking.priest?.name || 'Not assigned'}</p>
+              <p><strong>Status:</strong> 
+                <span style={{ color: booking.status === 'Booked' ? '#28a745' : '#888', fontWeight: 'bold' }}>
+                  {' '}{booking.status}
+                </span>
+              </p>
+              {booking.status === 'Booked' && new Date(booking.date).setHours(0,0,0,0) >= new Date().setHours(0,0,0,0) && (
+  <div className="order-actions">
+    <button onClick={() => handleCancelConfirmation(booking._id)}>❌ Cancel</button>
+  </div>
+)}
+
+
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+      </div>
+
+      <footer className="footer">
+        <div className="footer-content">
+          <p>&copy; 2025 VK Aura. All rights reserved.</p>
+          <div className="social-media">
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"><FaFacebook /></a>
+            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"><FaTwitter /></a>
+            <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"><FaInstagram /></a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer"><FaLinkedin /></a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
 
 export default UserBookingList;
-
-
-//C:\Destop\it90\ITP1\ITP1\frontend\src\Bookkingpages\UserBookingList.js

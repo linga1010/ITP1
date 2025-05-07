@@ -113,11 +113,11 @@ const UserComponent = ({ user }) => {
         </button>
         <Link to="/user-home" onClick={() => setSidebarOpen(false)}>Home</Link>
         <Link to="/view-package" onClick={() => setSidebarOpen(false)}>Packages</Link>
-        <Link to="/OrderHistoryDetails" onClick={() => setSidebarOpen(false)}>Order History</Link>
-        <Link to="/Feedback" onClick={() => setSidebarOpen(false)}>Feedbacks</Link>
-        <Link to="/about-us" onClick={() => setSidebarOpen(false)}>About Us</Link>
-        <Link to="/user/booking-list" onClick={() => setSidebarOpen(false)}>Booking Details</Link>
         <Link to="/user/book-priest" onClick={() => setSidebarOpen(false)}>Book Priest</Link>
+        <Link to="/OrderHistoryDetails" onClick={() => setSidebarOpen(false)}>Order History</Link> 
+        <Link to="/user/booking-list" onClick={() => setSidebarOpen(false)}>Booking Details</Link>
+        <Link to="/Feedback" onClick={() => setSidebarOpen(false)}>Feedbacks</Link>
+      
       </div>
 
       <header className="dashboard-header">

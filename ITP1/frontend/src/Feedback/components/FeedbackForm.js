@@ -84,7 +84,6 @@ const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
         }}
       ></textarea>
 
-      {/* Star Rating and Emoji Display */}
       <div className="rating-container" style={{ marginBottom: "10px" }}>
         <div className="star-rating">
           {[1, 2, 3, 4, 5].map((star) => (
