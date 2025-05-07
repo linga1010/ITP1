@@ -1,6 +1,7 @@
 import Product from '../models/Product.js';
 import path from 'path';
 import fs from 'fs';
+import Package from '../models/Package.js';
 
 // ✅ Utility to delete an image file
 const deleteImage = (imagePath) => {
@@ -82,26 +83,35 @@ const updateProduct = async (req, res) => {
 
 
 
-// ✅ Delete product by SKU
 const deleteProduct = async (req, res) => {
   try {
     const { sku } = req.params;
-    const product = await Product.findOneAndDelete({ sku });
 
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+    // ✅ Find the product first
+    const product = await Product.findOne({ sku });
+    if (!product) return res.status(404).json({ message: "Product not found" });
+
+    // ✅ Check if any package uses this product
+    const isUsedInPackage = await Package.findOne({
+      "products.productId": product._id
+    });
+
+    if (isUsedInPackage) {
+      return res.status(400).json({
+        message: `Cannot delete product '${product.name}' because it is part of a package.`
+      });
     }
 
-    // Delete image if it exists
+    // ✅ Delete product and image
+    await Product.findOneAndDelete({ sku });
     deleteImage(product.image);
 
     res.status(200).json({ message: "Product deleted successfully" });
   } catch (error) {
-    console.error('Error deleting product:', error);
+    console.error("Error deleting product:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-
 
 // ✅ Get all products
 const getProducts = async (req, res) => {

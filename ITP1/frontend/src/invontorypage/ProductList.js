@@ -34,7 +34,8 @@ const ProductList = () => {
         await axios.delete(`http://localhost:5000/api/products/${sku}`);
         fetchProducts();
       } catch (error) {
-        console.error("Error deleting product:", error);
+        const msg = error.response?.data?.message || "Error deleting product";
+        alert(`❌ ${msg}`);
       }
     }
   };
@@ -358,7 +359,7 @@ const ProductList = () => {
                       style={{backgroundColor: "#1E88E5", color: "white" }}>
                       Edit
                     </button>
-                    {/* <button onClick={() => handleDelete(product.sku)} className="Delete">Delete</button> */}
+                     <button onClick={() => handleDelete(product.sku)} className="Delete">Delete</button> 
                   </td>
                 </tr>
               ))}

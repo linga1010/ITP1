@@ -76,7 +76,7 @@ const FeedbackPage = () => {
     }}>
       <UserComponent user={user} />
 
-      {/* Main Content */}
+      
       <main className="dashboard-content" style={{ padding: "20px" }}>
         <div style={{ 
           maxWidth: "700px",
@@ -88,7 +88,10 @@ const FeedbackPage = () => {
           boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)"
         }}>
 
-          <h2>Give Your Feedback</h2>
+
+<p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+Give Your Feedback</p>
+        
 
           <FeedbackForm
             editFeedback={editing}
@@ -99,7 +102,7 @@ const FeedbackPage = () => {
 
           <button
             onClick={() => setIsFeedbackVisible(!isFeedbackVisible)}
-            style={{ marginTop: "20px", padding: "10px 20px", backgroundColor: "#4CAF50", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}
+            style={{ width:"100%", marginTop: "20px", padding: "10px 25px", backgroundColor: " #1976d2", color: "white", border: "none", borderRadius: "5px", cursor: "pointer" }}
           >
             {isFeedbackVisible ? "Hide Feedbacks" : "View Feedbacks"}
           </button>

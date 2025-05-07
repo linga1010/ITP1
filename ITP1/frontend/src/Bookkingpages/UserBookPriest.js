@@ -63,7 +63,7 @@ const UserBookPriest = () => {
     e.preventDefault();
     
    
-    if (!event || event.length <= 5 || /[^a-zA-Z]/.test(event)) {
+    if (!event || event.length <= 5) {
       setError('Event name must be more than 5 characters (no numbers or symbols).');
       return;
     }
@@ -110,6 +110,7 @@ const UserBookPriest = () => {
     <div>
 
     <UserComponent user={user} />
+    <p><br></br></p> <p><br></br></p>
     
     <div
       className="user-book-priest-container"
@@ -119,28 +120,66 @@ const UserBookPriest = () => {
         borderRadius: "10px",
       }}
     >
-      <h2>Book a Priest</h2>
+      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+      Book a Priest</p> 
+     
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Event:</label>
-          <input
-            type="text"
-            value={event}
-            onChange={(e) => setEvent(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Date:</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            min={getMinDate()}
-            max={getMaxDate()}
-            required
-          />
-        </div>
+
+
+      
+      <div style={{ marginBottom: "15px", display: "flex", alignItems: "center" }}>
+  <label style={{ fontWeight: "bold", marginRight: "10px" }}>Event:</label>
+  <select
+    value={event}
+    onChange={(e) => setEvent(e.target.value)}
+    required
+    style={{
+      padding: "8px",
+      borderRadius: "5px",
+      border: "1px solid #ccc",
+      flex: "1",
+      maxWidth: "250px"
+    }}
+  >
+    <option value="">-- Select an Event --</option>
+    <option value="Wedding">Wedding</option>
+    <option value="Housewarming (Griha Pravesh)">Housewarming (Griha Pravesh)</option>
+    <option value="Ganesha Pooja">Ganesha Pooja</option>
+    <option value="Sathyanarayana Pooja">Sathyanarayana Pooja</option>
+    <option value="Durga Pooja">Durga Pooja</option>
+    <option value="Naming Ceremony (Namakarana)">Naming Ceremony (Namakarana)</option>
+    <option value="Thread Ceremony (Upanayana)">Thread Ceremony (Upanayana)</option>
+    <option value="Shraddha Ceremony">Shraddha Ceremony</option>
+    <option value="Annaprashana (First Rice Ceremony)">Annaprashana (First Rice Ceremony)</option>
+    <option value="Karthigai Deepam">Karthigai Deepam</option>
+    <option value="Ayudha Pooja">Ayudha Pooja</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
+
+
+
+<div style={{ marginBottom: "15px", display: "flex", alignItems: "center" }}>
+  <label style={{ fontWeight: "bold", marginRight: "10px" }}>Date:</label>
+  <input
+    type="date"
+    value={date}
+    onChange={(e) => setDate(e.target.value)}
+    min={getMinDate()}
+    max={getMaxDate()}
+    required
+    style={{
+      padding: "8px",
+      borderRadius: "5px",
+      border: "1px solid #ccc",
+      flex: "1",
+      maxWidth: "250px"
+    }}
+  />
+</div>
+
+
+
         <button type="button" onClick={fetchAvailablePriests} disabled={loading}>
           {loading ? 'Loading...' : 'Check Availability'}
         </button>
@@ -150,6 +189,7 @@ const UserBookPriest = () => {
         )}
 
         {availablePriests.length > 0 && (
+          
           <div>
             <h3>Available Priests</h3>
             <table>

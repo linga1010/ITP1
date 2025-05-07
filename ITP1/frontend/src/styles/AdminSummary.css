@@ -1,6 +1,34 @@
+.centered-month-picker {
+  display: flex;
+  justify-content: center;
+  align-items: baseline; /* Aligns text with input */
+  gap: 10px;
+  margin: 20px 220px;
+  font-size: 25px;
+  font-weight: 500;
+  color: #d33530;
+  flex-wrap: wrap;
+}
+
+.centered-month-picker label {
+  margin-top: 4px; /* Small tweak to align text visually */
+  font-weight: 600;
+}
+
+.custom-month-input {
+  font-size: 16px !important;
+  padding: 10px 12px !important;
+  border-radius: 6px !important;
+  border: 1px solid #ccc !important;
+  color: #d33530;
+  font-weight: 600 !important;
+  width: 160px !important;
+}
+
+
 .admin-summary-table-wrapper {
   display: flex;
-  margin-left: 88px;
+  margin-left: 150px;
   justify-content: center;
   width: 100%;
 }
@@ -20,7 +48,7 @@
   margin-top: 100px;
   margin-bottom: 40px;
   margin-left: 10%;
-  margin-right: -20%;
+  margin-right: -10%;
   padding: 100px;
   align-items: center;
   min-width: 1000px; /* Minimum width for the container */
@@ -34,13 +62,13 @@
   
   /* Title Styling */
   .admin-summary-title {
-    text-align: center;
-    font-size: 36px;
-    margin-left: 380px;
-    font-weight: bold;
+    margin-top: 40px;
+    font-size: 3.5rem;
+    font-weight: bolder;
     color: #374495;
-    letter-spacing: 1px;
-    margin-bottom: 30px;
+
+    text-align: center;
+    width: 100%;
   }
   
   /* User Details Section */
@@ -155,4 +183,151 @@
     font-weight: 400;
     opacity: 1;
   }
+  .date-picker-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    color: #000;
+    margin-top: 10px;
+    align-items: center;
+  }
   
+  .clear-filter-btn {
+    background-color: #ff6961;
+    border: none;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .clear-filter-btn:hover {
+    background-color: #e55b53;
+  }
+  /* ✅ Force black text for month/year header */
+/* Force black text for month + year header */
+.react-datepicker__header .react-datepicker__current-month,
+.react-datepicker__header .react-datepicker-year-header {
+  color: #000000 !important;
+  font-weight: bold !important;
+}
+
+/* Force black for weekday labels (Su, Mo, etc.) and date numbers */
+.react-datepicker__day-name,
+.react-datepicker__day {
+  color: #000000 !important;
+}
+
+/* Selected and focused date */
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+  background-color: #4b6cb7 !important; /* optional: your theme color */
+  color: #ffffff !important;
+}
+/* Target the DatePicker input fields */
+.react-datepicker-wrapper input {
+  font-weight: 600 !important;         /* Increase placeholder + typed text weight */
+  border: 1px solid #000000 !important; /* Thicker solid black border */
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+/* Increase placeholder font weight and keep it black */
+.react-datepicker-wrapper input::placeholder {
+  color: #000000 !important;
+  font-weight: 500 !important;
+  opacity: 1 !important;
+}
+/* Move control buttons to the far right and increase size */
+.admin-summary-controls {
+  display: flex;
+  justify-content: flex-end; /* align to right */
+  gap: 15px;
+  margin: 20px 60px 10px 800px; /* space from top and right */
+}
+
+/* Style for both buttons */
+.print-btn,
+.download-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect */
+.print-btn:hover,
+.download-btn:hover {
+  transform: scale(1.05);
+
+  background-color: #0056b3;
+}
+/* Summary Cards Section */
+.admin-summary-cards {
+  display: flex;
+  justify-content: center; /* centers cards horizontally */
+  flex-wrap: wrap;
+  margin-left: 200px !important; /* centers cards horizontally */
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.summary-card {
+  background-color: #f0f4ff;
+  padding: 20px;
+  border-radius: 12px;
+  min-width: 220px;
+  text-align: center;
+  border: 1px solid #b4c2f5;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.summary-title {
+  font-weight: bold;
+  color: #374495;
+  margin-bottom: 10px;
+}
+
+.summary-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #000;
+}
+
+/* Top 5 Join Days Table */
+.top-join-days-table {
+  width: 90%;
+  margin: 40px auto 20px;
+  border-collapse: collapse;
+  background-color: #fff;
+  border: 2px solid #374495;
+}
+
+.top-join-days-table th,
+.top-join-days-table td {
+  border: 1px solid #ddd;
+  padding: 10px 15px;
+  font-size: 15px;
+  text-align: center;
+}
+/* Match the heading background and text color */
+.top-join-days-table th {
+  background-color: #4b6cb7;  /* same as admin-summary-user-table */
+  color: #000000;             /* match black text */
+  font-weight: bold;
+}
+
+/* Match zebra striping and hover effect */
+.top-join-days-table tr:nth-child(even) {
+  background-color: #f4f4f4;
+}
+
+.top-join-days-table tr:hover {
+  background-color: #e2e8f0;
+}

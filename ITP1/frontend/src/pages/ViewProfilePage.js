@@ -47,7 +47,6 @@ const ViewProfilePage = () => {
       <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '0px',marginBottom:'30PX', textAlign: 'center',letterSpacing: '1px' }}>
       Your Profile</p>
       
-
       {error && <p className="view-error-message">{error}</p>}
 
       <div className="view-profile-info view-centered-profile">
@@ -72,6 +71,13 @@ const ViewProfilePage = () => {
         <p className="view-profile-field">
           <strong>Phone:</strong> {user.phone}
         </p>
+
+        {/* 🆕 Show Prayer Wish if not admin */}
+        {!user.isAdmin && user.personalPrayerWish && (
+          <p className="view-profile-field">
+            <strong>🙏 Your Prayer Wish:</strong> {user.personalPrayerWish}
+          </p>
+        )}
       </div>
 
       <div className="view-profile-actions">
@@ -96,6 +102,7 @@ const ViewProfilePage = () => {
         <button
           className="view-action-btn"
           onClick={handleBackToDashboard}
+          style={{ marginTop: '20px',width: '600px' }}
         >
            ⬅️ Back to Dashboard
         </button>

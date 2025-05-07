@@ -169,7 +169,7 @@ export const getProfile = async (req, res) => {
 // Update User Profile
 export const updateProfile = async (req, res) => {
   try {
-    const { name, address, phone, profilePic } = req.body;
+    const { name, address, phone, profilePic, personalPrayerWish } = req.body;
 
     const user = await User.findById(req.user.id);
     if (!user) {
@@ -181,6 +181,10 @@ export const updateProfile = async (req, res) => {
     user.phone = phone || user.phone;
     user.profilePic = profilePic || user.profilePic;
 
+    if (personalPrayerWish !== undefined) {
+      user.personalPrayerWish = personalPrayerWish;
+    }
+
     await user.save();
     res.json({ message: "Profile updated successfully." });
   } catch (error) {
@@ -188,6 +192,7 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: "Server error." });
   }
 };
+
 
 // Change Password
 export const changePassword = async (req, res) => {

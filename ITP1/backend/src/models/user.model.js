@@ -1,4 +1,3 @@
-// models/user.model.js
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
@@ -11,6 +10,7 @@ const userSchema = new mongoose.Schema({
   profilePic: { type: String, default: '' }, 
   sex: { type: String, required: false },
   isAdmin: { type: Boolean, default: false },
+  personalPrayerWish: { type: String, default: '' },  // <-- added field here
   createdAt: { type: Date, default: Date.now },
 });
 

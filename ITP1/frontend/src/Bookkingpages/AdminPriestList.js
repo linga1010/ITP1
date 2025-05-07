@@ -43,7 +43,7 @@ const AdminPriestList = () => {
 
   const handleDateChange = (date) => {
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time to midnight
+    today.setHours(0, 0, 0, 0);
 
     if (date < today) {
       alert("You cannot select dates in the past.");
@@ -72,11 +72,9 @@ const AdminPriestList = () => {
     const updateData = new FormData();
     updateData.append('name', formData.name);
     updateData.append('dailyCharge', formData.dailyCharge);
-
     if (formData.photoFile) {
       updateData.append('photoFile', formData.photoFile);
     }
-
     updateData.append('unavailableDates', JSON.stringify(formData.unavailableDates));
 
     try {
@@ -106,43 +104,53 @@ const AdminPriestList = () => {
   const photoPreview = formData.photoFile ? URL.createObjectURL(formData.photoFile) : null;
 
   return (
-    <div className="admin-dashboard-container">
+    <div style={{ backgroundColor: '#fff', color: '#000', minHeight: '100vh' }}>
       <Adminnaviagtion />
-      <div className="main-content">
-        <h2>Priest List</h2>
+      <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '40px 20px' }}>
+        <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+        Priest List</p>
         {priests.map(priest => (
-          <div key={priest._id} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
+          <div key={priest._id} style={{
+            border: '1px solid #ccc',
+            borderRadius: '10px',
+            padding: '20px',
+            marginBottom: '20px',
+            backgroundColor: '#f9f9f9',
+           
+          }}>
             {editingPriest === priest._id ? (
               <div>
-                <div>
-                  <label>Name:</label>
+                <div style={{ marginBottom: '15px' }}>
+                  <label style={{ fontWeight: 'bold' }}>Name:</label>
                   <input
                     type="text"
                     value={formData.name}
                     onChange={e => setFormData({ ...formData, name: e.target.value })}
+                    style={{ width: '100%', padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
                   />
                 </div>
-                <div>
-                  <label>Daily Charge:</label>
+                <div style={{ marginBottom: '15px' }}>
+                  <label style={{ fontWeight: 'bold' }}>Daily Charge:</label>
                   <input
                     type="number"
                     value={formData.dailyCharge}
                     onChange={e => setFormData({ ...formData, dailyCharge: e.target.value })}
+                    style={{ width: '100%', padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
                   />
                 </div>
-                <div>
-                  <label>Change Photo:</label>
+                <div style={{ marginBottom: '15px' }}>
+                  <label style={{ fontWeight: 'bold' }}>Change Photo:</label>
                   <input type="file" onChange={handleFileChange} />
-                  {photoPreview && <img src={photoPreview} alt="Photo Preview" className="photo-preview" />}
+                  {photoPreview && <img src={photoPreview} alt="Preview" style={{ marginTop: '10px', width: '100px', borderRadius: '5px' }} />}
                   {!photoPreview && priest.photo && (
-                    <div>
+                    <div style={{ marginTop: '10px' }}>
                       <p>Current Photo:</p>
-                      <img src={`http://localhost:5000${priest.photo}`} alt="Current Photo" width="100" />
+                      <img src={`http://localhost:5000${priest.photo}`} alt="Current" style={{ width: '100px', borderRadius: '5px' }} />
                     </div>
                   )}
                 </div>
-                <div>
-                  <label>Unavailable Dates:</label>
+                <div style={{ marginBottom: '15px' }}>
+                  <label style={{ fontWeight: 'bold' }}>Unavailable Dates:</label>
                   <DatePicker
                     selected={null}
                     onChange={handleDateChange}
@@ -151,20 +159,56 @@ const AdminPriestList = () => {
                     dayClassName={date =>
                       formData.unavailableDates.some(d => d.getTime() === date.getTime()) ? 'selected-date' : ''
                     }
-                    minDate={new Date()} // Disable past dates, including today
+                    minDate={new Date()}
                   />
                 </div>
-                <button onClick={() => handleUpdate(priest._id)}>Save</button>
-                <button onClick={() => setEditingPriest(null)}>Cancel</button>
+                <div style={{ marginTop: '20px' }}>
+                  <button onClick={() => handleUpdate(priest._id)} style={{
+                    backgroundColor: '#007bff',
+                    color: '#fff',
+                    padding: '10px 15px',
+                    border: 'none',
+                    borderRadius: '5px',
+                    marginRight: '10px',
+                    cursor: 'pointer'
+                  }}>Save</button>
+                  <button onClick={() => setEditingPriest(null)} style={{
+                    backgroundColor: '#6c757d',
+                    color: '#fff',
+                    padding: '10px 15px',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer'
+                  }}>Cancel</button>
+                </div>
               </div>
             ) : (
-              <div>
-                <h3>{priest.name}</h3>
-                <img src={`http://localhost:5000${priest.photo}`} alt={priest.name} width="100" />
-                <p>Daily Charge: ${priest.dailyCharge}</p>
-                <p>Unavailable Dates: {priest.unavailableDates.map(date => new Date(date).toLocaleDateString()).join(', ')}</p>
-                <button onClick={() => handleEditClick(priest)}>Edit</button>
-                <button onClick={() => handleDelete(priest._id)}>Delete</button>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
+                <img src={`http://localhost:5000${priest.photo}`} alt={priest.name} style={{ width: '100px', borderRadius: '5px' }} />
+                <div style={{ flex: 1 }}>
+                  <h3 style={{ margin: 0 }}>{priest.name}</h3>
+                  <p><strong>Daily Charge:</strong> ${priest.dailyCharge}</p>
+                  <p><strong>Unavailable Dates:</strong><br /> {priest.unavailableDates.map(date => new Date(date).toLocaleDateString()).join(', ')}</p>
+                  <div style={{ marginTop: '10px' }}>
+                    <button onClick={() => handleEditClick(priest)} style={{
+                      backgroundColor: '#ffc107',
+                      color: '#000',
+                      padding: '8px 12px',
+                      border: 'none',
+                      borderRadius: '5px',
+                      marginRight: '10px',
+                      cursor: 'pointer'
+                    }}>Edit</button>
+                    <button onClick={() => handleDelete(priest._id)} style={{
+                      backgroundColor: '#dc3545',
+                      color: '#fff',
+                      padding: '8px 12px',
+                      border: 'none',
+                      borderRadius: '5px',
+                      cursor: 'pointer'
+                    }}>Delete</button>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -174,13 +218,7 @@ const AdminPriestList = () => {
             .selected-date {
               background-color: green !important;
               color: white !important;
-            }
-            .photo-preview {
-              margin-top: 10px;
-              max-width: 100%;
-              height: auto;
-              border: 1px solid #ccc;
-              border-radius: 5px;
+              border-radius: 50%;
             }
           `}
         </style>

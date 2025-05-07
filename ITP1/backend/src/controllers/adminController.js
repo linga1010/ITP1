@@ -1,5 +1,6 @@
 import User from '../models/user.model.js';
 import DeletedUser from '../models/deletedUser.model.js';
+import sendPrayerEmail from '../utils/sendPrayerEmail.js';
 
 import Order from '../models/Order.js';
 import sendDeletionEmail from '../utils/sendDeletionEmail.js';
@@ -74,8 +75,12 @@ export const getDeletedUsers = async (req, res) => {
 // Get user summary by date (join date count)
 export const getUserSummary = async (req, res) => {
   try {
-    // Group users by date (joined on that date)
     const userSummary = await User.aggregate([
+      {
+        $match: {
+          isAdmin: false // 🔒 Exclude admin users
+        }
+      },
       {
         $project: {
           date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
@@ -99,3 +104,29 @@ export const getUserSummary = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch user summary' });
   }
 };
+
+
+export const sendPrayerEmailToUser = async (req, res) => {
+  const { userId, message } = req.body;
+  try {
+    const user = await User.findById(userId);
+    if (!user || !user.personalPrayerWish) {
+      return res.status(404).json({ error: 'User or prayer not found.' });
+    }
+
+    const result = await sendPrayerEmail(user, message);
+    if (!result.success) {
+      return res.status(500).json({ error: 'Failed to send email.' });
+    }
+
+    // ✅ Clear the prayer wish from DB
+    user.personalPrayerWish = '';
+    await user.save();
+
+    res.status(200).json({ message: 'Blessing email sent successfully and prayer cleared!' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error.' });
+  }
+};
+

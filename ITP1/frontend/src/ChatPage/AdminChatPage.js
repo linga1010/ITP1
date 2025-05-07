@@ -357,6 +357,9 @@ const [audioChunks, setAudioChunks] = useState([]);
                   Send
                 </button>
               </div>
+
+
+              
             </>
           ) : (
             <div style={{ marginTop: '100px', textAlign: 'center' }}>

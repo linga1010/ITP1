@@ -39,17 +39,15 @@ const AddPackage = () => {
     };
   }, [preview]);
 
-  // Submit package
   const handleSubmit = async (values) => {
-
     if (!image) return message.error("Please upload an image");
-
+  
     const formData = new FormData();
-    formData.append("name", values.name);
+    formData.append("name", values.name.trim());
     formData.append("discount", discount);
     formData.append("image", image);
     formData.append("products", JSON.stringify(selectedProducts));
-
+  
     try {
       await axios.post("http://localhost:5000/api/packages", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -57,7 +55,8 @@ const AddPackage = () => {
       message.success("Package added successfully");
       navigate("/packages");
     } catch (error) {
-      message.error("Error submitting package");
+      const errMsg = error.response?.data?.message || "Error submitting package";
+      message.error(`❌ ${errMsg}`);
     }
   };
 

@@ -52,14 +52,17 @@ const AdminAddPriest = () => {
     }
   };
 
-  // Preview the selected image
+
   const photoPreview = photoFile ? URL.createObjectURL(photoFile) : null;
 
   return (
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
+      <p><br></br></p>  <p><br></br></p>
       <div className="main-content">
-        <h2>Add Priest</h2>
+      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+      Add Priest </p> 
+       
         <form onSubmit={handleSubmit} className="priest-form">
           <div className="input-group">
             <label>Name:</label>
@@ -73,18 +76,17 @@ const AdminAddPriest = () => {
             <div className="photo-section">
               <label>Browse Photo:</label>
               <input type="file" onChange={handleFileChange} />
-              {/* If a file is selected, show the preview */}
               {photoPreview && <img src={photoPreview} alt="Photo Preview" className="photo-preview" />}
             </div>
-            <div className="date-section">
+            <div className="date-section"  style={{color: '#374495'}} >
               <label>Unavailable Dates:</label>
-              <DatePicker
+              <DatePicker 
                 selected={null}
                 onChange={handleDateChange}
                 inline
                 highlightDates={unavailableDates}
                 dayClassName={date => unavailableDates.some(d => d.getTime() === date.getTime()) ? 'selected-date' : ''}
-                minDate={new Date()} // Disable past dates, including today
+                minDate={new Date()}
               />
             </div>
           </div>
@@ -124,7 +126,7 @@ const AdminAddPriest = () => {
               border-radius: 5px;
             }
             button {
-              background-color: #28a745;
+              background-color:#1E88E5;
               color: white;
               padding: 10px 15px;
               border: none;
@@ -133,7 +135,7 @@ const AdminAddPriest = () => {
               margin-top: 10px;
             }
             button:hover {
-              background-color: #218838;
+              background-color:#1E88E5;
             }
             .photo-preview {
               margin-top: 10px;

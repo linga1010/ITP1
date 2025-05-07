@@ -84,7 +84,8 @@ const Adminnaviagtion = () => {
       links: [
         { to: '/admin/manage-users', label: 'Manage Users' },
         { to: '/admin/deleted-users', label: 'Removed Users' },
-        
+        { to: '/admin/user-prayers', label: ' User Prayers' },
+
         { to: '/admin/view-summary', label: 'User Summary' },
       ],
     },
@@ -141,14 +142,14 @@ const Adminnaviagtion = () => {
 
   return (
     <div className="admin-dashboard-container">
-      <header className="navbar" style={{ background: '#2c3e50' }}>
-        <div className="navbar-right">
+      <header className="navbar" style={{ background: '#2c3e50',paddingTop:"10px"}}>
+        <div className="navbar-right" >
           <button className="hamburger-icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
             <FaBars />
           </button>
           <BackButton />
           <div className="admin-profile-section">
-            <p className="admin-welcome-text">Welcome back, <strong>{user?.name || 'Admin'}</strong></p>
+            <p className="admin-welcome-text" style={{fontSize:"32px" ,marginLeft:"300px",marginRight:"350px"}}>Welcome Admin, <strong>{user?.name || 'Admin'}</strong></p>
             <div className="admin-profile-wrapper" onClick={() => navigate('/admin/view-profile')}>
               <img
                 src={user?.profilePic ? user.profilePic : defaultProfilePicUrl}
@@ -163,12 +164,11 @@ const Adminnaviagtion = () => {
         </div>
       </header>
 
-      <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`} style={{ background: '#2c3e50' }}>
-        <p style={{ color: 'white', fontSize: '36px', marginTop: '80px' }}>Admin</p>
-        <ul className="sidebar-menu">
+      <aside className={`sidebar ${isSidebarOpen ? 'open' : ''}`} style={{ background: '#2c3e50', paddingTop: '20px' }}>
+        <ul className="sidebar-menu" style={{marginTop:"100px", marginBottom:"100px"}}>
           {sidebarItems.map((item, index) => (
-            <li key={index}>
-              <button className="sidebar-toggle" onClick={() => handleToggle(item.title)}>
+            <li key={index} style={{background: 'rgb(255, 255, 255)'}}>
+              <button className="sidebar-toggle" onClick={() => handleToggle(item.title)} style={{ color: 'black' }}>
                 {item.title}
               </button>
               {openSections[item.title] && (
