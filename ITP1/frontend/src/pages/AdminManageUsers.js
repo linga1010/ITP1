@@ -343,9 +343,16 @@ const AdminManageUsers = () => {
                 <button className="admin-user-btn" onClick={confirmDelete} disabled={isDeleting}>
                   {isDeleting ? "Removing..." : "Confirm"}
                 </button>
-                <button className="admin-user-btn cancel" onClick={() => setShowDeleteModal(false)} disabled={isDeleting}>
-                  Cancel
-                </button>
+                <button
+  className={`admin-user-btn cancel ${isDeleting ? 'disabled-btn' : ''}`}
+  onClick={() => {
+    if (!isDeleting) setShowDeleteModal(false);
+  }}
+  disabled={isDeleting}
+>
+  Cancel
+</button>
+
               </div>
             </div>
           </div>
