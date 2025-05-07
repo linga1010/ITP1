@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import Order from "../models/Order.js";
 import Package from "../models/Package.js";
 import Product from "../models/Product.js";
+import sendStatusUpdateEmail from "../utils/sendStatusUpdateEmail.js";
 
 const router = express.Router();
 
@@ -12,7 +13,7 @@ router.post("/", async (req, res) => {
     const { user, userName, userPhone, items, total, location } = req.body;
 
     if (!user || !items || items.length === 0 || !total || !location || !userPhone) {
-      return res.status(400).json({ message: "Invalid order data! All fields (including location and phone) are required." });
+      return res.status(400).json({ message: "Invalid order data! All fields are required." });
     }
 
     const enrichedItems = [];
@@ -31,9 +32,9 @@ router.post("/", async (req, res) => {
 
       enrichedItems.push({
         name: item.name,
-        price: matchedPackage.totalPrice,         // ⬅️ Consistent pricing
+        price: matchedPackage.totalPrice,
         finalPrice: matchedPackage.finalPrice,
-        discountRate: matchedPackage.discount || 0, // ✅ Store % discount from package
+        discountRate: matchedPackage.discount || 0,
         quantity: item.quantity,
         products: enrichedProducts
       });
@@ -58,57 +59,41 @@ router.post("/", async (req, res) => {
   }
 });
 
-
-// Fetch all orders (Admin View)
+// Admin: Fetch all orders
 router.get("/", async (req, res) => {
   try {
     const orders = await Order.find().sort({ createdAt: -1 });
     res.status(200).json(orders);
   } catch (error) {
-    console.error("❌ Fetch All Orders Error:", error.message);
     res.status(500).json({ message: "❌ Server Error", error: error.message });
   }
 });
 
-// Fetch orders by user ID (User View)
+// User: Fetch orders by user ID
 router.get("/:userId", async (req, res) => {
   try {
     const userId = decodeURIComponent(req.params.userId);
-    console.log("Fetching orders for user:", userId);
     const orders = await Order.find({ user: userId }).sort({ createdAt: -1 });
-
-    if (!orders.length) return res.status(200).json([]);
     res.status(200).json(orders);
   } catch (error) {
-    console.error("❌ Fetch Orders Error:", error.message);
     res.status(500).json({ message: "❌ Server Error", error: error.message });
   }
 });
 
-// Confirm order (Change status to "success" and reduce stock)
+// Confirm order
 router.put("/:id/confirm", async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
     const order = await Order.findById(req.params.id).session(session);
-    if (!order) {
-      await session.abortTransaction();
-      return res.status(404).json({ message: "Order not found" });
-    }
+    if (!order) throw new Error("Order not found");
+    if (order.status === "success") throw new Error("Order is already confirmed");
 
-    if (order.status === "success") {
-      await session.abortTransaction();
-      return res.status(400).json({ message: "Order is already confirmed" });
-    }
-
-    const requiredQuantities = {}; // { productId: totalQty }
+    const requiredQuantities = {};
     for (const item of order.items) {
       const pkg = await Package.findOne({ name: item.name }).session(session);
-      if (!pkg) {
-        await session.abortTransaction();
-        return res.status(404).json({ message: `Package '${item.name}' not found` });
-      }
+      if (!pkg) throw new Error(`Package '${item.name}' not found`);
 
       for (const { productId, quantity } of pkg.products) {
         const totalRequired = quantity * item.quantity;
@@ -122,32 +107,32 @@ router.put("/:id/confirm", async (req, res) => {
 
     for (const product of products) {
       const requiredQty = requiredQuantities[product._id.toString()];
-      if (product.quantity < requiredQty) {
-        await session.abortTransaction();
-        return res.status(400).json({
-          message: `Insufficient stock for '${product.name}'. Required: ${requiredQty}, Available: ${product.quantity}`
-        });
-      }
+      if (product.quantity < requiredQty) throw new Error(`Insufficient stock for '${product.name}'`);
     }
 
     for (const product of products) {
-      const requiredQty = requiredQuantities[product._id.toString()];
-      product.quantity -= requiredQty;
+      product.quantity -= requiredQuantities[product._id.toString()];
       await product.save({ session });
     }
 
     order.status = "success";
     await order.save({ session });
-
     await session.commitTransaction();
     session.endSession();
 
-    res.json({ message: "✅ Order confirmed and inventory updated successfully!", order });
+    await sendStatusUpdateEmail({
+      orderId: order._id,
+      status: "success",
+      email: order.user,
+      name: order.userName,
+    });
+
+    res.json({ message: "✅ Order confirmed and inventory updated!", order });
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    console.error("❌ Order Confirm Error:", error);
-    res.status(500).json({ message: "❌ Internal Server Error", error: error.message });
+    console.error("❌ Confirm Error:", error.message);
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -155,15 +140,23 @@ router.put("/:id/confirm", async (req, res) => {
 router.put("/:id/ship", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
-    if (!order) return res.status(404).json({ message: "Order not found" });
-    if (order.status !== "success") return res.status(400).json({ message: "Order cannot be shipped" });
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "success") throw new Error("Order must be confirmed before shipping");
 
     order.status = "shipped";
     await order.save();
+
+    await sendStatusUpdateEmail({
+      orderId: order._id,
+      status: "shipped",
+      email: order.user,
+      name: order.userName,
+    });
+
     res.json({ message: "✅ Order marked as shipped", order });
   } catch (error) {
-    console.error("❌ Ship Order Error:", error.message);
-    res.status(500).json({ message: "❌ Server Error", error: error.message });
+    console.error("❌ Ship Error:", error.message);
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -171,46 +164,70 @@ router.put("/:id/ship", async (req, res) => {
 router.put("/:id/deliver", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
-    if (!order) return res.status(404).json({ message: "Order not found" });
-    if (order.status !== "shipped") return res.status(400).json({ message: "Order cannot be delivered" });
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "shipped") throw new Error("Only shipped orders can be delivered");
 
     order.status = "delivered";
     await order.save();
+
+    await sendStatusUpdateEmail({
+      orderId: order._id,
+      status: "delivered",
+      email: order.user,
+      name: order.userName,
+    });
+
     res.json({ message: "✅ Order marked as delivered", order });
   } catch (error) {
-    console.error("❌ Deliver Order Error:", error.message);
-    res.status(500).json({ message: "❌ Server Error", error: error.message });
+    console.error("❌ Deliver Error:", error.message);
+    res.status(500).json({ message: error.message });
   }
 });
 
-// Change order status to "removed"
+// Remove Order
 router.put("/:id/remove", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
-    if (!order) return res.status(404).json({ message: "Order not found" });
+    if (!order) throw new Error("Order not found");
 
     order.status = "removed";
     await order.save();
-    res.json({ message: "✅ Order status changed to 'removed' successfully!", order });
+
+    await sendStatusUpdateEmail({
+      orderId: order._id,
+      status: "removed",
+      email: order.user,
+      name: order.userName,
+    });
+
+    res.json({ message: "✅ Order marked as removed", order });
   } catch (error) {
-    console.error("❌ Order Removal Error:", error.message);
-    res.status(500).json({ message: "❌ Internal Server Error", error: error.message });
+    console.error("❌ Remove Error:", error.message);
+    res.status(500).json({ message: error.message });
   }
 });
 
-// Cancel pending order
+// Cancel Order
 router.put("/:id/cancel", async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
-    if (!order) return res.status(404).json({ message: "Order not found" });
-    if (order.status !== "pending") return res.status(400).json({ message: "Only pending orders can be canceled" });
+    if (!order) throw new Error("Order not found");
+    if (order.status !== "pending") throw new Error("Only pending orders can be canceled");
 
     order.status = "canceled";
     await order.save();
+
+    await sendStatusUpdateEmail({
+      orderId: order._id,
+      status: "canceled",
+      email: order.user,
+      name: order.userName,
+    });
+
     res.json({ message: "✅ Order canceled successfully!", order });
   } catch (error) {
-    console.error("❌ Cancel Order Error:", error.message);
-    res.status(500).json({ message: "❌ Server Error", error: error.message });
+    console.error("❌ Cancel Error:", error.message);
+    res.status(500).json({ message: error.message });
   }
 });
 

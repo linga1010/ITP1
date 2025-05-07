@@ -9,9 +9,9 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import http from 'http'; // Add http server
 import { Server } from 'socket.io'; // Import socket.io
-import orderRatingRoutes from './routers/OrderRatingRoutes';
+import orderRatingRoutes from './routers/OrderRatingRoutes.js';
 import offerRoutes from './routers/OfferRoutes.js';
-
+import EmailNotification from './routers/StatusNotificationEmail.js';
 
 
 // Import routes
@@ -112,6 +112,7 @@ app.use('/api/chats', chatRoutes); // ✅ Added Chat API
 app.use('/api/upload', uploadRoutes); 
 app.use('/api/order-rating', orderRatingRoutes);
 app.use('/api/offers',offerRoutes);
+app.use('/api/notifications',EmailNotification);
 
 // 404 Handler
 app.use((req, res, next) => {
