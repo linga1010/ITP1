@@ -6,6 +6,7 @@ import axios from "axios";
 import { Button, Input, message, Checkbox, Modal } from "antd";
 import { useAuth } from "../hooks/useAuth";
 import "./Order.css";
+import UserComponent from "../Component/Usercomponent";
 
 const OrderPage = () => {
   const navigate = useNavigate();
@@ -22,6 +23,8 @@ const OrderPage = () => {
     setCart(storedCart);
     setPhone(user?.phone || "");
   }, [user]);
+
+  const [locationLoading, setLocationLoading] = useState(false);
 
   const getTotalPrice = () =>
     cart.reduce((sum, item) => sum + item.finalPrice * item.quantity, 0).toFixed(2);
@@ -96,25 +99,26 @@ const OrderPage = () => {
   const handleConfirmLocation = () => {
     const txt = location.trim();
     const phoneTrimmed = phone.trim();
-
+  
     if (!txt) {
       message.error("Please enter your location.");
       return;
     }
+  
     const phoneRegex = /^0\d{9}$/;
     if (!phoneRegex.test(phoneTrimmed)) {
       message.error("Please enter a valid 10-digit phone number starting with 0.");
       return;
     }
-    const coordRegex = /^Lat: [-+]?[0-9]*\.?[0-9]+, Long: [-+]?[0-9]*\.?[0-9]+$/;
-    const addrRegex = /^[a-zA-Z0-9\s,.-]{5,}$/;
-    if (coordRegex.test(txt) || addrRegex.test(txt)) {
+  
+   
+    if (txt.length >= 5) {
       proceedToPayment();
     } else {
-      message.error("Please enter a valid address (min 5 characters) or click ‘Share My Location’.");
+      message.error("Please enter a valid address (at least 5 characters) or click ‘Share My Location’.");
     }
   };
-
+  
   const proceedToPayment = () => {
     try {
       localStorage.setItem(`location_user_${user._id}`, location);
@@ -135,12 +139,15 @@ const OrderPage = () => {
       message.error("❌ Geolocation is not supported by your browser.");
       return;
     }
+  
+    setLocationLoading(true); // start loading
+  
     navigator.geolocation.getCurrentPosition(
       async ({ coords }) => {
         const { latitude, longitude } = coords;
         try {
           const r = await axios.get("https://nominatim.openstreetmap.org/reverse", {
-            params: { lat: latitude, lon: longitude, format: "json" },
+            params: { lat: latitude, lon: longitude, format: "json", 'accept-language': 'ta' },
           });
           const addr = r.data.display_name;
           if (addr) {
@@ -155,35 +162,27 @@ const OrderPage = () => {
           const fallback = `Lat: ${latitude.toFixed(2)}, Long: ${longitude.toFixed(2)}`;
           setLocation(fallback);
           message.error("❌ Couldn't fetch address. Coordinates used.");
+        } finally {
+          setLocationLoading(false); // stop loading
         }
       },
       err => {
         console.error("Error getting location:", err);
         message.error("❌ Unable to retrieve your location.");
+        setLocationLoading(false); // stop loading
       }
     );
   };
+  
 
   return (
+    <div>
+      <UserComponent user={user} />
+    
     <div className="containerorder">
       <h2>Package Order Summary</h2>
 
-      <Button
-        className="backbutton"
-        onClick={() => navigate("/view-package")}
-        type="default"
-        style={{
-          position: "fixed",
-          top: "30px",
-          right: "20px",
-          zIndex: 1000,
-          padding: "10px 15px",
-          backgroundColor: "#007bff",
-          color: "white",
-        }}
-      >
-        ← Back to Packages
-      </Button>
+     
 
       {cart.length > 0 ? (
         <div className="cart">
@@ -253,13 +252,20 @@ const OrderPage = () => {
         <Button onClick={getUserLocation} type="default" style={{ marginBottom: "10px" }}>
           Share My Location
         </Button>
+        {locationLoading && (
+        <p style={{ color: "gray", fontStyle: "italic", marginTop: "5px" }}>
+        📍 Finding your location...
+        </p>
+        )}
+
         <Input
           placeholder="Enter your Phone Number"
           value={phone}
           onChange={e => setPhone(e.target.value)}
-          maxLength={15}
+          maxLength={10}
         />
       </Modal>
+    </div>
     </div>
   );
 };

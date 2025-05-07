@@ -6,6 +6,8 @@ import { message, Spin } from "antd";
 import "./Payment.css";
 import RatingModal from "./RatingModal";
 
+
+
 const Payment = () => {
   const [paymentData, setPaymentData] = useState({
     cardNumber: "",
@@ -34,7 +36,7 @@ const Payment = () => {
       [name]: value.trim(),
     }));
   };
-
+  const [thankYouVisible, setThankYouVisible] = useState(false);
   const validate = () => {
     const errors = {};
     if (!/^\d{16}$/.test(paymentData.cardNumber)) {
@@ -42,7 +44,10 @@ const Payment = () => {
     }
     if (!paymentData.holderName) {
       errors.holderName = "Card holder name is required.";
+    } else if (!/^[\p{L}\s]+$/u.test(paymentData.holderName)) {
+      errors.holderName = "Name must contain only letters and spaces (any language).";
     }
+    
     if (!paymentData.expiryDate) {
       errors.expiryDate = "Expiry date is required.";
     } else {
@@ -123,8 +128,13 @@ const Payment = () => {
         localStorage.removeItem(`location_user_${user._id}`);
         localStorage.removeItem(`phone_user_${user._id}`);
 
-        message.success("✅ Payment and Order placed successfully!");
-        setRatingModalVisible(true);
+        setThankYouVisible(true); // Show the thank you popup
+
+setTimeout(() => {
+  setThankYouVisible(false);
+  setRatingModalVisible(true); // Then show rating modal after 10s
+}, 5000); // 10 seconds
+
       } else {
         message.error(paymentResponse.data.message || "❌ Payment failed. Try again.");
       }
@@ -143,8 +153,8 @@ const Payment = () => {
   }, [error]);
 
   return (
-    <div className="payment-container">
-      <h2>💳 Payment Page</h2>
+    <div className="payment-container" >
+      <p><span className="icon">💳</span> <span className="heading-text">PAYMENT PAGE</span></p>
       {error && <p ref={errorRef} className="error">{error}</p>}
 
       <form onSubmit={handleSubmit}>
@@ -209,6 +219,17 @@ const Payment = () => {
           orderId={createdOrderId}
         />
       )}
+
+        {thankYouVisible && (
+          <div className="thank-you-overlay">
+          <div className="thank-you-modal">
+            <h3>🙏 Thank You for Your Order!🎉</h3>
+            <p>Your order was placed successfully.</p>
+            <p>We will deliver it to you soon.</p>
+        </div>
+        </div>
+        )}
+
     </div>
   );
 };
