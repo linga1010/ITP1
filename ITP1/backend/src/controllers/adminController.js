@@ -74,8 +74,12 @@ export const getDeletedUsers = async (req, res) => {
 // Get user summary by date (join date count)
 export const getUserSummary = async (req, res) => {
   try {
-    // Group users by date (joined on that date)
     const userSummary = await User.aggregate([
+      {
+        $match: {
+          isAdmin: false // 🔒 Exclude admin users
+        }
+      },
       {
         $project: {
           date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },

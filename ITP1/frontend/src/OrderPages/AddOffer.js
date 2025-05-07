@@ -193,7 +193,9 @@ const AdminOffers = () => {
     <div className="admin-dashboard-container">
           <Adminnaviagtion />
     <div className="admin-offers-container">
-      <h2 className="admin-offer-title">ADMIN - MANAGE OFFERS</h2>
+    <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+    ADMIN - MANAGE OFFERS </p>
+      
 
       <div className="admin-offer-form">
         <Select

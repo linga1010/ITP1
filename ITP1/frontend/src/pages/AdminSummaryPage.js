@@ -319,7 +319,7 @@ const AdminSummary = () => {
       <div className="admin-summary-controls">
         <button onClick={handlePrint} className="print-btn">🖨️ Print</button>
       </div>
-      <p className="admin-summary-title">User Summary</p>
+      
       <div className="admin-summary-cards">
   {Object.entries(summaryCards).map(([title, value], idx) => (
     <div key={idx} className="summary-card">
@@ -431,9 +431,9 @@ const AdminSummary = () => {
         )}
       </div>
       {/* Table */}
-      <div className="admin-summary-user-details">
+      <div className="admin-summary-user-details" >
         <h3 className="admin-summary-heading">Users Joined</h3>
-        <div className="admin-summary-table-wrapper">
+        <div className="admin-summary-table-wrapper" style={{marginLeft:"100px" }}>
           {filteredSummary.length > 0 ? (
             <table className="admin-summary-user-table">
               <thead>

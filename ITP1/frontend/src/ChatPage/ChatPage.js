@@ -129,45 +129,62 @@ function UserChat() {
       mediaRecorder.stop();
       setIsRecording(false);
     } else {
-      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const recorder = new MediaRecorder(stream);
-        setMediaRecorder(recorder);
-        setAudioChunks([]);
-  
-        recorder.ondataavailable = (e) => {
-          if (e.data.size > 0) {
-            setAudioChunks((prev) => [...prev, e.data]);
-          }
-        };
-  
-        recorder.onstop = async () => {
-          const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-          const formData = new FormData();
-          formData.append('file', audioBlob, 'voiceMessage.webm');
-  
+
+
+   
+
+
+
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
           try {
-            const uploadRes = await axios.post('http://localhost:5000/api/upload', formData);
-            const audioUrl = uploadRes.data.url;
-  
-            socket.emit('sendMessage', {
-              senderEmail: user.email,
-              receiverEmail: 'admin',
-              messageType: 'audio',
-              messageContent: audioUrl,
-            });
-  
-            setSeenStatus(false);
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        
+            const recorder = new MediaRecorder(stream);
+            setMediaRecorder(recorder);
+            setAudioChunks([]);
+        
+            recorder.ondataavailable = (e) => {
+              if (e.data.size > 0) {
+                setAudioChunks((prev) => [...prev, e.data]);
+              }
+            };
+        
+            recorder.onstop = async () => {
+              const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+              const formData = new FormData();
+              formData.append('file', audioBlob, 'voiceMessage.webm');
+        
+              try {
+                const uploadRes = await axios.post('http://localhost:5000/api/upload', formData);
+                const audioUrl = uploadRes.data.url;
+        
+                socket.emit('sendMessage', {
+                  senderEmail: user.email,
+                  receiverEmail: 'admin',
+                  messageType: 'audio',
+                  messageContent: audioUrl,
+                });
+        
+                setSeenStatus(false);
+              } catch (error) {
+                console.error('Failed to upload voice message:', error);
+              }
+            };
+        
+            recorder.start();
+            setIsRecording(true);
           } catch (error) {
-            console.error('Failed to upload voice message:', error);
+            alert('🎤 Microphone access denied.\nPlease allow microphone permission in your browser or system settings.');
+            console.error('Microphone access error:', error);
           }
-        };
+        } else {
+          alert('🎤 Microphone not supported by your browser.');
+        }
+
+
+        
   
-        recorder.start();
-        setIsRecording(true);
-      } else {
-        alert('Microphone not supported');
-      }
+      
     }
   };
   

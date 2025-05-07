@@ -1,11 +1,10 @@
-// C:\Users\Admin\Desktop\new\ITP1\backend\src\models\Package.js
-// C:\Users\Admin\Desktop\new\ITP1\backend\src\controllers\PackageController.js
 
 import fs from 'fs';
 import path from 'path';
 import Package from '../models/Package.js';  // Add the .js extension
 import Product from '../models/Product.js';  // Add the .js extension if not done already
 import cloudinary from '../config/cloudinary.js';
+import Offer from '../models/Offer.js';
 
 
 
@@ -141,49 +140,28 @@ export const updatePackage = async (req, res) => {
 
 
 
-
-
-
-
-
-
-/*
-
-// Delete package
 export const deletePackage = async (req, res) => {
   try {
-    const deletedPackage = await Package.findByIdAndDelete(req.params.id);
-    if (!deletedPackage) return res.status(404).json({ message: "Package not found" });
+    const packageId = req.params.id;
 
-    // Delete package image if exists
-    if (deletedPackage.image) {
-      const imagePath = path.join(__dirname, '..', deletedPackage.image);
-      try {
-        if (fs.existsSync(imagePath)) {
-          fs.unlinkSync(imagePath);
-        }
-      } catch (err) {
-        console.error("Error deleting image:", err);
-      }
+    // ✅ Check if any offer is using this package
+    const offerUsingPackage = await Offer.findOne({ packageId });
+    if (offerUsingPackage) {
+      return res.status(400).json({
+        message: "Cannot delete package: It is currently used in an active offer.",
+      });
     }
 
-    res.status(200).json({ message: "Package deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-};   */
-
-// Delete package
-export const deletePackage = async (req, res) => {
-  try {
-    const deletedPackage = await Package.findByIdAndDelete(req.params.id);
-    if (!deletedPackage) return res.status(404).json({ message: "Package not found" });
+    // Proceed with delete
+    const deletedPackage = await Package.findByIdAndDelete(packageId);
+    if (!deletedPackage) {
+      return res.status(404).json({ message: "Package not found" });
+    }
 
     if (deletedPackage.image) {
       const imageUrlParts = deletedPackage.image.split('/');
       const imageNameWithExtension = imageUrlParts[imageUrlParts.length - 1];
       const publicId = `Packages/${imageNameWithExtension.split('.')[0]}`;
-
       try {
         await cloudinary.uploader.destroy(publicId);
         console.log('✅ Image deleted from Cloudinary');

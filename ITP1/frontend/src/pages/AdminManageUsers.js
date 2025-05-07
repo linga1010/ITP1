@@ -216,7 +216,7 @@ const AdminManageUsers = () => {
           <tbody>
             {filteredUsers.map(u => (
               <tr key={u._id}>
-                <td><img src={u.profilePic || defaultProfilePicUrl} alt={u.name} className="user-profile-pic" /></td>
+                <td ><img src={u.profilePic || defaultProfilePicUrl} alt={u.name} className="user-profile-pic" /></td>
                 <td>{u.name}<br></br>{u.email}</td><td>{u.phone}</td><td>{u.address || '—'}</td>
                 <td>
                   <button className="admin-user-btn" onClick={() => viewUserDetails(u)}>View</button>
@@ -235,7 +235,7 @@ const AdminManageUsers = () => {
               User Details</p>
               
               <div className="user-info">
-                <img src={selectedUser.profilePic || defaultProfilePicUrl} alt={selectedUser.name} className="user-profile-pic-large" />
+                <img style={{marginRight:"30px"}} src={selectedUser.profilePic || defaultProfilePicUrl} alt={selectedUser.name} className="user-profile-pic-large" />
                 <div className="user-fields">
                   <p><strong>Name</strong> {selectedUser.name}</p>
                   <p><strong>Email:</strong> {selectedUser.email}</p>
@@ -243,11 +243,13 @@ const AdminManageUsers = () => {
                   <p><strong>Address:</strong> {selectedUser.address || '—'}</p>
                 </div>
               </div>
+
+             <p><br></br></p>   <p><br></br></p>
               
               <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
               Order History</p>
               
-              <div className="order-history">
+              <div className="order-history" style={{marginLeft:"60px"}}>
                 {selectedUser.orderHistory.length > 0 ? selectedUser.orderHistory.map(order => {
                   const computedTotal = order.items.reduce((sum, it) => sum + it.finalPrice * it.quantity, 0);
                   const statusClass = statusClassMap[order.status.toLowerCase()] || '';
@@ -276,13 +278,13 @@ const AdminManageUsers = () => {
                       </div>
                     </div>
                   );
-                }) : <p className="no-orders">No orders found.</p>}
+                }) : <p className="no-orders" style={{marginLeft:"50px"}}>No orders found.</p>}
               </div>
               
 
               <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
               Feedback History</p>
-              <div className="order-history">
+              <div className="order-history" style={{marginLeft:"60px"}}>
                 {selectedUser.feedbackHistory.length > 0 ? selectedUser.feedbackHistory.map(fb => (
                   <div className="order-card" key={fb._id}>
                     <div className="order-header">
@@ -313,7 +315,7 @@ const AdminManageUsers = () => {
                       )}
                     </p>
                   </div>
-                )) : <p className="no-orders">No feedback found.</p>}
+                )) : <p className="no-orders" style={{marginLeft:"50px"}}>No feedback found.</p>}
               </div>
             </div>
           </div>
@@ -323,7 +325,9 @@ const AdminManageUsers = () => {
           <div className="modal">
             <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => !isDeleting && setShowDeleteModal(false)}>×</span>
-              <h2>Confirm Remove</h2>
+              <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+              Confirm Remove</p>
+             
               <textarea
                 placeholder="Reason for deletion"
                 value={deletionReason}

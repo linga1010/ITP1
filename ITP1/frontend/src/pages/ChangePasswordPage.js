@@ -64,7 +64,9 @@ const ChangePasswordPage = () => {
 
   return (
     <div className="cpw-container">
-      <h1 >Change Password</h1>
+      
+      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+      Change Password</p>
 
       {message && <p className="cpw-success">{message}</p>}
       {error   && <p className="cpw-error">{error}</p>}

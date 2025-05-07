@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import './List.css'; // Import the CSS file
 import "../styles/Body.css";
-import Adminnaviagtion from '../Component/Adminnavigation'; // Import the Admin Navigation Component
+import { Table, Input, Button, Select, message, Popconfirm } from "antd";
+import Adminnaviagtion from '../Component/Adminnavigation'; 
 
 const PackageList = () => {
   const [packages, setPackages] = useState([]);
@@ -28,13 +29,17 @@ const PackageList = () => {
     }
   };
 
+  
+
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this package?")) {
       try {
         await axios.delete(`http://localhost:5000/api/packages/${id}`);
         setPackages((prevPackages) => prevPackages.filter((pkg) => pkg._id !== id));
+        message.success("Package deleted successfully");
       } catch (error) {
-        console.error("Error deleting package:", error);
+        const errorMsg = error.response?.data?.message || "Failed to delete package";
+        message.error(errorMsg);
       }
     }
   };
