@@ -417,3 +417,8 @@ h1 {
   padding: 14px 28px;  /* ⬅️ increased size */
   font-size: 1rem;     /* ⬆️ larger font */
 }
+.disabled-btn {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}

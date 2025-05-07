@@ -13,28 +13,33 @@ const DeleteAccountPage = () => {
 
   const handleDeleteAccount = () => {
     if (!deletePassword) {
-      return setError('❌ Please enter your password to confirm deletion');
+      setError('❌ Please enter your password to confirm deletion');
+      setMessage('');
+      return;
     }
-    setIsDeleting(true); // ✅ Show progress
+  
+    setIsDeleting(true); // ✅ Only runs after validation
+    setError('');
+    setMessage('');
+  
     const token = localStorage.getItem('token');
     axios
       .delete('http://localhost:5000/api/users/delete-account', {
         headers: { Authorization: `Bearer ${token}` },
-        data:    { password: deletePassword },
+        data: { password: deletePassword },
       })
       .then(() => {
         setMessage('✅ Account deleted successfully');
-        setError('');
         localStorage.removeItem('token');
+        setIsDeleting(false);
         setTimeout(() => navigate('/'), 2000);
       })
       .catch(err => {
         setError('❌ ' + (err.response?.data?.message || 'Error deleting account'));
-        setMessage('');
-        setIsDeleting(false); // ✅ Reset on error
+        setIsDeleting(false);
       });
   };
-
+  
   return (
     <div className="dap-container">
       <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '0px', marginBottom: '30px', textAlign: 'center', letterSpacing: '1px' }}>
@@ -44,7 +49,7 @@ const DeleteAccountPage = () => {
       {message && <p className="dap-success">{message}</p>}
       {error   && <p className="dap-error">{error}</p>}
       {isDeleting && (
-        <p style={{ textAlign: 'center', fontWeight: 'bold', color: 'red' }}>
+        <p style={{ textAlign: 'center', fontWeight: 'bold', color: 'red',fontSize: '19px' }}>
           Deleting account... please wait
         </p>
       )}
