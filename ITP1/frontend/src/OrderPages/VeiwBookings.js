@@ -5,6 +5,7 @@ import "./VeiwBooking.css";
 import "../styles/Body.css";
 import Adminnaviagtion from "../Component/Adminnavigation";
 
+
 const ViewBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [products, setProducts] = useState([]);
@@ -213,29 +214,45 @@ const ViewBookings = () => {
   const updateOrderStatus = async (orderId, status) => {
     const token = localStorage.getItem("token");
     if (!token) return alert("❌ Unauthorized! Please log in again.");
-
+  
     try {
       const response = await axios.put(
         `http://localhost:5000/api/orders/${orderId}/${status}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
+  
+      const updatedOrder = response.data.order;
+  
       const updatedBookings = bookings.map((order) =>
-        order._id === orderId ? { ...order, status: response.data.order.status } : order
+        order._id === orderId ? { ...order, status: updatedOrder.status } : order
       );
-
+  
       setBookings(updatedBookings);
       updateOrderCounts(updatedBookings);
       calculateSalesAndProfit(updatedBookings, products, packages);
-
+  
+      // ✅ Send email notification for relevant statuses
+      if (["success", "removed", "shipped", "delivered"].includes(status)) {
+        await axios.post(
+          "http://localhost:5000/api/notifications/send-status-email",
+          {
+            orderId: updatedOrder._id,
+            status: updatedOrder.status,
+            userEmail: updatedOrder.user,
+            userName: updatedOrder.userName || "User"
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+  
       alert(`✅ Order marked as ${status} successfully!`);
     } catch (err) {
       console.error(`❌ Failed to update order to ${status}:`, err);
       alert(err.response?.data?.message || "❌ Failed to update order.");
     }
   };
-
+  
   const handleStartDateChange = e => {
     const sel = new Date(e.target.value);
     if (endDate) {
