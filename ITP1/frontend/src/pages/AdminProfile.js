@@ -98,13 +98,18 @@ const AdminProfile = () => {
         >
           🗑️ Delete Account
         </button>
-        <button
+        
+      
+    
+      </div>
+      
+      <button
           className="view-action-btn"
+          style={{ marginTop: '20px',width: '600px' }}
           onClick={handleBackToDashboard}
         >
           ⬅ Back to Dashboard
         </button>
-      </div>
     </div>
   );
 };

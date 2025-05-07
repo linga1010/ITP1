@@ -160,10 +160,16 @@ const AdminManageUsers = () => {
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
       <div className="maincontent">
-        <h1>Manage Users</h1>
+      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+      Manage Users</p>
+       
         <div className="summary">
-          <h2>Total Admins: {admins.length}</h2>
-          <h2>Total Users: {users.length}</h2>
+        <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+        Total Admins: {admins.length}</p>
+
+        <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+        Total Users: {users.length} </p>
+        
         </div>
         <div className="search-box">
           <input
@@ -183,8 +189,9 @@ const AdminManageUsers = () => {
         )}
 
         {error && <p className="error-text">{error}</p>}
-
-        <h1>Admins</h1>
+        <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+        Admins</p>
+        
         <table className="standard-table">
           <thead>
             <tr><th>Profile</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th></tr>
@@ -199,16 +206,18 @@ const AdminManageUsers = () => {
           </tbody>
         </table>
 
-        <h1>Users</h1>
+       
+        <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+        Users</p>
         <table className="standard-table">
           <thead>
-            <tr><th>Profile</th><th>Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Actions</th></tr>
+            <tr><th>Profile</th><th>Name&Email</th><th>Phone</th><th>Address</th><th>Actions</th></tr>
           </thead>
           <tbody>
             {filteredUsers.map(u => (
               <tr key={u._id}>
                 <td><img src={u.profilePic || defaultProfilePicUrl} alt={u.name} className="user-profile-pic" /></td>
-                <td>{u.name}</td><td>{u.email}</td><td>{u.phone}</td><td>{u.address || '—'}</td>
+                <td>{u.name}<br></br>{u.email}</td><td>{u.phone}</td><td>{u.address || '—'}</td>
                 <td>
                   <button className="admin-user-btn" onClick={() => viewUserDetails(u)}>View</button>
                   <button className="admin-user-btn cancel" onClick={() => handleDeleteUser(u._id)}>Remove</button>
@@ -222,17 +231,22 @@ const AdminManageUsers = () => {
           <div className="modal" >
             <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => setShowUserModal(false)}>×</span>
-              <h2>User Details</h2>
+              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+              User Details</p>
+              
               <div className="user-info">
                 <img src={selectedUser.profilePic || defaultProfilePicUrl} alt={selectedUser.name} className="user-profile-pic-large" />
                 <div className="user-fields">
-                  <p><strong>Name:</strong> {selectedUser.name}</p>
+                  <p><strong>Name</strong> {selectedUser.name}</p>
                   <p><strong>Email:</strong> {selectedUser.email}</p>
                   <p><strong>Phone:</strong> {selectedUser.phone}</p>
                   <p><strong>Address:</strong> {selectedUser.address || '—'}</p>
                 </div>
               </div>
-              <h2>Order History</h2>
+              
+              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+              Order History</p>
+              
               <div className="order-history">
                 {selectedUser.orderHistory.length > 0 ? selectedUser.orderHistory.map(order => {
                   const computedTotal = order.items.reduce((sum, it) => sum + it.finalPrice * it.quantity, 0);
@@ -264,7 +278,10 @@ const AdminManageUsers = () => {
                   );
                 }) : <p className="no-orders">No orders found.</p>}
               </div>
-              <h2>Feedback History</h2>
+              
+
+              <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
+              Feedback History</p>
               <div className="order-history">
                 {selectedUser.feedbackHistory.length > 0 ? selectedUser.feedbackHistory.map(fb => (
                   <div className="order-card" key={fb._id}>

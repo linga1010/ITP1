@@ -150,7 +150,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="profile-container" style={{ width: '900px', height: '900px', backgroundColor: '#f0f0f0' }}>
+    <div className="profile-container" style={{ width: '900px', height: '1000px', backgroundColor: '#f0f0f0' }}>
       <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '0px',marginBottom:'30PX', textAlign: 'center',letterSpacing: '1px' }}>
       Your Profile</p>
      
@@ -247,7 +247,7 @@ const ProfilePage = () => {
         setFormData((prev) => ({ ...prev, name: user.name || '' }));
         setIsEditing((prev) => ({ ...prev, name: true }));
       }}
-      style={{ marginTop: '10px',width: '500px' }}
+      style={{ marginTop: '10px',width: '520px' }}
     >
        ✏️Change Name
     </button>
@@ -302,7 +302,7 @@ const ProfilePage = () => {
       }}
       style={{ marginTop: '10px',width: '500px' }}
     >
-     🏠Change Address
+     🏠ChangeAddress
     </button>
   )}
 </div>
