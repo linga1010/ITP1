@@ -8,11 +8,18 @@ import Product from '../models/Product.js';  // Add the .js extension if not don
 import cloudinary from '../config/cloudinary.js';
 
 
-// Create a package
+
+
 export const createPackage = async (req, res) => {
   try {
     const { name, discount, products } = req.body;
     const image = req.file ? req.file.path : null;
+
+    // ✅ Check if package name already exists
+    const existingPackage = await Package.findOne({ name: name.trim() });
+    if (existingPackage) {
+      return res.status(400).json({ message: "Package name already exists. Please use a different name." });
+    }
 
     let parsedProducts;
     try {
@@ -24,7 +31,6 @@ export const createPackage = async (req, res) => {
       return res.status(400).json({ message: "Invalid products format" });
     }
 
-    // Validate if all product IDs exist
     const productDetails = await Promise.all(
       parsedProducts.map(async (item) => {
         const product = await Product.findById(item.productId);
@@ -33,12 +39,11 @@ export const createPackage = async (req, res) => {
       })
     );
 
-    // Calculate total and final price
     const totalPrice = productDetails.reduce((sum, item) => sum + item.price * item.quantity, 0);
     const finalPrice = discount ? totalPrice - (totalPrice * (discount / 100)) : totalPrice;
 
     const newPackage = new Package({
-      name,
+      name: name.trim(),
       discount,
       totalPrice,
       finalPrice,
