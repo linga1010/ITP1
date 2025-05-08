@@ -94,8 +94,17 @@ const AdminUserPrayers = () => {
     <div className="admin-dashboard-container">
       <Adminnaviagtion />
       <div className="maincontent">
-        <h2 style={{ textAlign: 'center', color: '#374495', marginTop: '20px' }}>🙏 User Prayer Wishes</h2>
-
+      <p style={{
+          fontSize: '36px',
+          fontWeight: 'bold',
+          color: '#374495',
+          margin: '0px',
+          marginBottom: '30px',
+          textAlign: 'center',
+          letterSpacing: '1px'
+        }}>
+          User Prayers
+        </p>
         <table className="standard-table">
           <thead>
             <tr>
@@ -140,7 +149,17 @@ const AdminUserPrayers = () => {
           <div className="modal">
             <div className="modal-content" ref={modalRef}>
               <span className="close" onClick={() => !sending && setShowModal(false)}>×</span>
-              <h3 style={{ color: '#374495', textAlign: 'center' }}>Send Blessing to {selectedUser.name}</h3>
+  <p style={{
+          fontSize: '36px',
+          fontWeight: 'bold',
+          color: '#374495',
+          margin: '0px',
+          marginBottom: '30px',
+          textAlign: 'center',
+          letterSpacing: '1px'
+        }}>
+         Send Blessing to {selectedUser.name}
+        </p>
               <textarea
                 placeholder="Type your blessing message here..."
                 rows={6}
