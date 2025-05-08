@@ -106,7 +106,8 @@ const AdminPriestList = () => {
   return (
     <div style={{ backgroundColor: '#fff', color: '#000', minHeight: '100vh' }}>
       <Adminnaviagtion />
-      <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '40px 20px' }}>
+      <p><br></br></p>  <p><br></br></p>
+      <div style={{ maxWidth: '1600px', margin: '0 auto', padding: '40px 20px' }}>
         <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
         Priest List</p>
         {priests.map(priest => (
@@ -141,11 +142,11 @@ const AdminPriestList = () => {
                 <div style={{ marginBottom: '15px' }}>
                   <label style={{ fontWeight: 'bold' }}>Change Photo:</label>
                   <input type="file" onChange={handleFileChange} />
-                  {photoPreview && <img src={photoPreview} alt="Preview" style={{ marginTop: '10px', width: '100px', borderRadius: '5px' }} />}
+                  {photoPreview && <img src={photoPreview} alt="Preview" style={{ marginTop: '10px', width: '500px',height:"500px" ,borderRadius: '5px' }} />}
                   {!photoPreview && priest.photo && (
                     <div style={{ marginTop: '10px' }}>
                       <p>Current Photo:</p>
-                      <img src={`http://localhost:5000${priest.photo}`} alt="Current" style={{ width: '100px', borderRadius: '5px' }} />
+                      <img src={`http://localhost:5000${priest.photo}`} alt="Current" style={{ width: '500px', borderRadius: '5px' }} />
                     </div>
                   )}
                 </div>
@@ -170,6 +171,7 @@ const AdminPriestList = () => {
                     border: 'none',
                     borderRadius: '5px',
                     marginRight: '10px',
+                    width:"47%",
                     cursor: 'pointer'
                   }}>Save</button>
                   <button onClick={() => setEditingPriest(null)} style={{
@@ -178,13 +180,14 @@ const AdminPriestList = () => {
                     padding: '10px 15px',
                     border: 'none',
                     borderRadius: '5px',
+                    width:"47%",
                     cursor: 'pointer'
                   }}>Cancel</button>
                 </div>
               </div>
             ) : (
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: '20px', flexWrap: 'wrap' }}>
-                <img src={`http://localhost:5000${priest.photo}`} alt={priest.name} style={{ width: '100px', borderRadius: '5px' }} />
+                <img src={`http://localhost:5000${priest.photo}`} alt={priest.name} style={{ width: '300px',height:"200px" ,borderRadius: '5px' }} />
                 <div style={{ flex: 1 }}>
                   <h3 style={{ margin: 0 }}>{priest.name}</h3>
                   <p><strong>Daily Charge:</strong> ${priest.dailyCharge}</p>

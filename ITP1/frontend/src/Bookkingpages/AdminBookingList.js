@@ -85,7 +85,7 @@ const AdminBookingList = () => {
   return (
     <div style={{ backgroundColor: '#fff', minHeight: '100vh', color: '#000' ,marginLeft: '150px'}}>
       <Adminnaviagtion />
-      <p><br></br></p>  <p><br></br></p>
+      <p><br></br></p>  <p><br></br></p> 
       <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '40px 20px' }}>
       <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
       Admin - Booking Details </p> 

@@ -205,7 +205,7 @@ const AdminDashboard = () => {
 
         <div className="date-filter-row" style={{ gap: '100px'}}>
           <div className="date-field">
-            <label><strong>Start Date:</strong></label>
+            <label style={{marginTop:"0px"}}><strong>Start Date:</strong></label>
             <input type="date" value={startDate} max={today} onChange={e => handleStartDateChange(e.target.value)} />
             
           </div>
@@ -216,7 +216,7 @@ const AdminDashboard = () => {
             
           </div>
 
-          <button onClick={clearFilters} className="clear-btn">All Data</button>
+          <button   onClick={clearFilters} className="clear-btn">All Data</button>
         </div>
 
         <div className="summary-row">

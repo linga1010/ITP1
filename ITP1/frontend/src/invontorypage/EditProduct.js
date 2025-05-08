@@ -206,13 +206,7 @@ const EditProduct = () => {
 
           <div className="form-group">
             <label>Quantity</label>
-            <Input
-  type="text"
-  value={quantity ? parseFloat(quantity).toFixed(2) : ""}
-  onChange={doublevalue(setQuantity)}
-  placeholder="Quantity"
-/>
-
+            {quantity ? parseFloat(quantity).toFixed(2) : ""}
           </div>
 
           <div className="form-group">

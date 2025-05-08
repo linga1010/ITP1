@@ -47,8 +47,7 @@ const ProductList = () => {
 
 
   const handlePrint = () => {
-    const logoURL = "/logo.jpeg"; // Your logo path
-    
+    const logoURL = "/logo.jpeg"; // Make sure this is in your public folder
     const newWindow = window.open('', '_blank');
   
     const productHTML = `
@@ -57,53 +56,69 @@ const ProductList = () => {
           <title>Product List - Vk Aura</title>
           <style>
             body {
-              font-family: 'Arial', sans-serif;
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              background-color: #f4f6f8;
+              margin: 0;
               padding: 40px;
-              background-color: #f2f2f2;
-              display: flex;
-              justify-content: center;
             }
             .container {
-              background-color: #ffffff;
-              border: 2px solid #ccc;
-              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-              padding: 30px;
-              max-width: 950px;
-              width: 100%;
+              background-color: #fff;
+              padding: 40px;
+              max-width: 1100px;
               margin: auto;
+              border-radius: 10px;
+              box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             }
             .company-header {
               display: flex;
               justify-content: space-between;
               align-items: center;
+              border-bottom: 2px solid #e0e0e0;
+              padding-bottom: 20px;
               margin-bottom: 30px;
             }
             .company-header img {
-              width: 100px;
-              height: auto;
-              border: 1px solid #ccc;
-              padding: 5px;
+              height: 70px;
             }
             .company-header h1 {
-              font-size: 28px;
+              font-size: 32px;
+              color: #374495;
               margin: 0;
+            }
+            h2 {
+              text-align: center;
+              color: #374495;
+              margin-bottom: 30px;
             }
             table {
               width: 100%;
               border-collapse: collapse;
-              margin-bottom: 20px;
+              margin-bottom: 30px;
             }
-            table, th, td {
-              border: 1px solid #333;
+            thead {
+              background-color: #f0f0f0;
             }
             th, td {
-              padding: 12px;
+              border: 1px solid #ddd;
+              padding: 12px 14px;
               text-align: center;
+              font-size: 15px;
+            }
+            tr:nth-child(even) {
+              background-color: #fafafa;
+            }
+            tr:hover {
+              background-color: #f1f1f1;
             }
             .totals {
-              text-align: right;
               font-size: 18px;
+              font-weight: bold;
+              text-align: right;
               margin-top: 20px;
+              background: #f9f9f9;
+              padding: 12px;
+              border: 1px solid #ccc;
+              border-radius: 6px;
             }
             .button-group {
               display: flex;
@@ -111,25 +126,21 @@ const ProductList = () => {
               gap: 20px;
               margin-top: 40px;
             }
-            .print-btn, .cancel-btn, .download-btn {
-              padding: 10px 25px;
-              font-size: 18px;
+            .button {
+              padding: 10px 24px;
+              font-size: 16px;
               border: none;
               border-radius: 6px;
               cursor: pointer;
-            }
-            .print-btn {
-              background-color: #4CAF50;
+              transition: background 0.2s ease;
               color: white;
             }
-            .cancel-btn {
-              background-color: #f44336;
-              color: white;
-            }
-            .download-btn {
-              background-color: #2196F3;
-              color: white;
-            }
+            .cancel-btn { background-color: #e53935; }
+            .cancel-btn:hover { background-color: #c62828; }
+            .download-btn { background-color: #1e88e5; }
+            .download-btn:hover { background-color: #1565c0; }
+            .print-btn { background-color: #43a047; }
+            .print-btn:hover { background-color: #2e7d32; }
           </style>
         </head>
         <body>
@@ -139,7 +150,7 @@ const ProductList = () => {
               <img src="${logoURL}" alt="Company Logo" />
             </div>
   
-            <h2 style="text-align: center;">Product List</h2>
+            <h2>📦 Product List</h2>
   
             <table>
               <thead>
@@ -167,28 +178,27 @@ const ProductList = () => {
             </table>
   
             <div class="totals">
-              <p><strong>Total Hand Stock Value:</strong> ₹${totalHandStockValue.toFixed(2)}</p>
+              Total Hand Stock Value: ₹${totalHandStockValue.toFixed(2)}
             </div>
   
             <div class="button-group">
-              <button class="cancel-btn" onclick="window.close()">Cancel</button>
-              <button class="download-btn" onclick="downloadHTML()">Download</button>
-              <button class="print-btn" onclick="window.print()">Print Product List</button>
+              <button class="button cancel-btn" onclick="window.close()">❌ Cancel</button>
+              <button class="button download-btn" onclick="downloadHTML()">📥 Download</button>
+              <button class="button print-btn" onclick="window.print()">🖨️ Print Product List</button>
             </div>
           </div>
   
           <script>
             function downloadHTML() {
-              const element = document.getElementById('product-content');
-              const htmlContent = '<html><head><title>Product List</title></head><body>' + element.outerHTML + '</body></html>';
-              const blob = new Blob([htmlContent], { type: 'text/html' });
+              const content = document.getElementById('product-content').outerHTML;
+              const fullHTML = '<html><head><title>Product List</title></head><body>' + content + '</body></html>';
+              const blob = new Blob([fullHTML], { type: 'text/html' });
               const link = document.createElement('a');
               link.href = URL.createObjectURL(blob);
               link.download = 'product-list.html';
               link.click();
             }
           </script>
-  
         </body>
       </html>
     `;
@@ -196,40 +206,116 @@ const ProductList = () => {
     newWindow.document.write(productHTML);
     newWindow.document.close();
   };
+  
 
   const handleDownload = () => {
-    const element = document.createElement('div');
+    const logoURL = "/logo.jpeg"; // Ensure this exists in /public
     const htmlContent = `
       <html>
-        <head><title>Product List</title></head>
+        <head>
+          <title>Product List - Vk Aura</title>
+          <style>
+            body {
+              font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+              background-color: #f4f6f8;
+              margin: 0;
+              padding: 40px;
+            }
+            .container {
+              background-color: #fff;
+              padding: 40px;
+              border-radius: 10px;
+              max-width: 1000px;
+              margin: auto;
+              box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            }
+            .header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              border-bottom: 2px solid #ccc;
+              padding-bottom: 20px;
+              margin-bottom: 30px;
+            }
+            .header h1 {
+              margin: 0;
+              font-size: 28px;
+              color: #374495;
+            }
+            .header img {
+              height: 70px;
+            }
+            h2 {
+              text-align: center;
+              margin-bottom: 30px;
+              color: #374495;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 30px;
+            }
+            th, td {
+              border: 1px solid #ddd;
+              padding: 12px 14px;
+              text-align: center;
+              font-size: 15px;
+            }
+            thead {
+              background-color: #f0f0f0;
+            }
+            tr:nth-child(even) {
+              background-color: #fafafa;
+            }
+            .totals {
+              font-size: 16px;
+              font-weight: bold;
+              background-color: #f9f9f9;
+              padding: 14px;
+              border-radius: 8px;
+              border: 1px solid #ddd;
+              text-align: right;
+            }
+          </style>
+        </head>
         <body>
-          <h1>Product List - Vk Aura</h1>
-          <table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width: 100%;">
-            <thead>
-              <tr>
-                <th>Product Name</th>
-                <th>SKU</th>
-                <th>Selling Price</th>
-                <th>Cost Price</th>
-                <th>Quantity</th>
-                <th>Unit</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${filteredPackages.map(product => `
+          <div class="container">
+            <div class="header">
+              <h1>Vk Aura</h1>
+              <img src="${logoURL}" alt="Logo" />
+            </div>
+  
+            <h2>📦 Product List</h2>
+  
+            <table>
+              <thead>
                 <tr>
-                  <td>${product.name}</td>
-                  <td>${product.sku}</td>
-                  <td>₹${Number(product.sellingPrice).toFixed(2)}</td>
-                  <td>₹${Number(product.costPrice).toFixed(2)}</td>
-                  <td>${Number(product.quantity).toFixed(2)}</td>
-                  <td>${product.unit}</td>
+                  <th>Product Name</th>
+                  <th>SKU</th>
+                  <th>Selling Price (₹)</th>
+                  <th>Cost Price (₹)</th>
+                  <th>Quantity</th>
+                  <th>Unit</th>
                 </tr>
-              `).join('')}
-            </tbody>
-          </table>
-          <br/>
-          <p><strong>Total Hand Stock Value:</strong> ₹${totalHandStockValue.toFixed(2)}</p>
+              </thead>
+              <tbody>
+                ${filteredPackages.map(product => `
+                  <tr>
+                    <td>${product.name}</td>
+                    <td>${product.sku}</td>
+                    <td>${Number(product.sellingPrice).toFixed(2)}</td>
+                    <td>${Number(product.costPrice).toFixed(2)}</td>
+                    <td>${Number(product.quantity).toFixed(2)}</td>
+                    <td>${product.unit}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+  
+            <div class="totals">
+              Total Hand Stock Value: ₹${totalHandStockValue.toFixed(2)}
+            </div>
+          </div>
         </body>
       </html>
     `;
@@ -242,6 +328,7 @@ const ProductList = () => {
     link.click();
     document.body.removeChild(link);
   };
+  
   
   
   const handleSearch = (e) => {

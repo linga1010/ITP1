@@ -75,12 +75,12 @@ const SalesReport = () => {
     let profit = 0;
   
     (order.items || []).forEach(item => {
-      // 🛑 Skip legacy orders without historical prices
+      
       if (!item.products || item.products.length === 0) {
         return;
       }
   
-      // ✅ Use historical prices from the order itself
+      
       item.products.forEach(prod => {
         const quantity = Number(prod.quantity || 0);
         const cost = Number(prod.costPriceAtOrder || 0);
@@ -89,7 +89,7 @@ const SalesReport = () => {
         profit += (sell - cost) * unitsSold;
       });
   
-      // ✅ Apply historical discount if present
+      
       const discount = ((item.price || 0) - (item.finalPrice || 0)) * (item.quantity || 1);
       profit -= discount;
     });
@@ -113,22 +113,80 @@ const SalesReport = () => {
     }
   };
 
+
+
   const handlePrint = () => {
+    const logoURL = "/logo.jpeg"; // Must be in public folder
     const newWindow = window.open('', '_blank');
-    
+  
     const html = `
       <html>
       <head>
         <title>Sales Report - Vk Aura</title>
         <style>
-          body { font-family: Arial, sans-serif; padding: 20px; }
-          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-          th, td { border: 1px solid black; padding: 8px; text-align: center; }
-          h2, h3 { text-align: center; }
+          body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 40px;
+          }
+          .container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            max-width: 1200px;
+            margin: auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          }
+          .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+          }
+          .header img {
+            height: 70px;
+          }
+          .header h2 {
+            font-size: 32px;
+            color: #374495;
+            margin: 0;
+          }
+          h3 {
+            color: #374495;
+            margin-top: 30px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 6px;
+          }
+          .summary p {
+            font-size: 16px;
+            margin: 8px 0;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+          }
+          table thead {
+            background-color: #f0f0f0;
+          }
+          th, td {
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            text-align: center;
+          }
+          tr:nth-child(even) {
+            background-color: #fafafa;
+          }
+          tr:hover {
+            background-color: #f1f1f1;
+          }
           .button-group {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             margin-top: 40px;
           }
           .button {
@@ -145,74 +203,81 @@ const SalesReport = () => {
         </style>
       </head>
       <body>
-        <h2>Vk Aura - Sales Report</h2>
-        <h3>${getReportPeriod()}</h3>
+        <div class="container">
+          <div class="header">
+            <h2>Vk Aura - Sales Report</h2>
+            <img src="${logoURL}" alt="Logo" />
+          </div>
   
-        <h3>Summary</h3>
-        <p><strong>Invoice Sales:</strong> Rs ${invoiceSales.toFixed(2)}</p>
-        <p><strong>Invoice Profit:</strong> Rs ${invoiceProfit.toFixed(2)}</p>
-        <p><strong>Package Sales:</strong> Rs ${packageSales.toFixed(2)}</p>
-        <p><strong>Package Profit:</strong> Rs ${packageProfit.toFixed(2)}</p>
-        <p><strong>Total Sales:</strong> Rs ${(invoiceSales + packageSales).toFixed(2)}</p>
-        <p><strong>Total Profit:</strong> Rs ${(invoiceProfit + packageProfit).toFixed(2)}</p>
+          <h3>${getReportPeriod()}</h3>
   
-        <h3>Invoice Details</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Invoice Number</th>
-              <th>Customer</th>
-              <th>Amount</th>
-              <th>Profit</th>
-              <th>Invoice Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${filteredInvoices.map(inv => `
+          <div class="summary">
+            <p><strong>Invoice Sales:</strong> Rs ${invoiceSales.toFixed(2)}</p>
+            <p><strong>Invoice Profit:</strong> Rs ${invoiceProfit.toFixed(2)}</p>
+            <p><strong>Package Sales:</strong> Rs ${packageSales.toFixed(2)}</p>
+            <p><strong>Package Profit:</strong> Rs ${packageProfit.toFixed(2)}</p>
+            <p><strong>Total Sales:</strong> Rs ${(invoiceSales + packageSales).toFixed(2)}</p>
+            <p><strong>Total Profit:</strong> Rs ${(invoiceProfit + packageProfit).toFixed(2)}</p>
+          </div>
+  
+          <h3>🧾 Invoice Details</h3>
+          <table>
+            <thead>
               <tr>
-                <td>${inv.invoiceNumber}</td>
-                <td>${inv.customerName}</td>
-                <td>Rs ${inv.amountAfterDiscount?.toFixed(2)}</td>
-                <td>Rs ${calculateInvoiceProfit(inv).toFixed(2)}</td>
-                <td>${new Date(inv.invoiceDate).toLocaleDateString()}</td>
+                <th>Invoice Number</th>
+                <th>Customer</th>
+                <th>Amount</th>
+                <th>Profit</th>
+                <th>Invoice Date</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${filteredInvoices.length === 0
+                ? `<tr><td colspan="5">No Invoices</td></tr>`
+                : filteredInvoices.map(inv => `
+                  <tr>
+                    <td>${inv.invoiceNumber}</td>
+                    <td>${inv.customerName}</td>
+                    <td>Rs ${inv.amountAfterDiscount?.toFixed(2)}</td>
+                    <td>Rs ${calculateInvoiceProfit(inv).toFixed(2)}</td>
+                    <td>${new Date(inv.invoiceDate).toLocaleDateString()}</td>
+                  </tr>`).join('')}
+            </tbody>
+          </table>
   
-        <h3>Delivered Package Details</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Customer Name</th>
-              <th>Package Total</th>
-              <th>Profit</th>
-              <th>Delivery Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${deliveredOrders.map(order => `
+          <h3>📦 Delivered Package Details</h3>
+          <table>
+            <thead>
               <tr>
-                <td>${order.userName}</td>
-                <td>Rs ${order.total?.toFixed(2)}</td>
-                <td>Rs ${calculateOrderProfit(order).toFixed(2)}</td>
-                <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+                <th>Customer Name</th>
+                <th>Package Total</th>
+                <th>Profit</th>
+                <th>Delivery Date</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${deliveredOrders.length === 0
+                ? `<tr><td colspan="4">No Delivered Orders</td></tr>`
+                : deliveredOrders.map(order => `
+                  <tr>
+                    <td>${order.userName}</td>
+                    <td>Rs ${order.total?.toFixed(2)}</td>
+                    <td>Rs ${calculateOrderProfit(order).toFixed(2)}</td>
+                    <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+                  </tr>`).join('')}
+            </tbody>
+          </table>
   
-        <!-- 🚀 Here are your bottom 3 buttons -->
-        <div class="button-group">
-          <button class="button cancel-btn" onclick="window.close()">❌ Cancel</button>
-          <button class="button download-btn" onclick="downloadHTML()">📥 Download</button>
-          <button class="button print-btn" onclick="window.print()">🖨️ Print</button>
+          <div class="button-group">
+            <button class="button cancel-btn" onclick="window.close()">❌ Cancel</button>
+            <button class="button download-btn" onclick="downloadHTML()">📥 Download</button>
+            <button class="button print-btn" onclick="window.print()">🖨️ Print</button>
+          </div>
         </div>
   
         <script>
           function downloadHTML() {
-            const element = document.body;
-            const htmlContent = '<html><head><title>Sales Report</title></head><body>' + element.innerHTML + '</body></html>';
+            const htmlContent = document.documentElement.outerHTML;
             const blob = new Blob([htmlContent], { type: 'text/html' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
@@ -220,7 +285,6 @@ const SalesReport = () => {
             link.click();
           }
         </script>
-  
       </body>
       </html>
     `;
@@ -229,74 +293,138 @@ const SalesReport = () => {
     newWindow.document.close();
   };
   
+  
+
   const handleDownload = () => {
-    const element = document.createElement('a');
-    
+    const logoURL = "/logo.jpeg"; // Logo must be in the public folder
+  
     const html = `
       <html>
-      <head><title>Sales Report - Vk Aura</title></head>
-      <body>
-        <h2>Sales Report - Vk Aura</h2>
-        <h3>${getReportPeriod()}</h3> <!-- 🛑 Added report period here -->
+        <head>
+          <title>Sales Report - Vk Aura</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              background-color: #f9f9f9;
+              padding: 40px;
+              margin: 0;
+            }
+            .container {
+              background-color: #fff;
+              border-radius: 8px;
+              padding: 40px;
+              max-width: 1000px;
+              margin: auto;
+              box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            }
+            .header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              margin-bottom: 30px;
+            }
+            .header img {
+              height: 80px;
+            }
+            h2, h3 {
+              color: #374495;
+              text-align: center;
+              margin: 10px 0;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin-top: 20px;
+            }
+            th, td {
+              border: 1px solid #ddd;
+              padding: 10px;
+              text-align: center;
+            }
+            th {
+              background-color: #f2f2f2;
+            }
+            .summary {
+              margin-top: 30px;
+              font-size: 16px;
+              line-height: 1.6;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h2>Vk Aura - Sales Report</h2>
+              <img src="${logoURL}" alt="Logo" />
+            </div>
   
-        <h3>Summary</h3>
-        <p><strong>Invoice Sales:</strong> Rs ${invoiceSales.toFixed(2)}</p>
-        <p><strong>Invoice Profit:</strong> Rs ${invoiceProfit.toFixed(2)}</p>
-        <p><strong>Package Sales:</strong> Rs ${packageSales.toFixed(2)}</p>
-        <p><strong>Package Profit:</strong> Rs ${packageProfit.toFixed(2)}</p>
-        <p><strong>Total Sales:</strong> Rs ${(invoiceSales + packageSales).toFixed(2)}</p>
-        <p><strong>Total Profit:</strong> Rs ${(invoiceProfit + packageProfit).toFixed(2)}</p>
+            <h3>${getReportPeriod()}</h3>
   
-        <h3>Invoice Details</h3>
-        <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
-          <thead>
-            <tr>
-              <th>Invoice Number</th>
-              <th>Customer</th>
-              <th>Amount</th>
-              <th>Profit</th>
-              <th>Invoice Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${filteredInvoices.map(inv => `
-              <tr>
-                <td>${inv.invoiceNumber}</td>
-                <td>${inv.customerName}</td>
-                <td>Rs ${inv.amountAfterDiscount?.toFixed(2)}</td>
-                <td>Rs ${calculateInvoiceProfit(inv).toFixed(2)}</td>
-                <td>${new Date(inv.invoiceDate).toLocaleDateString()}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
+            <div class="summary">
+              <p><strong>Invoice Sales:</strong> Rs ${invoiceSales.toFixed(2)}</p>
+              <p><strong>Invoice Profit:</strong> Rs ${invoiceProfit.toFixed(2)}</p>
+              <p><strong>Package Sales:</strong> Rs ${packageSales.toFixed(2)}</p>
+              <p><strong>Package Profit:</strong> Rs ${packageProfit.toFixed(2)}</p>
+              <p><strong>Total Sales:</strong> Rs ${(invoiceSales + packageSales).toFixed(2)}</p>
+              <p><strong>Total Profit:</strong> Rs ${(invoiceProfit + packageProfit).toFixed(2)}</p>
+            </div>
   
-        <h3>Delivered Package Details</h3>
-        <table border="1" cellpadding="5" cellspacing="0" style="width:100%; border-collapse: collapse;">
-          <thead>
-            <tr>
-              <th>Customer Name</th>
-              <th>Package Total</th>
-              <th>Profit</th>
-              <th>Delivery Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${deliveredOrders.map(order => `
-              <tr>
-                <td>${order.userName}</td>
-                <td>Rs ${order.total?.toFixed(2)}</td>
-                <td>Rs ${calculateOrderProfit(order).toFixed(2)}</td>
-                <td>${new Date(order.createdAt).toLocaleDateString()}</td>
-              </tr>
-            `).join('')}
-          </tbody>
-        </table>
-      </body>
+            <h3>🧾 Invoice Details</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Invoice Number</th>
+                  <th>Customer</th>
+                  <th>Amount</th>
+                  <th>Profit</th>
+                  <th>Invoice Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${filteredInvoices.length === 0 ? `
+                  <tr><td colspan="5">No Invoices</td></tr>
+                ` : filteredInvoices.map(inv => `
+                  <tr>
+                    <td>${inv.invoiceNumber}</td>
+                    <td>${inv.customerName}</td>
+                    <td>Rs ${inv.amountAfterDiscount?.toFixed(2)}</td>
+                    <td>Rs ${calculateInvoiceProfit(inv).toFixed(2)}</td>
+                    <td>${new Date(inv.invoiceDate).toLocaleDateString()}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+  
+            <h3>📦 Delivered Package Details</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Customer Name</th>
+                  <th>Package Total</th>
+                  <th>Profit</th>
+                  <th>Delivery Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${deliveredOrders.length === 0 ? `
+                  <tr><td colspan="4">No Delivered Orders</td></tr>
+                ` : deliveredOrders.map(order => `
+                  <tr>
+                    <td>${order.userName}</td>
+                    <td>Rs ${order.total?.toFixed(2)}</td>
+                    <td>Rs ${calculateOrderProfit(order).toFixed(2)}</td>
+                    <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        </body>
       </html>
     `;
   
     const blob = new Blob([html], { type: 'text/html' });
+    const element = document.createElement('a');
     element.href = URL.createObjectURL(blob);
     element.download = 'Sales-Report-VkAura.html';
     document.body.appendChild(element);
@@ -304,6 +432,8 @@ const SalesReport = () => {
     document.body.removeChild(element);
   };
   
+
+
 
   const invoiceSales = filteredInvoices.reduce((sum, inv) => sum + (inv.amountAfterDiscount || 0), 0);
   const invoiceProfit = filteredInvoices.reduce((sum, inv) => sum + calculateInvoiceProfit(inv), 0);
@@ -352,7 +482,7 @@ const SalesReport = () => {
     />
   </div>
 
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start',marginTop: '20px' }}>
     <label>Month:</label>
     <select 
       value={selectedMonth} 
@@ -366,7 +496,7 @@ const SalesReport = () => {
     </select>
   </div>
 
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'start' ,marginTop: '20px'}}>
     <label>Year:</label>
     <select 
       value={selectedYear} 

@@ -370,10 +370,10 @@ const ViewBookings = () => {
             className="totals-container"
              style={{
              display: 'flex',
-             gap: '40px',               // more spacing between the boxes
+             gap: '40px',               
              marginTop: '20px',
-             flexWrap: 'nowrap',        // ❗ prevents line break
-             justifyContent: 'center'   // centers the boxes nicely
+             flexWrap: 'nowrap',       
+             justifyContent: 'center'  
             }}
             >
             <div className="totals-box" style={{ width: '450px' }}>
@@ -409,6 +409,7 @@ const ViewBookings = () => {
             <button className="clear-date-btn" onClick={clearFilters}>
               ❌ Clear
             </button>
+            
           </div>
 
           <div className="booking-table">

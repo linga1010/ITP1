@@ -190,7 +190,7 @@
 
 .items-table {
   width: 100% !important;
-  table-layout: auto; /* or fixed if you want equal columns */
+  table-layout: auto; 
   border-collapse: collapse;
   margin-bottom: 12px;
 }

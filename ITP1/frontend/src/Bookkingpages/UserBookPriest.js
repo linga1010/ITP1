@@ -180,7 +180,7 @@ const UserBookPriest = () => {
 
 
 
-        <button type="button" onClick={fetchAvailablePriests} disabled={loading}>
+        <button type="button" onClick={fetchAvailablePriests} disabled={loading} style={{width:"100%"}}>
           {loading ? 'Loading...' : 'Check Availability'}
         </button>
 

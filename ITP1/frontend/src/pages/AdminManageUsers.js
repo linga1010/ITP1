@@ -262,12 +262,12 @@ const AdminManageUsers = () => {
                   const computedTotal = order.items.reduce((sum, it) => sum + it.finalPrice * it.quantity, 0);
                   const statusClass = statusClassMap[order.status.toLowerCase()] || '';
                   return (
-                    <div className="order-card" key={order._id}>
+                    <div style={{minWidth:"700px"}} className="order-card" key={order._id} >
                       <div className="order-header">
                         <span className="order-id">Order #{order._id}</span>
                         <span className="order-date">{new Date(order.createdAt).toLocaleDateString()}</span>
                       </div>
-                      <table className="items-table">
+                      <table className="items-table"  >
                         <thead><tr><th>Name</th><th>Price</th><th>Qty</th><th>Total</th></tr></thead>
                         <tbody>
                           {order.items.map((item, i) => (
@@ -292,9 +292,9 @@ const AdminManageUsers = () => {
 
               <p style={{ fontSize: '24px', fontWeight: 'bold', color: '#374495',  margin: '20px 0', textAlign: 'center',letterSpacing: '1px' }}>
               Feedback History</p>
-              <div className="order-history" style={{marginLeft:"60px"}}>
+              <div className="order-history" style={{ marginLeft:"60px"}}>
                 {selectedUser.feedbackHistory.length > 0 ? selectedUser.feedbackHistory.map(fb => (
-                  <div className="order-card" key={fb._id}>
+                  <div style={{minWidth:"700px"}} className="order-card" key={fb._id}>
                     <div className="order-header">
                       <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '40px', fontWeight: 'bold' }}>
                         {Array.from({ length: fb.rating }, (_, i) => (

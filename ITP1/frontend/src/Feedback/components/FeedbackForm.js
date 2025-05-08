@@ -110,6 +110,7 @@ const FeedbackForm = ({ editFeedback, setEditing, onAdd, onEdit }) => {
           backgroundColor: "#4CAF50",
           color: "white",
           border: "none",
+          width: "100%",
           borderRadius: "4px",
           cursor: "pointer",
         }}
