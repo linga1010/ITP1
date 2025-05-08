@@ -398,15 +398,15 @@ const ViewBookings = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-bar"
             />
-            <div className="date-input">
+            <div className="date-input" >
               <label>Start Date:</label>
-              <input type="date" value={startDate} onChange={handleStartDateChange} max={today} />
+              <input style={{height:'35px'}} type="date" value={startDate} onChange={handleStartDateChange} max={today} />
             </div>
             <div className="date-input">
               <label>End Date:</label>
-              <input type="date" value={endDate} onChange={handleEndDateChange} max={today}/>
+              <input  style={{height:'35px'}}type="date" value={endDate} onChange={handleEndDateChange} max={today}/>
             </div>
-            <button className="clear-date-btn" onClick={clearFilters}>
+            <button  className="clear-date-btn" onClick={clearFilters}>
               ❌ Clear
             </button>
             
