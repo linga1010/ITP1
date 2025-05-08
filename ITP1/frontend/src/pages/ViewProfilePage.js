@@ -44,7 +44,7 @@ const ViewProfilePage = () => {
 
   return (
     <div className="view-profile-container" style={{ width: '900px', height: '800px', backgroundColor: '#f0f0f0' }}>
-      <p style={{ fontSize: '36px', fontWeight: 'bold', color: '#374495', margin: '0px',marginBottom:'30PX', textAlign: 'center',letterSpacing: '1px' }}>
+      <p style={{ fontSize: '35px', fontWeight: 'bold', color: '#374495', margin: '0px',marginBottom:'30PX', textAlign: 'center',letterSpacing: '1px' }}>
       Your Profile</p>
       
       {error && <p className="view-error-message">{error}</p>}
@@ -74,9 +74,13 @@ const ViewProfilePage = () => {
 
         {/* 🆕 Show Prayer Wish if not admin */}
         {!user.isAdmin && user.personalPrayerWish && (
-          <p className="view-profile-field">
-            <strong>🙏 Your Prayer Wish:</strong> {user.personalPrayerWish}
-          </p>
+         <div className="view-profile-field" style={{ flexDirection: 'column', alignItems: 'center' }}>
+         <span style={{ fontSize: '1.6rem', color: '#374495', marginBottom: '8px' }}>
+           🙏 <strong>Your Prayer Wish:</strong>
+         </span>
+         <span style={{ fontSize: '1.5rem', fontWeight: '600' }}>{user.personalPrayerWish}</span>
+       </div>
+       
         )}
       </div>
 
