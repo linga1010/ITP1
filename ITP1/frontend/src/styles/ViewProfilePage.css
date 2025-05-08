@@ -2,6 +2,7 @@
   max-width: 720px;
   margin: 60px auto;
   padding: 35px;
+  min-height: 1000px;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -27,12 +28,12 @@
   box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
 }
 .view-profile-field {
-  font-size: 17px;
+  font-size: 15px;
   margin: 10px 0;
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: bold;
   justify-content: center;
 }
