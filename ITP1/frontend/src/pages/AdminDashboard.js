@@ -206,13 +206,13 @@ const AdminDashboard = () => {
         <div className="date-filter-row" style={{ gap: '100px'}}>
           <div className="date-field">
             <label style={{marginTop:"0px"}}><strong>Start Date:</strong></label>
-            <input type="date" value={startDate} max={today} onChange={e => handleStartDateChange(e.target.value)} />
+            <input style={{height:'35px'}} type="date" value={startDate} max={today} onChange={e => handleStartDateChange(e.target.value)} />
             
           </div>
 
           <div className="date-field">
             <label><strong>End Date:</strong></label>
-            <input type="date" value={endDate} min={startDate} max={today} onChange={e => handleEndDateChange(e.target.value)} />
+            <input style={{height:'35px'}} type="date" value={endDate} min={startDate} max={today} onChange={e => handleEndDateChange(e.target.value)} />
             
           </div>
 

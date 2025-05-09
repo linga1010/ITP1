@@ -1,13 +1,15 @@
-.order-history-container {
+.order-history-container1 {
   width: 1300px;
   margin-top: 60px;
   padding: 20px;
+  margin-left: auto;
+  margin-right: auto;
   text-align: center;
   background: rgba(68, 68, 68, 0.5);
 }
 
 /* Grid wrapper for cards */
-.order-grid {
+.order-grid1 {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -16,7 +18,7 @@
 }
 
 /* Updated card layout */
-.order-card {
+.order-card1 {
   background: rgba(245, 245, 245, 0.8);
   padding: 15px;
   border-radius: 8px;
@@ -27,15 +29,18 @@
   margin: 10px;
 }
 
-.search-bar{
+.search-bar1{
   width: 500px ;
+  height: 15px;
+  border-radius: 5px;
+  padding: 10px;
 }
 
 h2, h3, h4 {
   color: #333333;
 }
 
-.OrderHis {
+.OrderHis1 {
   background-color: rgba(255, 255, 255, 0.8) !important;
   border-radius: 15px;
   padding: 10px;
@@ -138,4 +143,20 @@ li {
   .order-card {
     flex: 1 1 100%; /* 1 per row on phones */
   }
+}
+
+/* Footer */
+.footer {
+  background-color: rgba(44, 39, 39, 0.5);
+  color: white;
+  width: 100vw;
+  text-align: center;
+  padding: 20px 0;
+  margin-top: 40px;
+  position: relative;
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
 }
