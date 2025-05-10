@@ -46,6 +46,8 @@ import TermsAndConditions from './OrderPages/Term&condition';
 import ChatPage from './ChatPage/ChatPage';
 import AdminChatPage from './ChatPage/AdminChatPage';
 import AddOfferPage from './OrderPages/AddOffer.js';
+import ProductReport from './OrderPages/ProductPerformanceReport.js'
+import OrderReport from './OrderPages/OrderReport.js'
 
 
 
@@ -103,6 +105,9 @@ function App() {
       <Route path="/AdminChatPage" element={<AdminChatPage />} />
       <Route path="/admin/view-summary" element={<AdminSummary/>} />
       <Route path="/admin/Add-Offer" element={<AddOfferPage/>} />
+      <Route path="/admin/ProductReport" element={<ProductReport/>} />
+      <Route path="/admin/order-report" element={<OrderReport />} />
+      
 
 
     

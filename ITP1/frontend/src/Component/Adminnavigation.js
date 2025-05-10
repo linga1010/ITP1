@@ -108,6 +108,8 @@ const Adminnaviagtion = () => {
         { to: '/admin/view-bookings', label: 'Order Bookings' },
         { to: '/admin/viewPayment', label: 'Order Payments' },
         { to: '/admin/Add-Offer', label: 'Add Offers' },
+        { to: '/admin/order-report', label: 'Order Summary' },
+        { to: '/admin/ProductReport', label: 'Order Report' },
       ],
     },
     {
