@@ -12,6 +12,7 @@ import { Server } from 'socket.io'; // Import socket.io
 import orderRatingRoutes from './routers/OrderRatingRoutes.js';
 import offerRoutes from './routers/OfferRoutes.js';
 import EmailNotification from './routers/StatusNotificationEmail.js';
+import ProductReport from './routers/orderReportRoutes.js';
 
 
 // Import routes
@@ -113,6 +114,7 @@ app.use('/api/upload', uploadRoutes);
 app.use('/api/order-rating', orderRatingRoutes);
 app.use('/api/offers',offerRoutes);
 app.use('/api/notifications',EmailNotification);
+app.use('/api/reports',ProductReport);
 
 // 404 Handler
 app.use((req, res, next) => {

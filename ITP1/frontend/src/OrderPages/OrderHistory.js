@@ -97,13 +97,13 @@ const OrderHistory = () => {
 
       <p><br></br></p>   
    
-    <div className="order-history-container" style={{marginLeft: "180px"}}>
+    <div className="order-history-container1" >
       
-      <p className="OrderHis">🛒 Order History</p>
+      <p className="OrderHis1">🛒 Order History</p>
       <br />
       <input
         type="text"
-        className="search-bar"
+        className="search-bar1"
         placeholder="Search by date or status...🔍︎"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
@@ -111,10 +111,10 @@ const OrderHistory = () => {
       {loading && <p>Loading...</p>}
       {error && <p className="error">{error}</p>}
       {!loading && filteredOrders.length === 0 && <p>No matching orders found.</p>}
-      <div className="order-grid">
+      <div className="order-grid1">
       {filteredOrders.map((order) => (
         
-        <div key={order._id} className="order-card">
+        <div key={order._id} className="order-card1">
           <OrderProgressBar status={order.status} />
 
           <h3>📅 Date: {new Date(order.createdAt).toLocaleDateString()}</h3>
