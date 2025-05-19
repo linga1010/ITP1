@@ -5,8 +5,8 @@ const sendOTPEmail = async (email, otp) => {
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "heckerhackie@gmail.com", // Your Gmail
-        pass: "sobn xxxl ulca limx",     // App password
+        user: "vkaura1010@gmail.com", // Your Gmail
+        pass: "lfub rcbf xyvs gdic",     // App password
       },
     });
 

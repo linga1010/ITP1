@@ -5,8 +5,8 @@ const sendPrayerEmail = async (user, message) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'heckerhackie@gmail.com',
-        pass: 'sobn xxxl ulca limx',
+        user: 'vkaura1010@gmail.com',
+        pass: 'lfub rcbf xyvs gdic',
       },
     });
 
