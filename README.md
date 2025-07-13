@@ -223,3 +223,13 @@ Use VS Code split terminal (`Ctrl + ~`, then `Ctrl + Shift + 5`) to run both at 
 - ✅ You must update **all 5 email files** in `backend/utils/`.
 - ✅ Frontend Cloudinary config is hardcoded in `EditProfile.jsx`.
 - ❌ Do not change folder structure or filenames — the project is structured intentionally for clean separation of concerns.
+
+## 👨‍💻 Contributors
+
+Built and maintained by:
+- [Lingajan](https://github.com/linga1010)
+- [Tharshikan](https://github.com/tharshihecker)
+- [Kajanan](https://github.com/Kaja-Code)
+
+## 📝 License
+This project is licensed under the MIT License.
