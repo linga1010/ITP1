@@ -187,8 +187,8 @@ To preview the app without editing anything:
 To access the Admin Panel in demo mode, use the following credentials:
 
 ```
-📧 Email: kajan01@gmail.com  
-🔑 Password: 12345678
+📧 Email: skajanan2022@gmail.com 
+🔑 Password: Kaja@123
 ```
 
 This account has full admin rights.  
